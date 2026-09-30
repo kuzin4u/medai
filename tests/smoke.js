@@ -128,6 +128,8 @@ const click = (W, el) => el && el.dispatchEvent(new W.MouseEvent('click', {bubbl
       ? ok('в записи причина, код и группа') : bad('в записи нет кода или группы причины');
     idx[idx.length-1].reasonCode === 'R02' ? ok('код причины в указателе') : bad('в указателе нет кода причины');
     r.stated.pre.level === 7 && r.stated.post.level === 3 ? ok('ответы до и после записаны') : bad('ответы записаны неверно');
+    r.stated.pre.area === 'heart' && r.stated.pre.ctx === '__skipped' && r.stated.pre.quality === '__skipped'
+      ? ok('показанный вопрос без ответа — __skipped') : bad('неотвеченный вопрос до сессии не помечен пропуском');
     r.set.params && r.set.params['t-h2'] === 20 ? ok('фактические параметры записаны') : bad('параметры сессии не записаны');
   }
 
@@ -147,6 +149,23 @@ const click = (W, el) => el && el.dispatchEvent(new W.MouseEvent('click', {bubbl
   old.OLD2.reasonCode === 'R00' && old.OLD2.reasonUnknown === true && old.OLD2.reason === 'Бессонница'
     ? ok('неизвестная причина — R00 с пометкой') : bad('неизвестная причина обработана неверно');
   old.OLD1.fmt === 'cb-record-1' ? ok('версия старой записи не переписывается') : bad('версия старой записи изменена');
+
+  // Escape: в сессии — на экран после, на экране после — как «Пропустить»
+  const esc = () => d.dispatchEvent(new W.KeyboardEvent('keydown', {key:'Escape', bubbles:true}));
+  click(W, d.getElementById('tb-quick'));
+  click(W, d.querySelector('[data-reason="Тревога"]'));
+  click(W, d.getElementById('rs-go'));
+  await wait(250);
+  d.getElementById('session-live').classList.contains('on') ? ok('вторая сессия запускается') : bad('вторая сессия не запустилась');
+  esc(); await wait(250);
+  d.getElementById('post-screen').classList.contains('on') ? ok('Escape в сессии открывает экран после') : bad('Escape не открыл экран после');
+  esc(); await wait(350);
+  const esr = (await W.CB_DB.all('sessions')).find(x => x.reason === 'Тревога' && x.fmt === 'cb-record-2');
+  const esi = (await W.CB_DB.all('index')).find(x => esr && x.id === esr.id);
+  esr && esr.stated.postSkipped === true ? ok('Escape на экране после записывает сессию как пропуск') : bad('сессия после Escape не записана');
+  esr && esr.stated.pre.ctx === '__skipped' && esr.stated.pre.level === '__skipped' && esi && esi.pre === null
+    ? ok('пропуски до сессии: в записи __skipped, в указателе null') : bad('пропуски до сессии записаны неверно');
+  !d.getElementById('post-screen').classList.contains('on') ? ok('экран после закрыт') : bad('экран после не закрылся');
 
   // Возврат из настроек
   click(W, d.getElementById('tb-set'));

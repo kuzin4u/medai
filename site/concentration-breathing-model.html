@@ -1564,10 +1564,10 @@ body.hints-off .hint-mark{display:none}
 │                              ├── «все расширенные настройки» ─► РАСШИРЕННЫЕ ─► назад к причинам
 │                              └── «Отмена» ────────────────► общий экран
 │
-│   СЕССИЯ ─► «завершить» или отклик ─► ЭКРАН ПОСЛЕ
+│   СЕССИЯ ─► «завершить», Escape или отклик ─► ЭКРАН ПОСЛЕ
 │                              ├── «Сохранить» ─────────────► общий экран
 │                              ├── «Сохранить и провести ещё одну» ─► ЭКРАН ПРИЧИН
-│                              └── «Пропустить» ────────────► общий экран (пропуск записан)
+│                              └── «Пропустить» или Escape ─► общий экран (пропуск записан)
 │
 ├── ▶ Запустить процесс ─────► запись реакции + измерение отклика
 │   └── повторное нажатие ───► остановить и сохранить
@@ -5190,6 +5190,7 @@ document.addEventListener('keydown',e=>{
   function renderPre(){
     const t=tOf(cur.reason);
     $('rs-questions').innerHTML = t? CTX.concat(t.pre).map(q=>qHTML(q,cur.pre[q.k],'pre')).join('') : '';
+    cur.preAsked = t? CTX.concat(t.pre).map(q=>q.k) : [];   // показанные вопросы: без ответа — пропуск (Р-6)
   }
   function renderPost(){
     const t=tOf(cur.reason);
@@ -5299,13 +5300,15 @@ document.addEventListener('keydown',e=>{
     const id='S'+started;
     const askedPost=t.post.concat([HINDER]).map(x=>x.k);
     const answers={};
-    askedPost.forEach(k=>{ answers[k] = (k in cur.post)? cur.post[k] : (skipped?'__skipped':'__skipped'); });
+    askedPost.forEach(k=>{ answers[k] = (k in cur.post)? cur.post[k] : '__skipped'; });
+    const pre=Object.assign({},cur.pre);
+    (cur.preAsked||[]).forEach(k=>{ if(!(k in pre)) pre[k]='__skipped'; });
     const note=$('ps-note').value.trim();
     const rec={id,fmt:FMT,startedAt:new Date(started).toISOString(),
       tz:Intl.DateTimeFormat().resolvedOptions().timeZone,
       durationSec:Math.round((Date.now()-started)/1000),
       reason:cur.reason, reasonCode:t.code, reasonGroup:t.group,
-      stated:{pre:cur.pre,post:answers,note:note||null,postSkipped:!!skipped},
+      stated:{pre,post:answers,note:note||null,postSkipped:!!skipped},
       set:{organ:cur.pre.area||window.__cbSavedOrgan||null,
            params:(()=>{const o={},ids=['t-in','t-h1','t-out','t-h2','s-h2','c-freq','c-force','heart-rate'];
              ids.forEach(id=>{const e=document.getElementById(id); if(e) o[id]=+e.value;}); return o;})(),
@@ -5328,6 +5331,12 @@ document.addEventListener('keydown',e=>{
   $('ps-skip').addEventListener('click',()=>save(true));
 
   // ловим завершение сессии: кнопки отклика и «завершить»
+  // Escape: в сессии — как «завершить», на экране после — как «Пропустить» (пропуск записывается, Р-6)
+  window.addEventListener('keydown',e=>{
+    if(e.key!=='Escape'||!started) return;
+    if($('post-screen').classList.contains('on')){ save(true); return; }
+    if(document.getElementById('session-live').classList.contains('on')) setTimeout(openPost,80);
+  },true);
   ['sess-exit'].forEach(id=>{ const b=document.getElementById(id);
     if(b) b.addEventListener('click',()=>setTimeout(openPost,80),true); });
   document.querySelectorAll('#sess-vector [data-vec]').forEach(b=>
