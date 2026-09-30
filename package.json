@@ -1,0 +1,13 @@
+{
+  "name": "medai",
+  "version": "1.0.0",
+  "private": true,
+  "description": "База знаний «ИИ в медицине» и модель «Концентрация и дыхание»",
+  "scripts": {
+    "test": "node tests/smoke.js"
+  },
+  "devDependencies": {
+    "jsdom": "^24.0.0",
+    "fake-indexeddb": "^6.0.0"
+  }
+}
