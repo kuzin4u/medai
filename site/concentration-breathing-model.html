@@ -3780,6 +3780,7 @@ document.addEventListener('keydown', function(e){
       if(el >= sessPreset.tOut){
         cyclePhase='hold'; phaseStart=t; holdBegan=t;
         stage='A'; stageAStart=t; contactLatency=null; crossFlash=0;
+        window.__cbSessEvent && window.__cbSessEvent('hold');
       }
     }
     // hold — переключение только через releaseHold()
@@ -4076,6 +4077,7 @@ document.addEventListener('keydown', function(e){
   // ── Запись вектора ──
   function recordVector(v){
     const latency = (performance.now() - vectorStart) / 1000;
+    window.__cbSessEvent && window.__cbSessEvent('response', v > 0 ? 1 : -1);
     try {
       const log = JSON.parse(localStorage.getItem('latencyLog_v1') || '[]');
       const o = ORGANS[sessOrgan] || {};
@@ -4114,6 +4116,7 @@ document.addEventListener('keydown', function(e){
     if(stage === 'A'){
       // Контакт установлен — переходим к наведению
       contactLatency = t - stageAStart;
+      window.__cbSessEvent && window.__cbSessEvent('contact');
       stage = 'B1';
       stageBStart = t;
       tone(440, 0.35, 0.05);
@@ -4123,6 +4126,7 @@ document.addEventListener('keydown', function(e){
       // Проходим границу сред
       stage = 'B2';
       stageB2Start = t;
+      window.__cbSessEvent && window.__cbSessEvent('b2');
       crossFlash = 1;
       tone(587.33, 0.5, 0.06);
       setTimeout(function(){ tone(880, 0.4, 0.045); }, 120);
@@ -4135,6 +4139,7 @@ document.addEventListener('keydown', function(e){
     if(cyclePhase !== 'hold') return;
     const t = (performance.now() - sessStart)/1000 - 3;
     releaseHold(t);
+    window.__cbSessEvent && window.__cbSessEvent('release');
     releaseBtn.className = '';
     stageBtn.className = '';
   });
@@ -4407,6 +4412,8 @@ function showDocSect(id){
   let rafId     = null;
   let lastSample= 0;
   const layers = {reaction:true, breath:true, impulse:true, pulse:true};
+  // ряд реакции для записи сессии (З-2): начало по performance.now и сами точки
+  window.__cbFbTrack = function(){ return {start:startTime, track:track}; };
 
   document.querySelectorAll('.fbl-item').forEach(function(el){
     el.addEventListener('click', function(){
@@ -5112,6 +5119,11 @@ document.addEventListener('keydown',e=>{
     async put(store,obj){ const d=await this.open(); if(!d) return false;
       return new Promise(res=>{ const tx=d.transaction(store,'readwrite');
         tx.objectStore(store).put(obj); tx.oncomplete=()=>res(true); tx.onerror=()=>res(false); }); },
+    // несколько хранилищ одной транзакцией: либо все записи, либо ни одной
+    async putAll(objs){ const d=await this.open(); if(!d) return false;
+      return new Promise(res=>{ const tx=d.transaction(Object.keys(objs),'readwrite');
+        Object.entries(objs).forEach(([s,o])=>tx.objectStore(s).put(o));
+        tx.oncomplete=()=>res(true); tx.onerror=tx.onabort=()=>res(false); }); },
     async all(store){ const d=await this.open(); if(!d) return [];
       return new Promise(res=>{ const q=d.transaction(store,'readonly').objectStore(store).getAll();
         q.onsuccess=()=>res((q.result||[]).map(r=>withCode(store,r))); q.onerror=()=>res([]); }); }
@@ -5277,16 +5289,32 @@ document.addEventListener('keydown',e=>{
   if(q) q.addEventListener('click',e=>{ e.stopImmediatePropagation(); e.preventDefault(); openReason(); },true);
 
   // фиксируем старт сессии
-  let started=null;
+  let started=null, startedPerf=0, ended=null, events=[];
   document.getElementById('ss-go').addEventListener('click',()=>{
     if(document.getElementById('ss-go').dataset.mode==='settings') return;
     if(!cur.reason) cur.reason=FALLBACK;
-    started=Date.now();
+    started=Date.now(); startedPerf=performance.now(); ended=null;
+    events=[{t:0,e:'start'}];
   });
+  // события этапов из слоя сессии: время в секундах от старта (З-2)
+  const sinceStart=()=>Math.round((performance.now()-startedPerf)/100)/10;
+  window.__cbSessEvent=(e,v)=>{
+    if(!started||ended!==null) return;
+    const o={t:sinceStart(),e}; if(v!==undefined) o.v=v; events.push(o);
+  };
+  // ряд реакции процесса за время сессии, одно значение в секунду (последнее в секунде)
+  function reactSeries(){
+    const fb=window.__cbFbTrack&&window.__cbFbTrack(); if(!fb||!fb.track) return [];
+    const out=[], end=ended??sinceStart();
+    fb.track.forEach(p=>{ const s=(fb.start+p.t*1000-startedPerf)/1000;
+      if(s>=0&&s<=end) out[Math.floor(s)]=p.v; });
+    return Array.from(out,x=>x??null);
+  }
 
   // ── Экран после сессии ──
   function openPost(){
     if(!started) return;
+    if(ended===null){ ended=sinceStart(); events.push({t:ended,e:'end'}); }
     document.getElementById('session-live').classList.remove('on');
     document.getElementById('session-setup').style.display='none';
     renderPost();
@@ -5316,11 +5344,14 @@ document.addEventListener('keydown',e=>{
              return p? {tIn:+p.dataset.in,tH1:+p.dataset.h1,tOut:+p.dataset.out,tH2:+p.dataset.h2,minutes:+p.dataset.min} : null;})()},
       measured:{device:null,samples:0},
       marked:{},derived:{}};
-    const ok=await DB.put('sessions',rec);
-    await DB.put('index',{id,at:rec.startedAt,reason:cur.reason,reasonCode:t.code,
+    if(ended===null){ ended=sinceStart(); events.push({t:ended,e:'end'}); }
+    // сырьё: не перезаписывается и не пересчитывается; rr и spo2 появятся с датчиком (З-3)
+    const series={id,fmt:FMT,react:reactSeries(),events};
+    const ok=await DB.putAll({sessions:rec, series,
+      index:{id,at:rec.startedAt,reason:cur.reason,reasonCode:t.code,
       area:cur.pre.area||null, areaOther:cur.pre.areaOther||null,pre:cur.pre.level??null,post:answers.level??null,
-      dur:rec.durationSec,device:false});
-    started=null; cur={reason:null,pre:{},post:{}};
+      dur:rec.durationSec,device:false}});
+    started=null; ended=null; events=[]; cur={reason:null,pre:{},post:{}};
     $('post-screen').classList.remove('on');
     document.getElementById('session-overlay').classList.remove('open');
     document.getElementById('session-setup').style.display='block';

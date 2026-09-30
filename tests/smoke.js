@@ -112,6 +112,11 @@ const click = (W, el) => el && el.dispatchEvent(new W.MouseEvent('click', {bubbl
   await wait(250);
   d.getElementById('session-live').classList.contains('on') ? ok('сессия запускается') : bad('сессия не запустилась');
 
+  // Процесс шёл параллельно: точка до сессии отбрасывается, внутри секунды остаётся последняя
+  const fbOrig = W.__cbFbTrack, fbStart = W.performance.now() - 2000;
+  // сессия идёт уже ~250 мс: точки 1.9 и 1.95 внутри её первой секунды, 1.0 — до старта
+  W.__cbFbTrack = () => ({start: fbStart, track: [{t:1.0, v:99}, {t:1.9, v:10}, {t:1.95, v:20}]});
+  W.__cbSessEvent('contact');
   click(W, d.getElementById('sess-exit'));
   await wait(250);
   d.getElementById('post-screen').classList.contains('on') ? ok('экран вопросов после сессии') : bad('нет экрана после сессии');
@@ -131,7 +136,20 @@ const click = (W, el) => el && el.dispatchEvent(new W.MouseEvent('click', {bubbl
     r.stated.pre.area === 'heart' && r.stated.pre.ctx === '__skipped' && r.stated.pre.quality === '__skipped'
       ? ok('показанный вопрос без ответа — __skipped') : bad('неотвеченный вопрос до сессии не помечен пропуском');
     r.set.params && r.set.params['t-h2'] === 20 ? ok('фактические параметры записаны') : bad('параметры сессии не записаны');
+
+    // З-2: сырьё в series, тот же id, одной транзакцией с sessions и index
+    const sr = (await W.CB_DB.all('series')).find(x => x.id === r.id);
+    sr && idx.some(x => x.id === r.id) ? ok('series: запись с тем же id, что в sessions и index') : bad('в series нет записи сессии');
+    if (sr) {
+      const ev = sr.events.map(x => x.e).join(',');
+      ev === 'start,contact,end' ? ok('series.events: start, contact, end') : bad('series.events: ' + ev);
+      sr.events.every((x, i, a) => typeof x.t === 'number' && (!i || x.t >= a[i-1].t))
+        ? ok('время событий растёт от старта') : bad('время событий неверно');
+      JSON.stringify(sr.react) === '[20]' ? ok('react: окно сессии, одно значение в секунду') : bad('react: ' + JSON.stringify(sr.react));
+      !('rr' in sr) && !('spo2' in sr) ? ok('без датчика rr и spo2 не пишутся') : bad('rr/spo2 записаны без датчика');
+    }
   }
+  W.__cbFbTrack = fbOrig;
 
   // Коды причин неизменяемы (Р-8): соответствие коду и строке
   const CODES = {'Дискомфорт':'R01','Боль':'R02','Острая боль':'R03','Хроническая боль':'R04','Воспаление':'R05',
@@ -166,6 +184,9 @@ const click = (W, el) => el && el.dispatchEvent(new W.MouseEvent('click', {bubbl
   esr && esr.stated.pre.ctx === '__skipped' && esr.stated.pre.level === '__skipped' && esi && esi.pre === null
     ? ok('пропуски до сессии: в записи __skipped, в указателе null') : bad('пропуски до сессии записаны неверно');
   !d.getElementById('post-screen').classList.contains('on') ? ok('экран после закрыт') : bad('экран после не закрылся');
+  const ess = esr && (await W.CB_DB.all('series')).find(x => x.id === esr.id);
+  ess && Array.isArray(ess.react) && ess.react.length === 0 && ess.events.map(x => x.e).join(',') === 'start,end'
+    ? ok('series после Escape: пустой react, события start и end') : bad('series после Escape записан неверно');
 
   // Возврат из настроек
   click(W, d.getElementById('tb-set'));
