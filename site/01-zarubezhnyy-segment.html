@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>База знаний: ИИ в медицине — зарубежный сегмент</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Serif:wght@500;600&family=IBM+Plex+Sans+Condensed:wght@500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#F7FAF9; --panel:#FFFFFF; --ink:#16302C; --ink2:#4A615C; --line:#CFDDD9;
+  --tint:#E4F0EC; --accent:#0B6E60; --accent2:#084F45; --warn:#9A5B00; --warntint:#FBF0DE;
+  --danger:#A3322A; --dangertint:#FBE7E4; --info:#2F5D8A; --infotint:#E6EEF7;
+  --serif:"IBM Plex Serif", Georgia, "Times New Roman", serif;
+  --sans:"IBM Plex Sans", "Segoe UI", Roboto, Arial, sans-serif;
+  --cond:"IBM Plex Sans Condensed", "Arial Narrow", Arial, sans-serif;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#0F1B19; --panel:#152623; --ink:#E3EFEC; --ink2:#A4BAB5; --line:#2C4540;
+    --tint:#1B332F; --accent:#4FC2AE; --accent2:#7ED9C8; --warn:#E3A64A; --warntint:#33280F;
+    --danger:#EE8A80; --dangertint:#3A1D1A; --info:#8DB6E0; --infotint:#172A3D;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#0F1B19; --panel:#152623; --ink:#E3EFEC; --ink2:#A4BAB5; --line:#2C4540;
+  --tint:#1B332F; --accent:#4FC2AE; --accent2:#7ED9C8; --warn:#E3A64A; --warntint:#33280F;
+  --danger:#EE8A80; --dangertint:#3A1D1A; --info:#8DB6E0; --infotint:#172A3D;
+}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*::before,*::after{box-sizing:inherit}
+body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.6 var(--sans);-webkit-text-size-adjust:100%}
+a{color:var(--accent)}
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.wrap{max-width:1180px;margin:0 auto;padding:0 20px}
+header.top{border-bottom:1px solid var(--line);background:var(--panel)}
+.top .wrap{display:flex;flex-wrap:wrap;gap:8px 18px;align-items:center;padding-top:12px;padding-bottom:12px}
+.brand{font-family:var(--cond);font-size:14px;color:var(--ink2)}
+.toplinks{display:flex;flex-wrap:wrap;gap:6px;margin-left:auto}
+.toplinks a.home{text-decoration:none;white-space:nowrap}
+.toplinks button,.toplinks a.home,.btn{font:500 14px var(--sans);background:transparent;color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:5px 10px;cursor:pointer}
+.toplinks button:hover,.btn:hover{border-color:var(--accent);color:var(--accent)}
+.hero{padding:40px 0 18px}
+.hero h1{font:600 clamp(28px,4.4vw,44px)/1.12 var(--serif);margin:0 0 14px;max-width:22ch;letter-spacing:-.01em}
+.hero p.lead{font-size:18px;max-width:70ch;color:var(--ink2);margin:0 0 10px}
+.task{border-left:3px solid var(--accent);background:var(--tint);padding:12px 16px;margin:18px 0 6px;max-width:80ch;border-radius:0 6px 6px 0}
+.task b{font-weight:600}
+.meta{font-family:var(--cond);font-size:14px;color:var(--ink2);margin-top:10px}
+.layout{display:grid;grid-template-columns:250px 1fr;gap:28px;padding:18px 0 60px}
+nav.side{position:sticky;top:env(safe-area-inset-top,0px);align-self:start;max-height:100vh;overflow:auto;padding-top:8px}
+nav.side ol{list-style:none;margin:0;padding:0}
+nav.side li{margin:0}
+nav.side .grp{font-family:var(--cond);font-size:13px;color:var(--ink2);margin:14px 0 4px}
+nav.side button{display:block;width:100%;text-align:left;background:none;border:0;border-left:2px solid transparent;padding:5px 10px;font:15px/1.35 var(--sans);color:var(--ink);cursor:pointer}
+nav.side button:hover{color:var(--accent)}
+nav.side button[aria-current="true"]{border-left-color:var(--accent);color:var(--accent);font-weight:600;background:var(--tint)}
+.mobnav{display:none;margin:10px 0}
+.mobnav select{width:100%;font:16px var(--sans);padding:8px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--ink)}
+section.pane{display:none}
+section.pane.on{display:block}
+h2{font:600 28px/1.2 var(--serif);margin:4px 0 8px}
+h3{font:600 19px/1.3 var(--serif);margin:26px 0 8px}
+.pane > p.intro{color:var(--ink2);max-width:75ch;margin:0 0 18px}
+p,li{max-width:78ch}
+.tree{font:15px/1.55 var(--sans);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:16px 18px;overflow-x:auto}
+.tree ul{list-style:none;margin:0;padding-left:20px;border-left:1px solid var(--line)}
+.tree > ul{border-left:0;padding-left:0}
+.tree li{position:relative;padding:3px 0 3px 12px;max-width:none}
+.tree li::before{content:"";position:absolute;left:-20px;top:15px;width:26px;border-top:1px solid var(--line)}
+.tree > ul > li::before{display:none}
+.tree .branch{font-weight:600}
+.tree .cnt{font-family:var(--cond);color:var(--ink2);font-size:13px;margin-left:6px}
+.tree button.lnk{background:none;border:0;padding:0;color:var(--accent);font:inherit;cursor:pointer;text-decoration:underline;text-underline-offset:2px}
+.tree .note{color:var(--ink2)}
+.tree .plan{color:var(--ink2);font-style:italic}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px;margin:10px 0}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:14px 16px}
+.card h4{margin:0 0 6px;font:600 16px/1.3 var(--sans)}
+.card p{margin:0;color:var(--ink2);font-size:15px}
+.card .foot{margin-top:8px;font-family:var(--cond);font-size:13px;color:var(--ink2)}
+.scroll{overflow-x:auto;border:1px solid var(--line);border-radius:8px;background:var(--panel);margin:10px 0}
+table{border-collapse:collapse;width:100%;font-size:14.5px;line-height:1.45}
+th,td{text-align:left;vertical-align:top;padding:9px 12px;border-bottom:1px solid var(--line)}
+th{font:500 13.5px var(--cond);color:var(--ink2);background:var(--tint);position:sticky;top:0}
+tr:last-child td{border-bottom:0}
+td.num{white-space:nowrap}
+.tag{display:inline-block;font:500 12.5px var(--cond);padding:1px 7px;border-radius:10px;border:1px solid var(--line);white-space:nowrap;margin:1px 2px 1px 0}
+.t-doc{background:var(--tint);color:var(--accent2);border-color:transparent}
+.t-obs{background:var(--infotint);color:var(--info);border-color:transparent}
+.t-inf{background:var(--warntint);color:var(--warn);border-color:transparent}
+.t-proj{background:var(--dangertint);color:var(--danger);border-color:transparent}
+.filters{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:8px 0}
+.filters input,.filters select{font:15px var(--sans);padding:6px 9px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--ink);min-width:0}
+.filters input[type=search]{flex:1 1 220px}
+.chip{font:500 14px var(--sans);border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:16px;padding:4px 11px;cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--panel)}
+.count{font-family:var(--cond);font-size:13.5px;color:var(--ink2)}
+/* путь случая — главная интерактивная полоса */
+.path{display:grid;grid-template-columns:repeat(9,minmax(96px,1fr));gap:0;margin:16px 0 4px;overflow-x:auto;padding-bottom:4px}
+.stage{position:relative;background:none;border:0;cursor:pointer;padding:34px 6px 8px;text-align:center;color:var(--ink);font:500 14px/1.25 var(--sans)}
+.stage::before{content:"";position:absolute;left:0;right:0;top:15px;border-top:2px solid var(--line)}
+.stage .dot{position:absolute;left:50%;top:6px;width:20px;height:20px;margin-left:-10px;border-radius:50%;background:var(--panel);border:2px solid var(--line);font:600 11px/16px var(--cond);color:var(--ink2)}
+.stage:hover .dot{border-color:var(--accent)}
+.stage[aria-pressed="true"] .dot{background:var(--accent);border-color:var(--accent);color:var(--panel)}
+.stage[aria-pressed="true"]{color:var(--accent)}
+.stage[aria-pressed="true"]::before{border-top-color:var(--accent)}
+.detail{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:16px 18px;margin-top:8px}
+.detail h3{margin-top:0}
+.dgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px 22px}
+.dgrid h5{margin:0 0 4px;font:500 13.5px var(--cond);color:var(--ink2)}
+.dgrid ul{margin:0;padding-left:18px}
+.dgrid li{font-size:15px;margin:2px 0}
+.steps{counter-reset:s;list-style:none;padding:0;margin:10px 0}
+.steps > li{counter-increment:s;position:relative;padding:12px 14px 12px 52px;border:1px solid var(--line);border-radius:8px;background:var(--panel);margin-bottom:8px;max-width:none}
+.steps > li::before{content:counter(s);position:absolute;left:14px;top:12px;width:26px;height:26px;border-radius:50%;background:var(--tint);color:var(--accent2);font:600 14px/26px var(--cond);text-align:center}
+.steps h4{margin:0 0 4px;font:600 16px var(--sans)}
+.steps .row{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:4px 18px;font-size:14.5px;color:var(--ink2);margin-top:6px}
+.steps .row b{color:var(--ink);font-weight:500}
+.calc{display:grid;grid-template-columns:minmax(240px,320px) 1fr;gap:18px;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:16px 18px;margin:12px 0}
+.calc label{display:block;font-size:14.5px;margin:10px 0 2px}
+.calc input[type=range]{width:100%;accent-color:var(--accent)}
+.calc output{font-family:var(--cond);font-weight:500}
+.cm{display:grid;grid-template-columns:auto 1fr 1fr;gap:4px;font-size:14.5px;align-self:start}
+.cm div{padding:9px 10px;border-radius:6px;background:var(--tint)}
+.cm .h{background:none;font:500 13.5px var(--cond);color:var(--ink2);padding:4px 6px}
+.cm .bad{background:var(--dangertint);color:var(--danger)}
+.cm .big{font:600 20px var(--cond);display:block}
+.res{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:10px 26px;border-top:1px solid var(--line);padding-top:12px;font-size:15px}
+.res b{font:600 22px var(--cond);display:block;color:var(--accent)}
+.callout{border-left:3px solid var(--warn);background:var(--warntint);padding:10px 14px;border-radius:0 6px 6px 0;margin:12px 0;max-width:80ch}
+.callout.ok{border-left-color:var(--accent);background:var(--tint)}
+.gl dt{font-weight:600;margin-top:12px}
+.gl dd{margin:2px 0 0;color:var(--ink2);max-width:78ch}
+.gl .grp{font:600 17px var(--serif);margin:22px 0 4px;color:var(--accent2)}
+footer.foot{border-top:1px solid var(--line);padding:18px 0 30px;color:var(--ink2);font-size:14px}
+@media (max-width:860px){
+  .layout{grid-template-columns:1fr}
+  nav.side{display:none}
+  .mobnav{display:block}
+  .calc{grid-template-columns:1fr}
+  .path{grid-template-columns:repeat(9,112px)}
+}
+@media print{
+  header.top,nav.side,.mobnav,.filters,.toplinks{display:none!important}
+  section.pane{display:block!important;page-break-before:always}
+  .layout{display:block}
+  body{background:#fff;color:#000}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+<style>
+.jgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px;margin:12px 0}
+.jcard{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:14px 16px}
+.jcard h4{margin:0 0 2px;font:600 18px var(--serif)}
+.jcard .who{font-family:var(--cond);font-size:13.5px;color:var(--ink2);margin-bottom:8px}
+.jcard ul{margin:0;padding-left:18px}
+.jcard li{font-size:14.5px;margin:3px 0}
+.scbtns{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 12px}
+.qual{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px}
+.qcell{border:1px solid var(--line);border-radius:8px;padding:12px 14px;background:var(--panel)}
+.qcell h5{margin:0 0 6px;font:600 16px var(--serif)}
+.qcell .st{display:inline-block;font:500 13px var(--cond);padding:2px 9px;border-radius:10px;margin-bottom:6px}
+.st-md{background:var(--dangertint);color:var(--danger)}
+.st-mid{background:var(--warntint);color:var(--warn)}
+.st-no{background:var(--tint);color:var(--accent2)}
+.qcell p{margin:0;font-size:14.5px;color:var(--ink2)}
+.qcell .basis{margin-top:6px;font-size:13.5px}
+td .st{display:inline-block;font:500 12.5px var(--cond);padding:1px 8px;border-radius:10px}
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap">
+  <span class="brand">База знаний · ИИ в медицине · зарубежный сегмент</span>
+  <div class="toplinks">
+    <a class="btn home" href="index.html" title="К начальному меню комплекта">← Комплект</a>
+    <button data-go="jur">Юрисдикции</button>
+    <button data-go="qual">Квалификатор</button>
+    <button data-go="reestr">Реестр</button>
+    <button data-go="drugie">Китай, Залив, ЕАЭС</button>
+    <button data-go="perenos">Уроки для России</button>
+    <button id="printBtn" title="Печать всех разделов">Печать</button>
+  </div>
+</div></header>
+
+<div class="wrap">
+  <div class="hero">
+    <h1>Дерево материалов по ИИ в медицине: зарубежный сегмент</h1>
+    <p class="lead">Парная база к российской. США, Евросоюз, Великобритания, а также Китай, страны Персидского залива и ЕАЭС: как регулируется медицинский ИИ, кто платит, какие продукты уже работают в клиниках и что из этого опыта переносится на российский рынок.</p>
+    <div class="task"><b>Зачем команде этот материал.</b> Зарубежные рынки на один-два года раньше проходят те же развилки: где граница медицинского изделия для LLM, как менять модель после регистрации, кто платит за ИИ и как проверяется качество медпомощи алгоритмом. Российскому продукту полезно знать ответы до того, как их задаст заказчик.</div>
+    <div class="meta">Редакция 3 · 28.09.2026 · 14 разделов · глоссарий с источниками, реестр по уровням силы · добавлены Китай, страны Персидского залива, ЕАЭС · парная база: <a href="00-ukazatel-bz-ii-medicina.html">российский сегмент</a></div>
+  </div>
+</div>
+
+<div class="wrap">
+  <div class="mobnav"><label for="mob" class="count">Раздел</label><select id="mob"></select></div>
+  <div class="layout">
+    <nav class="side" aria-label="Разделы базы знаний"><ol id="sidenav"></ol></nav>
+    <main id="main">
+
+<section class="pane" id="ukaz" data-title="Указатель" data-grp="Вход в материал">
+  <h2>Указатель</h2>
+  <p class="intro">Шесть ветвей: вход, регуляторика, модель рынка, качество, другие юрисдикции, перенос опыта. Структура совпадает с российской базой, поэтому одинаковые разделы можно открывать рядом и сравнивать. Ветви курсивом запланированы отдельными страницами.</p>
+  <div class="tree" id="tree"></div>
+  <h3>Порядок чтения</h3>
+  <ol>
+    <li><b>Карта юрисдикций</b> — чтобы за пять минут понять, чем США, ЕС и Великобритания отличаются друг от друга и от России.</li>
+    <li><b>Квалификатор сценария</b> — если нужно понять, станет ли конкретный продукт медицинским изделием в каждой юрисдикции.</li>
+    <li><b>Уроки для России</b> — если готовится разговор с российским заказчиком и нужны зарубежные аргументы.</li>
+    <li><b>Реестр документов</b> и <b>деньги</b> — для регуляторной и коммерческой стратегии выхода.</li>
+  </ol>
+  <h3>Как пользоваться материалом</h3>
+  <ol>
+    <li>Происхождение позиций то же, что в российской базе: <span class="tag t-doc">документ</span> — акт регулятора или официальный источник; <span class="tag t-obs">наблюдение</span> — отраслевая пресса, аналитика, данные компаний; <span class="tag t-inf">вывод</span> — наша реконструкция; <span class="tag t-proj">проект</span> — документ в разработке.</li>
+    <li>Квалификатор даёт предварительную оценку, а не юридическое заключение. Статус продукта определяют заявленное назначение и позиция регулятора.</li>
+    <li>Регуляторика ЕС и Великобритании в 2026 году меняется быстро: реформа MDR и итоговый доклад британской Национальной комиссии по регулированию ИИ в здравоохранении могут изменить часть выводов.</li>
+    <li>Названия ведомств и документов приведены в оригинале, пояснения — на русском.</li>
+  </ol>
+</section>
+
+<section class="pane" id="jur" data-title="Карта юрисдикций" data-grp="Регуляторика">
+  <h2>Карта юрисдикций</h2>
+  <p class="intro">Три зарубежные модели регулирования и российская для сравнения. Главная ось различий — кто и как решает, что программа с ИИ является медицинским изделием, и как разрешается менять модель после выхода на рынок.</p>
+  <div class="jgrid" id="jcards"></div>
+  <h3>Сравнение по измерениям</h3>
+  <div class="scroll"><table><thead><tr><th>Измерение</th><th>США</th><th>Евросоюз</th><th>Великобритания</th><th>Россия</th></tr></thead><tbody id="jcmp"></tbody></table></div>
+  <div class="callout">Общая тенденция 2026 года. Регуляторы США и Великобритании сужают периметр медицинского изделия для инструментов, где врач сам проверяет результат: документирование, подсказки с прозрачным обоснованием. Евросоюз сохраняет двойной контур MDR и AI Act, но отложил применение требований AI Act к медицинским изделиям до 2 августа 2028 года.</div>
+</section>
+
+<section class="pane" id="qual" data-title="Квалификатор сценария" data-grp="Регуляторика">
+  <h2>Квалификатор сценария</h2>
+  <p class="intro">Выберите сценарий и посмотрите его вероятный регуляторный статус в каждой юрисдикции с основанием. <span class="tag t-inf">вывод</span> на основе документов из реестра</p>
+  <div class="scbtns" id="qbtns" role="group" aria-label="Сценарии"></div>
+  <div id="qdesc"></div>
+  <div class="qual" id="qgrid" aria-live="polite"></div>
+  <h3>Сводная матрица</h3>
+  <div class="scroll"><table><thead><tr><th>Сценарий</th><th>США</th><th>ЕС</th><th>Великобритания</th><th>Россия</th></tr></thead><tbody id="qmatrix"></tbody></table></div>
+  <p class="count"><span class="st st-md">изделие</span> скорее медицинское изделие · <span class="st st-mid">зависит</span> определяется назначением и формулировками · <span class="st st-no">не изделие</span> скорее вне регулирования изделий</p>
+</section>
+
+<section class="pane" id="put" data-title="Путь случая: зарубежная практика" data-grp="Модель рынка">
+  <h2>Путь случая: зарубежная практика</h2>
+  <p class="intro">Те же девять стадий, что в российской базе, — с зарубежными классами продуктов, игроками и способами оплаты. Выберите стадию.</p>
+  <div class="path" id="path" role="group" aria-label="Стадии случая"></div>
+  <div class="detail" id="stageDetail" aria-live="polite"></div>
+</section>
+
+<section class="pane" id="dengi" data-title="Заказчики и деньги" data-grp="Модель рынка">
+  <h2>Заказчики и деньги</h2>
+  <p class="intro">За рубежом ИИ в медицине оплачивается четырьмя основными способами. Для российской команды самый поучительный — модель, где подрядчик получает долю подтверждённой экономии плательщика.</p>
+  <div class="scroll"><table><thead><tr><th>Механизм оплаты</th><th>Как работает</th><th>Пример</th><th>Происхождение</th></tr></thead><tbody id="payBody"></tbody></table></div>
+  <h3>Заказчики</h3>
+  <div class="scroll"><table><thead><tr><th>Заказчик</th><th>Что покупает</th><th>Особенность продажи</th></tr></thead><tbody id="custBody"></tbody></table></div>
+</section>
+
+<section class="pane" id="reestr" data-title="Реестр документов" data-grp="Регуляторика">
+  <h2>Реестр документов и стандартов</h2>
+  <p class="intro">Реестр сгруппирован сначала по юрисдикции, затем по юридической силе: законы, обязательные акты, руководства, реестры и принципы, стандарты. Документы, принятые в развитие другого документа, показаны с отступом под ним.</p>
+  <div class="callout ok"><b>Как читать иерархию.</b> Главное отличие от российской практики — вес руководств регулятора. Формально руководство FDA или MHRA не создаёт прав и обязанностей, но именно оно решает, попадёт ли продукт в периметр медицинского изделия: закон задаёт рамку исключений, а руководство объясняет, как регулятор её применяет. Поэтому в США и Великобритании читать нужно снизу вверх — от свежего руководства к закону, а в ЕС наоборот, от регламента к разъяснениям.</div>
+  <div class="filters">
+    <input type="search" id="rgQ" placeholder="Поиск: название, смысл" aria-label="Поиск по реестру">
+    <select id="rgJ" aria-label="Юрисдикция"><option value="">Все юрисдикции</option></select>
+    <select id="rgType" aria-label="Тип"><option value="">Все типы</option></select>
+    <select id="rgLvl" aria-label="Уровень"><option value="">Все уровни</option></select>
+    <span class="count" id="rgCount"></span>
+  </div>
+  <div class="scroll"><table id="rgTable"><thead><tr><th>Документ</th><th>Юрисдикция</th><th>Тип</th><th>Что означает для продукта</th><th>Происхождение</th></tr></thead><tbody></tbody></table></div>
+</section>
+
+<section class="pane" id="kach" data-title="Оценка качества" data-grp="Качество">
+  <h2>Оценка качества: как это делают за рубежом</h2>
+  <p class="intro">Регуляторные принципы, стандарты отчётности об исследованиях и отраслевые бенчмарки. Метрики и калькулятор цены ошибки — в российской базе, они одинаковы для всех рынков.</p>
+  <div class="scroll"><table><thead><tr><th>Инструмент</th><th>Что задаёт</th><th>Когда применять</th><th>Происхождение</th></tr></thead><tbody id="evalBody"></tbody></table></div>
+  <h3>Что показывают данные о реальном эффекте</h3>
+  <div class="scroll"><table><thead><tr><th>Результат</th><th>Вывод для продукта</th><th>Источник</th></tr></thead><tbody id="evidBody"></tbody></table></div>
+</section>
+
+<section class="pane" id="rynok" data-title="Рынок и игроки" data-grp="Модель рынка">
+  <h2>Рынок и игроки: состояние на сентябрь 2026</h2>
+  <p class="intro">Всё в разделе — <span class="tag t-obs">наблюдение</span>; перед использованием проверяйте актуальность.</p>
+  <div class="scroll"><table><thead><tr><th>Факт</th><th>Что это значит для команды</th><th>Источник</th></tr></thead><tbody id="mktBody"></tbody></table></div>
+</section>
+
+<section class="pane" id="perenos" data-title="Уроки для России" data-grp="Перенос опыта">
+  <h2>Уроки для российской команды</h2>
+  <p class="intro">Что из зарубежного опыта переносится на российский рынок. В первой колонке — ссылка на раздел этой базы, где факт разобран; в третьей — ссылки на российские документы и разделы, где этот урок применяется. <span class="tag t-inf">вывод</span></p>
+  <div class="scroll"><table><thead><tr><th>Зарубежный опыт</th><th>Урок</th><th>Российский аналог или точка применения</th></tr></thead><tbody id="lessBody"></tbody></table></div>
+</section>
+
+
+<section class="pane" id="drugie" data-title="Обзор трёх регионов" data-grp="Другие юрисдикции">
+  <h2>Китай, страны Персидского залива, ЕАЭС</h2>
+  <p class="intro">Три региона, которые для российской команды важнее как рынки выхода и источники практики, чем как регуляторные образцы. Сравнение по измерениям, важным для стратегии выхода.</p>
+  <div class="scroll"><table><thead><tr><th>Измерение</th><th>Китай</th><th>Персидский залив</th><th>ЕАЭС</th><th>Россия</th></tr></thead><tbody id="ojCmp"></tbody></table></div>
+  <div class="callout">Общий вывод. Во всех трёх регионах решающими оказываются локальные данные: валидация на местной популяции, хранение данных внутри страны, подключение к национальным обменам. Российскому продукту выход проще всего в ЕАЭС: совпадают язык, нормативная логика и путь регистрации по правилам Союза. <span class="tag t-inf">вывод</span></div>
+</section>
+<section class="pane" id="china" data-title="Китай" data-grp="Другие юрисдикции"><div class="ojbox" data-oj="china"></div></section>
+<section class="pane" id="gulf" data-title="Персидский залив" data-grp="Другие юрисдикции"><div class="ojbox" data-oj="gulf"></div></section>
+<section class="pane" id="eaeu" data-title="ЕАЭС" data-grp="Другие юрисдикции"><div class="ojbox" data-oj="eaeu"></div></section>
+
+<section class="pane" id="gloss" data-title="Глоссарий" data-grp="Вход в материал">
+  <h2>Глоссарий зарубежных терминов</h2>
+  <p class="intro">Сокращения раскрыты полностью в оригинале и по-русски, у каждого термина — определение и ссылка на документ, где он введён или объяснён лучше всего. Если единого официального текста нет, ссылка ведёт в реестр документов базы.</p>
+  <div class="filters"><input type="search" id="glQ" placeholder="Поиск термина" aria-label="Поиск термина"><span class="count" id="glCount"></span></div>
+  <div class="gl" id="glBody"></div>
+</section>
+
+    </main>
+  </div>
+</div>
+
+<footer class="foot"><div class="wrap">
+  <p>База знаний по ИИ в медицине, зарубежный сегмент · редакция 2 от 28.09.2026 · <a href="index.html">комплект</a> · парная к <a href="00-ukazatel-bz-ii-medicina.html">российскому сегменту</a> · <a href="02-paralleli-i-modeli.html">параллели с платежами и модели</a>.</p>
+  <p>Требует пересмотра: после итогового доклада Национальной комиссии Великобритании по регулированию ИИ в здравоохранении; по ходу реформы MDR/IVDR в ЕС; при выходе новой политики FDA по программным функциям и генеративному ИИ.</p>
+</div></footer>
+
+<script>
+(function(){
+"use strict";
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>Array.from(r.querySelectorAll(s));
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const TAG={doc:'<span class="tag t-doc">документ</span>',obs:'<span class="tag t-obs">наблюдение</span>',inf:'<span class="tag t-inf">вывод</span>',proj:'<span class="tag t-proj">проект</span>'};
+const ST={md:'<span class="st st-md">изделие</span>',mid:'<span class="st st-mid">зависит</span>',no:'<span class="st st-no">не изделие</span>'};
+const host=u=>{try{return new URL(u).hostname.replace("www.","")}catch(e){return u}};
+const link=u=>`<a href="${esc(u)}" target="_blank" rel="noopener">${esc(host(u))}</a>`;
+const li=a=>"<ul>"+a.map(x=>"<li>"+esc(x)+"</li>").join("")+"</ul>";
+
+/* ЮРИСДИКЦИИ */
+const JUR=[
+ {n:"США",who:"FDA (CDRH), CMS, HHS/ONC",p:["Риск-ориентированный подход по назначению изделия: пути 510(k), De Novo, PMA","Отдельного закона об ИИ нет; ИИ регулируется в рамках закона о пищевых продуктах, лекарствах и косметике","Изменения модели — через заранее согласованный план изменений (PCCP)","С января 2026 года расширено усмотрение FDA для программ поддержки решений, дающих одну клинически обоснованную рекомендацию"]},
+ {n:"Евросоюз",who:"Нотифицированные органы, Еврокомиссия, национальные регуляторы",p:["Двойной контур: MDR/IVDR для изделия и AI Act для ИИ-системы","ИИ-изделие, требующее нотифицированного органа, автоматически относится к ИИ высокого риска","Требования AI Act к медицинским изделиям применяются с 2 августа 2028 года","Европейское пространство данных здравоохранения (EHDS) открывает вторичное использование данных"]},
+ {n:"Великобритания",who:"MHRA, NHS England, NICE",p:["UK MDR; реформа предрыночных требований опубликована в проекте в мае 2026 года","Регуляторная песочница AI Airlock: второй этап завершён в мае 2026 года","С июля 2026 года инструменты, которые только транскрибируют и готовят документацию под контролем врача, не считаются медизделиями","Национальная комиссия по регулированию ИИ в здравоохранении готовит итоговые рекомендации"]},
+ {n:"Россия (для сравнения)",who:"Росздравнадзор, Минздрав, ФОМС",p:["Регистрация по ПП РФ № 1684 со специальными положениями для ИИ-ПО","Упрощённая процедура для модификаций ИИ-ПО","Обязательная автоматическая передача сведений о работе МИ с ИИ в АИС Росздравнадзора","Развитая система национальных стандартов (серия ГОСТ Р 59921 и другие)"]}
+];
+const CMP=[
+ ["Кто определяет статус изделия","Производитель по назначению; FDA при спорах","Производитель по MDR, проверка нотифицированным органом","Производитель; MHRA разъясняет границы","Производитель; Росздравнадзор при регистрации"],
+ ["Отдельное регулирование ИИ","Нет; руководства FDA","AI Act поверх MDR/IVDR","Нет; готовятся рекомендации комиссии","Нет; законопроект Минцифры в работе"],
+ ["Изменение модели после выхода","PCCP: заранее описанные изменения без новой заявки","В рамках MDR и изменений технической документации; AI Act добавит требования","Через UK MDR; обсуждается в рамках реформы","Упрощённая процедура для модификаций ИИ-ПО"],
+ ["Позиция по LLM-помощникам врача","Могут быть вне изделия как Non-Device CDS при прозрачности и проверке врачом; генеративный ИИ прямо не урегулирован","По назначению: если есть медицинская цель — изделие и ИИ высокого риска","Документирование под контролем врача — не изделие; клинические решения — изделие","По назначению; стандарты по генеративным моделям в проекте"],
+ ["Мониторинг после выхода","Отчёты о неблагоприятных событиях, пострегистрационные требования","Пострыночный надзор MDR, журналирование по AI Act","Пострыночный надзор; ожидаются требования к прозрачности и мониторингу ИИ","Автоматическая передача сведений о работе в АИС"],
+ ["Данные пациентов","HIPAA, договор BAA с поставщиком","GDPR и EHDS","UK GDPR, требования NHS","152-ФЗ, обезличивание по 341н, режим 123-ФЗ для Москвы"],
+ ["Кто платит за ИИ","Системы здравоохранения, страховые, CMS в отдельных кодах и моделях","Национальные системы и больницы; оплата различается по странам","NHS England, трасты; реестры поставщиков","Регионы, трансферты на информатизацию, ФОМС, ДМС"]
+];
+function renderJur(){
+  $("#jcards").innerHTML=JUR.map(j=>`<div class="jcard"><h4>${esc(j.n)}</h4><div class="who">${esc(j.who)}</div>${li(j.p)}</div>`).join("");
+  $("#jcmp").innerHTML=CMP.map(r=>`<tr><td><b>${esc(r[0])}</b></td>${r.slice(1).map(c=>`<td>${esc(c)}</td>`).join("")}</tr>`).join("");
+}
+
+/* КВАЛИФИКАТОР */
+const Q=[
+ {n:"Голосовой ввод и черновик записи приёма",d:"Запись разговора врача с пациентом превращается в черновик медицинской записи; врач проверяет и подписывает.",
+  us:["no","Функции административной поддержки и документирования FDA исторически относит к не-изделиям; остаётся открытым, где проходит граница при кодировании и заказах."],
+  eu:["mid","Без медицинского назначения — не изделие; при кодировании диагнозов или подсказках назначений может стать изделием и ИИ высокого риска."],
+  uk:["no","Руководство MHRA от 29.07.2026: транскрибирование, суммаризация, структурирование и черновики под контролем врача не регулируются как изделие."],
+  ru:["no","Голосовой ввод без интерпретации — скорее вне регистрации; при извлечении диагнозов применим ГОСТ Р 72313-2025."]},
+ {n:"Подсказка врачу по клиническим рекомендациям",d:"Система предлагает врачу действие со ссылкой на рекомендацию; врач принимает решение.",
+  us:["mid","Руководство по CDS 2026 года: одна клинически обоснованная рекомендация с прозрачной основой может быть Non-Device CDS; не применимо к срочным решениям и анализу изображений или сигналов."],
+  eu:["md","Программа с медицинским назначением поддержки решений — изделие по MDR; при классе IIa и выше — ИИ высокого риска."],
+  uk:["mid","Руководство AVT проводит границу по клиническому принятию решений; поддержка решений, как правило, изделие."],
+  ru:["md","СППВР — типичный класс программных медизделий; ГОСТ Р 71671-2024."]},
+ {n:"Анализ медицинских изображений",d:"Поиск находок и приоритизация исследований КТ, МРТ, рентгена.",
+  us:["md","Анализ изображений не проходит первый критерий Non-Device CDS; около 76% ИИ-изделий, одобренных в IV квартале 2025 года, — радиология."],
+  eu:["md","Изделие класса IIa и выше; ИИ высокого риска по AI Act."],
+  uk:["md","Медицинское изделие по UK MDR."],
+  ru:["md","Медицинское изделие; серия стандартов по лучевой диагностике."]},
+ {n:"Расшифровка анализов для пациента",d:"Пациент получает объяснение своих результатов простым языком.",
+  us:["mid","Потребительские инструменты FDA в руководстве 2026 года почти не затрагивает; ChatGPT Health позиционируется как помощь в подготовке к визиту, а не замена медицинской помощи."],
+  eu:["mid","Зависит от назначения; ChatGPT Health при запуске был недоступен в ЕЭЗ."],
+  uk:["mid","Зависит от назначения; ChatGPT Health при запуске был недоступен в Великобритании."],
+  ru:["mid","Граница между справкой и заключением определяет статус."]},
+ {n:"Предварительная авторизация и проверка обоснованности",d:"Плательщик проверяет медицинскую необходимость услуги до или после её оказания.",
+  us:["no","Административная функция плательщика; модель WISeR с 2026 года использует ИИ для предварительной авторизации в Medicare."],
+  eu:["no","Не медицинское назначение; при автоматизированных решениях о пациенте — требования GDPR."],
+  uk:["no","Не медицинское изделие."],
+  ru:["no","Аналог — МЭЭ и ЭКМП; вне регистрации МИ, но в рамках правил ОМС."]},
+ {n:"Аудит документации и кодирования",d:"Проверка медицинских записей на полноту, соответствие стандартам и корректность кодов.",
+  us:["no","Административная функция; коммерческие продукты встроены в процессы расчётов с плательщиками."],
+  eu:["no","Не медицинское назначение."],
+  uk:["no","Не медицинское изделие."],
+  ru:["no","Внутренний контроль качества в клинике — вне регистрации МИ."]},
+ {n:"Симптом-чекер и маршрутизация пациента",d:"Пациент описывает жалобы и получает рекомендацию, куда обратиться.",
+  us:["mid","Потребительские инструменты поддержки решений остаются серой зоной; FDA собирает мнения о не-изделийных программах."],
+  eu:["md","Сортировка пациентов по срочности обычно имеет медицинское назначение."],
+  uk:["md","Как правило, изделие; MHRA рассматривает цифровые инструменты психического здоровья отдельно."],
+  ru:["mid","Зависит от назначения; ПНСТ 962-2024 для маршрутизации."]},
+ {n:"Прогноз ухудшения состояния в стационаре",d:"Модель оценивает риск ухудшения и предупреждает персонал.",
+  us:["md","Срочные решения исключены из Non-Device CDS; изделие."],
+  eu:["md","Изделие и ИИ высокого риска."],
+  uk:["md","Медицинское изделие."],
+  ru:["md","Прогнозная аналитика — изделие; ГОСТ Р 71672-2024."]}
+];
+function renderQual(){
+  $("#qbtns").innerHTML=Q.map((q,i)=>`<button class="chip" aria-pressed="false" data-q="${i}">${esc(q.n)}</button>`).join("");
+  $("#qbtns").addEventListener("click",e=>{const b=e.target.closest("[data-q]");if(b)selQ(+b.dataset.q)});
+  $("#qmatrix").innerHTML=Q.map(q=>`<tr><td><b>${esc(q.n)}</b></td>${["us","eu","uk","ru"].map(k=>`<td>${ST[q[k][0]]}</td>`).join("")}</tr>`).join("");
+  selQ(0);
+}
+function selQ(i){
+  $$("#qbtns .chip").forEach(b=>b.setAttribute("aria-pressed",+b.dataset.q===i?"true":"false"));
+  const q=Q[i]; $("#qdesc").innerHTML=`<p>${esc(q.d)}</p>`;
+  const L={us:"США",eu:"Евросоюз",uk:"Великобритания",ru:"Россия"};
+  $("#qgrid").innerHTML=["us","eu","uk","ru"].map(k=>`<div class="qcell"><h5>${L[k]}</h5>${ST[q[k][0]]}<p class="basis">${esc(q[k][1])}</p></div>`).join("");
+}
+
+/* ПУТЬ */
+const STAGES=[
+ {n:"Профилактика и мониторинг",s:"Профилактика",pr:["Удалённый мониторинг с носимыми устройствами","Прогноз риска по EHR"],pl:["Производители носимых устройств","Модули прогнозирования в EHR"],pay:["Коды удалённого мониторинга в США","Программы плательщиков по хроническим заболеваниям"],note:"Руководство FDA по общему благополучию (2026) расширяет возможности носимых устройств без статуса изделия, если маркировка остаётся в рамках общего благополучия."},
+ {n:"Обращение и маршрутизация",s:"Маршрутизация",pr:["Потребительские медицинские LLM-помощники","Симптом-чекеры и цифровая сортировка"],pl:["ChatGPT Health","Claude for Healthcare","Цифровые сервисы NHS"],pay:["Бесплатно для пользователя в экосистемах","Контракты с системами здравоохранения"],note:"По данным OpenAI, около 230 млн человек еженедельно обсуждают здоровье с ChatGPT. Спрос на пациентские LLM-сервисы уже массовый, регулирование отстаёт."},
+ {n:"Лабораторная диагностика",s:"Анализы",pr:["Интерпретация результатов для пациента","Подготовка к визиту по данным медкарты"],pl:["ChatGPT Health (подключение медкарт)","Порталы пациентов в EHR"],pay:["Часть потребительского продукта или EHR"],note:"ChatGPT Health при запуске исключил Великобританию, ЕЭЗ и Швейцарию — пример того, как регуляторика определяет географию продукта."},
+ {n:"Инструментальная и лучевая диагностика",s:"Лучевая",pr:["Триаж и обнаружение находок","Генеративные черновики радиологических отчётов"],pl:["Крупнейшие разработчики радиологического ИИ","Производители оборудования"],pay:["Отдельные коды и надбавки за новые технологии","Контракты с системами здравоохранения"],note:"Генеративные инструменты черновиков отчётов уже идут через программу прорывных изделий FDA."},
+ {n:"Врачебное решение",s:"Решение врача",pr:["Поиск по доказательной медицине с цитатами","CDS в EHR"],pl:["OpenEvidence","ChatGPT for Clinicians","Модули CDS в Epic"],pay:["Бесплатно для врачей с рекламной моделью","Корпоративные лицензии"],note:"В опросе госпиталистов восьми академических центров OpenEvidence оказался самым используемым LLM-инструментом среди тех, кто применяет LLM в практике."},
+ {n:"Медицинская документация",s:"Документы",pr:["Ambient-скрайбы","Встроенное в EHR документирование"],pl:["Microsoft Dragon Copilot","Abridge","Epic AI Charting","athenaAmbient"],pay:["Подписка за врача в месяц, у корпоративных решений — сотни долларов","Встраивание в лицензию EHR"],note:"Самый быстро принятый класс ИИ в медицине. Производители EHR встраивают собственные решения и давят на независимых поставщиков."},
+ {n:"Лечение и лекарства",s:"Лечение",pr:["Подбор пациентов в исследования","Фармаконадзор"],pl:["Claude for Life Sciences","Специализированные платформы"],pay:["Контракты фармкомпаний"],note:"Фармацевтика — сегмент с наибольшей готовностью платить и наименьшим регуляторным трением для немедицинских функций."},
+ {n:"Оплата и контроль качества",s:"Контроль качества",pr:["Предварительная авторизация с ИИ","Проверка медицинской необходимости","Аудит кодирования"],pl:["Участники модели WISeR","Страховые компании","Claude for Healthcare (коннекторы к базе покрытия CMS, МКБ-10)"],pay:["Доля подтверждённой экономии (WISeR)","Контракты страховых"],note:"WISeR — прямой зарубежный аналог автоматизированной проверки обоснованности медпомощи. Отраслевое сопротивление показывает, что главный риск здесь — доступ пациентов к помощи."},
+ {n:"Управление и мониторинг ИИ",s:"Мониторинг",pr:["Реестры и надзор за ИИ в организации","Контроль прозрачности алгоритмов в EHR"],pl:["Коалиция CHAI и Joint Commission (руководство по ответственному ИИ)","Реестр поставщиков ambient-скрайбов NHS England"],pay:["Внутренние бюджеты систем здравоохранения"],note:"В США требования к прозрачности алгоритмов поддержки решений заложены в сертификацию EHR (ONC HTI-1)."}
+];
+function renderPath(){
+  $("#path").innerHTML=STAGES.map((s,i)=>`<button class="stage" data-s="${i}" aria-pressed="false"><span class="dot">${i+1}</span>${esc(s.s)}</button>`).join("");
+  $("#path").addEventListener("click",e=>{const b=e.target.closest(".stage");if(b)selS(+b.dataset.s)});
+  selS(5);
+}
+function selS(i){
+  $$(".stage").forEach(b=>b.setAttribute("aria-pressed",+b.dataset.s===i?"true":"false"));
+  const s=STAGES[i];
+  $("#stageDetail").innerHTML=`<h3>${i+1}. ${esc(s.n)}</h3><div class="dgrid"><div><h5>Классы продуктов</h5>${li(s.pr)}</div><div><h5>Игроки</h5>${li(s.pl)}</div><div><h5>Кто и как платит</h5>${li(s.pay)}</div></div><div class="callout" style="margin-bottom:0"><b>Наблюдение.</b> ${esc(s.note)}</div>`;
+}
+
+/* ДЕНЬГИ */
+const PAY=[
+ ["Отдельный код услуги","Процедура с ИИ получает собственный код оплаты, и плательщик платит за её выполнение","Код CPT 92229 для автономного скрининга диабетической ретинопатии в США","doc"],
+ ["Надбавка за новую технологию","Больница получает доплату к стационарному случаю за применение новой технологии","Программа надбавок CMS за новые технологии в стационаре (NTAP)","doc"],
+ ["Доля подтверждённой экономии","Подрядчик плательщика получает процент от сокращения расходов, достигнутого с помощью его технологии","Модель WISeR: вознаграждение участников привязано к доле экономии","doc"],
+ ["Подписка за врача","Система здравоохранения платит поставщику фиксированную сумму за пользователя в месяц","Ambient-скрайбы корпоративного уровня — порядка нескольких сотен долларов на врача в месяц","obs"],
+ ["Встраивание в EHR","ИИ-функция входит в лицензию или модуль производителя медицинской информационной системы","Epic AI Charting, athenaAmbient","obs"],
+ ["Экосистема и потребительский доступ","Сервис бесплатен для пациента или врача; монетизация через экосистему, рекламу или корпоративные версии","ChatGPT Health, OpenEvidence, ChatGPT for Clinicians","obs"]
+];
+const CUST=[
+ ["Интегрированные системы здравоохранения (IDN), США","Документирование, CDS, операционная аналитика","Покупка через комитеты по ИИ и IT; решающий фактор — интеграция с Epic или Oracle Health и доказательства эффекта"],
+ ["CMS и Medicare","Технологии контроля обоснованности и борьбы с мошенничеством","Через инновационный центр CMS (CMMI) и конкурсный отбор участников моделей"],
+ ["Страховые компании и планы Medicare Advantage","Предварительная авторизация, проверка счетов, управление рисками","Быстрый цикл сделки; растущее регуляторное внимание к ИИ в отказах"],
+ ["Производители EHR","Партнёрства и встраивание сторонних моделей","Канал дистрибуции и одновременно конкурент"],
+ ["NHS England и трасты","Ambient-скрайбы, диагностика, операционная эффективность","Реестры поставщиков, национальные закупочные рамки, требования к клинической безопасности"],
+ ["Национальные системы ЕС","Диагностика, документирование, аналитика","Разные правила в каждой стране; для ИИ-изделий — маркировка CE как входной билет"],
+ ["Фармацевтические компании","Исследования, фармаконадзор, медицинские коммуникации","Высокая готовность платить при минимальном регуляторном трении"]
+];
+function renderDengi(){
+  $("#payBody").innerHTML=PAY.map(r=>`<tr><td><b>${esc(r[0])}</b></td><td>${esc(r[1])}</td><td>${esc(r[2])}</td><td>${TAG[r[3]]}</td></tr>`).join("");
+  $("#custBody").innerHTML=CUST.map(r=>`<tr><td><b>${esc(r[0])}</b></td><td>${esc(r[1])}</td><td>${esc(r[2])}</td></tr>`).join("");
+}
+
+/* РЕЕСТР */
+const REG=[
+ {n:"FD&C Act, раздел 520(o) (изменения по 21st Century Cures Act)",j:"США",t:"Закон",o:"doc",w:"Исключает из определения изделия отдельные программные функции, включая часть программ поддержки клинических решений. Основа границы Non-Device CDS."},
+ {n:"FDA: Clinical Decision Support Software, финальное руководство (06.01.2026)",j:"США",t:"Руководство регулятора",o:"doc",w:"Заменяет руководство 2022 года. Расширяет усмотрение FDA для программ, дающих одну клинически обоснованную рекомендацию, если врач может независимо проверить её основу. Генеративный ИИ прямо не рассматривается."},
+ {n:"FDA: General Wellness: Policy for Low Risk Devices (06.01.2026)",j:"США",t:"Руководство регулятора",o:"doc",w:"Расширяет возможности носимых устройств и приложений общего благополучия, включая ИИ-выводы, при маркировке в рамках общего благополучия."},
+ {n:"FDA: Predetermined Change Control Plan для ИИ-функций, финальное руководство (декабрь 2024)",j:"США",t:"Руководство регулятора",o:"doc",w:"Заранее согласованный план изменений модели позволяет обновлять её без новой заявки. Ключевой механизм для обучаемых систем."},
+ {n:"FDA: AI-Enabled Device Software Functions: Lifecycle Management and Marketing Submission Recommendations (проект, январь 2025)",j:"США",t:"Руководство регулятора",o:"proj",w:"Требования к содержанию заявки на ИИ-изделие по всему жизненному циклу: данные, валидация, прозрачность, мониторинг."},
+ {n:"FDA: список ИИ-изделий (AI-Enabled Medical Devices List)",j:"США",t:"Реестр регулятора",o:"doc",w:"Публичный перечень допущенных ИИ-изделий; источник для конкурентного анализа и поиска предикатов для 510(k)."},
+ {n:"Принципы GMLP, PCCP и прозрачности (FDA, Health Canada, MHRA; 2021–2024)",j:"Международные",t:"Принципы регуляторов",o:"doc",w:"Десять принципов надлежащей практики машинного обучения и сопутствующие принципы изменений и прозрачности. Общий язык регуляторов трёх стран."},
+ {n:"ONC HTI-1: требования к вмешательствам поддержки решений в сертифицированных EHR",j:"США",t:"Правило регулятора",o:"doc",w:"Сертифицированные EHR раскрывают пользователям атрибуты источника алгоритмов поддержки решений. Требования к прозрачности попадают в продукт через EHR."},
+ {n:"HHS: правило по разделу 1557 о недискриминации при использовании инструментов поддержки решений",j:"США",t:"Правило регулятора",o:"doc",w:"Организации обязаны выявлять и снижать риск дискриминации в инструментах поддержки решений по уходу за пациентами."},
+ {n:"HIPAA и договор BAA",j:"США",t:"Закон",o:"doc",w:"Обработка защищённой медицинской информации поставщиком требует договора BAA. Корпоративные медицинские версии LLM продаются именно как HIPAA-совместимые."},
+ {n:"CMS: модель WISeR (2026–2031)",j:"США",t:"Программа плательщика",o:"doc",w:"Шесть штатов, предварительная авторизация и проверка обоснованности отдельных услуг Medicare с помощью ИИ; вознаграждение участников — доля экономии."},
+ {n:"Joint Commission и CHAI: руководство по ответственному использованию ИИ в здравоохранении",j:"США",t:"Отраслевая рамка",o:"obs",w:"Первые совместные рекомендации аккредитующего органа и отраслевой коалиции. Ориентир для требований систем здравоохранения к поставщикам."},
+ {n:"Регламент ЕС 2024/1689 (AI Act)",j:"Евросоюз",t:"Закон",o:"doc",w:"ИИ-изделие, требующее нотифицированного органа по MDR/IVDR, — ИИ высокого риска: управление рисками, качество данных, журналирование, прозрачность, человеческий надзор."},
+ {n:"Digital Omnibus по ИИ — Регламент ЕС 2026/1744",j:"Евросоюз",t:"Закон",o:"doc",w:"В силе с 27.07.2026. Требования для ИИ в продуктах Приложения I, включая медизделия, применяются с 02.08.2028; для самостоятельных систем Приложения III — с 02.12.2027. Медизделия остались в периметре AI Act."},
+ {n:"Регламенты ЕС 2017/745 (MDR) и 2017/746 (IVDR)",j:"Евросоюз",t:"Закон",o:"doc",w:"Основной путь выхода ИИ-изделия на рынок ЕС: классификация, клиническая оценка, нотифицированный орган, пострыночный надзор."},
+ {n:"Предложение о пересмотре MDR/IVDR («MDR 2.0», декабрь 2025)",j:"Евросоюз",t:"Закон",o:"proj",w:"Может перевести медизделия в раздел, где требования AI Act реализуются через MDR, и убрать двойной контроль. Главная неопределённость для европейской стратегии."},
+ {n:"Регламент о Европейском пространстве данных здравоохранения (EHDS)",j:"Евросоюз",t:"Закон",o:"doc",w:"Первичный обмен данными и вторичное использование для исследований и обучения моделей через органы доступа к данным; применяется поэтапно."},
+ {n:"GDPR",j:"Евросоюз",t:"Закон",o:"doc",w:"Данные о здоровье — особая категория; ограничения на полностью автоматизированные решения о человеке."},
+ {n:"UK MDR 2002 и проект реформы предрыночных требований (май 2026)",j:"Великобритания",t:"Закон",o:"proj",w:"Действующая основа регулирования изделий и готовящаяся реформа."},
+ {n:"MHRA: руководство по технологиям ambient voice (29.07.2026)",j:"Великобритания",t:"Руководство регулятора",o:"doc",w:"Транскрибирование, суммаризация, структурирование и черновики под проверкой врача не являются медизделием; клинические решения и действия без надзора — являются."},
+ {n:"MHRA AI Airlock",j:"Великобритания",t:"Песочница",o:"doc",w:"Регуляторная песочница для ИИ как медизделия; второй этап с семью участниками завершён в мае 2026 года, выводы переданы Национальной комиссии."},
+ {n:"Национальная комиссия по регулированию ИИ в здравоохранении",j:"Великобритания",t:"Программа регулятора",o:"proj",w:"Готовит рекомендации о будущей рамке; MHRA обязалась на них ответить. Возможны требования к прозрачности и мониторингу ИИ-изделий."},
+ {n:"NHS England: реестр поставщиков ambient-скрайбов и руководство по их внедрению",j:"Великобритания",t:"Программа заказчика",o:"doc",w:"Вход на рынок NHS для скрайбов идёт через самосертификационный реестр и требования к управлению, обучению и клиническому надзору."},
+ {n:"IEC 62304, ISO 14971, ISO 13485, IEC 82304-1",j:"Международные",t:"Стандарт",o:"doc",w:"Жизненный цикл медицинского ПО, менеджмент риска, система качества, безопасность ПО-продуктов. Общие для всех рынков, имеют российские аналоги."},
+ {n:"ISO/IEC 42001",j:"Международные",t:"Стандарт",o:"doc",w:"Система менеджмента ИИ в организации."},
+ {n:"TRIPOD+AI, CONSORT-AI, SPIRIT-AI, DECIDE-AI",j:"Международные",t:"Стандарт отчётности",o:"doc",w:"Как описывать разработку и валидацию моделей, клинические испытания и раннюю клиническую оценку ИИ. Нужны для публикаций и доказательной базы."},
+ {n:"ВОЗ: руководство по этике и управлению большими мультимодальными моделями в здравоохранении",j:"Международные",t:"Принципы",o:"doc",w:"Рекомендации для разработчиков, поставщиков и государств по генеративным моделям в медицине."}
+ ,{n:"NMPA: руководство по классификации и определению ИИ-программ (2021) и руководство по регистрационной экспертизе ИИ-изделий",j:"Китай",t:"Руководство регулятора",o:"doc",w:"Зрелые алгоритмы без работы в реальном времени допускаются в класс II; остальные ИИ-изделия — класс III с централизованной регистрацией."}
+ ,{n:"NMPA: проект руководства по клинической оценке ИИ-изделий диагностики (17.06.2026)",j:"Китай",t:"Руководство регулятора",o:"proj",w:"Клиническая оценка через сравнение врачей с ИИ-помощью и без неё."}
+ ,{n:"Временные меры по управлению сервисами генеративного ИИ (CAC, 2023)",j:"Китай",t:"Закон",o:"doc",w:"Общие требования к сервисам генеративного ИИ, включая медицинские."}
+ ,{n:"Закон КНР о защите персональной информации (PIPL)",j:"Китай",t:"Закон",o:"doc",w:"Медицинские данные — чувствительная информация; обработка требует отдельного согласия."}
+ ,{n:"DoH Абу-Даби: политика использования ИИ в здравоохранении (2018) и стандарт ответственного ИИ (2025)",j:"Персидский залив",t:"Руководство регулятора",o:"doc",w:"Обязательны для лицензированных поставщиков и всех, кто использует данные пациентов Абу-Даби в ИИ-проектах."}
+ ,{n:"SFDA: руководство по медизделиям на ИИ и машинном обучении (MDS-G010)",j:"Персидский залив",t:"Руководство регулятора",o:"doc",w:"Обязательные требования к ИИ-изделиям для разрешения на рынок Саудовской Аравии."}
+ ,{n:"Решение Совета ЕЭК № 46 от 12.02.2016 (правила регистрации медизделий ЕАЭС)",j:"ЕАЭС",t:"Акт ЕЭК",o:"doc",w:"Единая регистрация медизделий в странах Союза; основной путь после завершения переходного периода."}
+ ,{n:"Протокол от 29.12.2025 о продлении переходного периода",j:"ЕАЭС",t:"Акт ЕЭК",o:"doc",w:"Национальная регистрация доступна до 31.12.2027, перерегистрация — при подаче до 31.12.2028."}
+ ,{n:"Закон Республики Казахстан «Об искусственном интеллекте» № 230-VIII",j:"ЕАЭС",t:"Закон",o:"doc",w:"В силе с 18.01.2026: классификация систем ИИ, требования к прозрачности и управлению рисками, в том числе в здравоохранении."}
+ ,{n:"Порядок оказания медуслуг с применением ИИ (Минздрав Казахстана)",j:"ЕАЭС",t:"Руководство регулятора",o:"proj",w:"Пилот, клиническая проверка, биоэтическая экспертиза, перечень доверенных систем ИИ, пострегистрационный мониторинг."}
+];
+
+/* ---------- ИЕРАРХИЯ РЕЕСТРА ---------- */
+const LVL=[
+ {k:1,n:"Уровень 1 · Законы",d:"Акты законодателя: имеют высшую силу в своей юрисдикции и задают само определение медицинского изделия, границы регулирования ИИ и правила обращения с данными.",ty:["Закон"]},
+ {k:2,n:"Уровень 2 · Обязательные акты и правила регуляторов",d:"Правила и программы, изданные в развитие законов: обязательны для адресатов, но принимаются в рамках, заданных уровнем 1.",ty:["Правило регулятора","Программа плательщика","Программа регулятора","Программа заказчика","Песочница"]},
+ {k:3,n:"Уровень 3 · Руководства регуляторов",d:"Формально не обязательны и не создают прав и обязанностей, но выражают текущую позицию регулятора. На практике именно они определяют, попадёт ли продукт в периметр изделия.",ty:["Руководство регулятора"]},
+ {k:4,n:"Уровень 4 · Реестры и принципы",d:"Публичные перечни допущенных изделий и согласованные принципы нескольких регуляторов. Юридической силы сами по себе не имеют, но служат опорой в досье и в конкурентном анализе.",ty:["Реестр регулятора","Принципы регуляторов","Принципы"]},
+ {k:5,n:"Уровень 5 · Стандарты и отраслевые рамки",d:"Применяются добровольно; становятся обязательными, когда на них ссылается акт регулятора или когда производитель заявил соответствие в досье. Задают, как именно доказывать качество и безопасность.",ty:["Стандарт","Стандарт отчётности","Отраслевая рамка"]},
+ {k:6,n:"Уровень 6 · Акты наднационального объединения",d:"Единые правила союза, действующие в странах-участницах наряду с национальным правом в течение переходного периода.",ty:["Акт ЕЭК"]}
+];
+const lvlOf=r=>(LVL.find(l=>l.ty.includes(r.t))||{k:9}).k;
+const PARENT={
+ "FDA: Clinical Decision Support Software, финальное руководство (06.01.2026)":"FD&C Act, раздел 520(o) (изменения по 21st Century Cures Act)",
+ "FDA: General Wellness: Policy for Low Risk Devices (06.01.2026)":"FD&C Act, раздел 520(o) (изменения по 21st Century Cures Act)",
+ "FDA: AI-Enabled Device Software Functions: Lifecycle Management and Marketing Submission Recommendations (проект, январь 2025)":"FDA: Predetermined Change Control Plan для ИИ-функций, финальное руководство (декабрь 2024)",
+ "Digital Omnibus по ИИ — Регламент ЕС 2026/1744":"Регламент ЕС 2024/1689 (AI Act)",
+ "Предложение о пересмотре MDR/IVDR («MDR 2.0», декабрь 2025)":"Регламенты ЕС 2017/745 (MDR) и 2017/746 (IVDR)",
+ "MHRA: руководство по технологиям ambient voice (29.07.2026)":"UK MDR 2002 и проект реформы предрыночных требований (май 2026)",
+ "Протокол от 29.12.2025 о продлении переходного периода":"Решение Совета ЕЭК № 46 от 12.02.2016 (правила регистрации медизделий ЕАЭС)",
+ "Порядок оказания медуслуг с применением ИИ (Минздрав Казахстана)":"Закон Республики Казахстан «Об искусственном интеллекте» № 230-VIII",
+ "NMPA: проект руководства по клинической оценке ИИ-изделий диагностики (17.06.2026)":"NMPA: руководство по классификации и определению ИИ-программ (2021) и руководство по регистрационной экспертизе ИИ-изделий"
+};
+const JORD=["США","Евросоюз","Великобритания","Китай","Персидский залив","ЕАЭС","Международные"];
+
+function renderReg(){
+  const J=[...new Set(REG.map(r=>r.j))], T=[...new Set(REG.map(r=>r.t))];
+  J.forEach(x=>$("#rgJ").insertAdjacentHTML("beforeend",`<option>${esc(x)}</option>`));
+  T.forEach(x=>$("#rgType").insertAdjacentHTML("beforeend",`<option>${esc(x)}</option>`));
+  LVL.forEach(l=>$("#rgLvl").insertAdjacentHTML("beforeend",`<option value="${l.k}">${esc(l.n)}</option>`));
+  const row=(r,child)=>`<tr><td${child?' style="padding-left:34px"':''}>${child?'<span class="count">└ </span>':''}<b>${esc(r.n)}</b>${child?`<br><span class="count">принят в развитие: ${esc(PARENT[r.n])}</span>`:""}</td><td>${esc(r.j)}</td><td>${esc(r.t)}</td><td>${esc(r.w)}</td><td>${TAG[r.o]}</td></tr>`;
+  const f=()=>{const q=$("#rgQ").value.toLowerCase(), j=$("#rgJ").value, t=$("#rgType").value, lv=$("#rgLvl").value;
+    const rows=REG.filter(r=>(!j||r.j===j)&&(!t||r.t===t)&&(!lv||lvlOf(r)===+lv)&&(!q||(r.n+" "+r.w).toLowerCase().includes(q)));
+    let html="";
+    const juris=[...new Set(rows.map(r=>r.j))].sort((a,b)=>JORD.indexOf(a)-JORD.indexOf(b));
+    juris.forEach(ju=>{
+      const inJ=rows.filter(r=>r.j===ju);
+      html+=`<tr><td colspan="5" style="background:var(--tint)"><b style="font:600 16px var(--serif)">${esc(ju)}</b> <span class="count">· ${inJ.length}</span></td></tr>`;
+      LVL.concat([{k:9,n:"Прочее",d:""}]).forEach(l=>{
+        const inL=inJ.filter(r=>lvlOf(r)===l.k); if(!inL.length)return;
+        html+=`<tr><td colspan="5"><b style="font:500 13.5px var(--cond);color:var(--ink2)">${esc(l.n)}</b>${l.d?` <span class="count">· ${esc(l.d)}</span>`:""}</td></tr>`;
+        const tops=inL.filter(r=>!PARENT[r.n]||!inL.some(x=>x.n===PARENT[r.n]));
+        tops.forEach(r=>{html+=row(r,false); inL.filter(c=>PARENT[c.n]===r.n).forEach(c=>{html+=row(c,true)});});
+      });
+    });
+    $("#rgTable tbody").innerHTML=html||'<tr><td colspan="5">Ничего не найдено. Сбросьте фильтры или измените запрос.</td></tr>';
+    $("#rgCount").textContent=rows.length+" из "+REG.length;};
+  ["#rgQ","#rgJ","#rgType","#rgLvl"].forEach(s=>$(s).addEventListener("input",f)); f();
+}
+
+/* КАЧЕСТВО */
+const EVAL=[
+ ["Принципы GMLP","Требования к данным, разделению выборок, представительности, мониторингу","На всех этапах разработки ИИ-изделия","doc"],
+ ["PCCP","Какие изменения модели допустимы, как их проверять и как оценивать влияние","До подачи заявки, если модель будет обновляться","doc"],
+ ["TRIPOD+AI","Отчётность о разработке и валидации прогностических моделей","Публикация и досье","doc"],
+ ["DECIDE-AI","Отчётность о ранней клинической оценке систем поддержки решений","Пилот в клинике","doc"],
+ ["CONSORT-AI и SPIRIT-AI","Протокол и отчёт рандомизированного испытания с ИИ-вмешательством","Доказательство клинического эффекта","doc"],
+ ["HealthBench (OpenAI)","Оценка поведения LLM в реалистичных медицинских сценариях по рубрикам, написанным врачами","Сравнение базовых моделей; не заменяет валидацию на своём потоке","obs"],
+ ["Руководство Joint Commission и CHAI","Управление ИИ в организации: надзор, мониторинг, прозрачность","Требования системы здравоохранения к поставщику","obs"]
+];
+const EVID=[
+ ["Исследование в JAMA по пяти академическим центрам: ambient-скрайбы сократили общее время в EHR на 13,4 минуты и время документирования на 16 минут; с использованием связано 0,49 дополнительного визита в неделю","Эффект реальный, но умеренный. Обещать «час в день» — ошибка; критерии приёмки строить на минутах и частоте использования","https://www.aha.org/aha-center-health-innovation-market-scan/2026-04-14-6-health-systems-enhancing-care-delivery-ambient-ai-scribes"],
+ ["Экономия времени растёт с частотой использования; при эпизодическом использовании эффект заметно меньше заявленного поставщиками","Главная продуктовая метрика — регулярное использование на шестой месяц, а не число подключённых врачей","https://aihealthcare360.org/operations/ai-medical-scribes/"],
+ ["Ни один ambient-скрайб не пишет в медкарту без проверки человеком","Проверка врачом — часть продукта и основание для статуса «не изделие» в Великобритании","https://www.commure.com/blog-scribe/dax-ai-scribe"]
+];
+function renderKach(){
+  $("#evalBody").innerHTML=EVAL.map(r=>`<tr><td><b>${esc(r[0])}</b></td><td>${esc(r[1])}</td><td>${esc(r[2])}</td><td>${TAG[r[3]]}</td></tr>`).join("");
+  $("#evidBody").innerHTML=EVID.map(r=>`<tr><td>${esc(r[0])}</td><td>${esc(r[1])}</td><td>${link(r[2])}</td></tr>`).join("");
+}
+
+/* РЫНОК */
+const MKT=[
+ ["FDA допустило к рынку более 1 600 ИИ-изделий по состоянию на сентябрь 2026 года","Регистрационный путь в США отработан; главный вопрос — не «можно ли», а доказательства и изменения модели","https://www.fda.gov/medical-devices/digital-health-center-excellence/artificial-intelligence-enabled-medical-devices"],
+ ["В IV квартале 2025 года FDA допустило 72 ИИ-изделия, из них 55 (76%) — радиология","Рынок изделий сконцентрирован в визуальной диагностике; LLM-сценарии в основном идут вне статуса изделия","https://intuitionlabs.ai/articles/fda-approved-ai-medical-devices-list"],
+ ["Программа прорывных изделий FDA всё чаще включает генеративный ИИ, в том числе инструменты черновиков радиологических отчётов","Генеративный ИИ начинает проходить путь изделия там, где влияет на диагностическое заключение","https://intuitionlabs.ai/articles/fda-approved-ai-medical-devices-list"],
+ ["Epic в феврале 2026 года представила собственный ИИ-скрайб AI Charting с перспективой подготовки заказов","Производитель медицинской информационной системы — одновременно канал и конкурент. Для российского рынка это роль разработчиков МИС и региональных платформ","https://www.statnews.com/2026/02/04/epic-ai-charting-ambient-scribe-abridge-microsoft/"],
+ ["В системе UCSF к 2026 году 70% врачей используют ИИ-скрайбы в ежедневной практике","Документирование — точка входа с максимальным принятием врачами","https://www.medicaleconomics.com/view/take-note-the-ai-scribe-era-is-here"],
+ ["OpenAI запустила ChatGPT Health (7 января, потребительский, без Великобритании, ЕЭЗ и Швейцарии) и ChatGPT for Healthcare (8 января, корпоративный, HIPAA)","Разработчики базовых моделей идут в медицину напрямую; региональным игрокам нужна ставка на интеграцию с локальными данными и регуляторикой","https://www.iatrox.com/blog/clinical-ai-landscape-2026-chatgpt-openevidence-iatrox-medwise"],
+ ["Anthropic представила Claude for Healthcare с HIPAA-готовой инфраструктурой и коннекторами к базе покрытия CMS, кодам МКБ-10 и PubMed; один из сценариев — ускорение проверки предварительной авторизации","Ценность смещается от модели к коннекторам к отраслевым справочникам и процессам плательщика","https://www.fiercehealthcare.com/ai-and-machine-learning/jpm26-anthropic-launches-claude-healthcare-targeting-health-systems-payers"],
+ ["Среди госпиталистов, применяющих LLM в практике, самый используемый инструмент — OpenEvidence (88,9%), затем ChatGPT (58,5%)","Врачи выбирают специализированные инструменты с цитированием доказательной базы","https://intuitionlabs.ai/articles/chatgpt-vs-claude-for-healthcare"],
+ ["Модель CMS WISeR работает с 1 января 2026 года в шести штатах; с июля 2026 года поставщики, соблюдающие правила, освобождаются от проверки","Механизм «золотой карты» снижает нагрузку на добросовестных исполнителей — сильный аргумент для российских сценариев контроля качества","https://www.cms.gov/priorities/innovation/files/wiser-provider-supplier-guide.pdf"],
+ ["Отраслевые ассоциации медтеха не добились исключения медизделий из AI Act при согласовании Digital Omnibus","Для ЕС закладывать двойное соответствие MDR и AI Act, пока не принят пересмотр MDR","https://www.medtecheurope.org/2026/05/07/joint-industry-voice-calls-for-one-coherent-framework-for-ai-enabled-medical-technologies/"]
+];
+function renderMkt(){ $("#mktBody").innerHTML=MKT.map(r=>`<tr><td>${esc(r[0])}</td><td>${esc(r[1])}</td><td>${link(r[2])}</td></tr>`).join(""); }
+
+/* УРОКИ */
+const LESS=[
+ ["CMS WISeR: ИИ-проверка обоснованности с оплатой подрядчику долей экономии","Сценарий контроля качества можно продавать плательщику по модели разделения экономии, а не как лицензию. Нужна «золотая карта» для добросовестных клиник, иначе сопротивление отрасли","Автоматическая проверка качества медпомощи для ФОМС, СМО и ДМС"],
+ ["MHRA: документирование под контролем врача — не медизделие","Проектировать голосовой ввод и суммаризацию так, чтобы врач проверял результат, а продукт не принимал клинических решений. Это сокращает путь до внедрения","Голосовой ввод и суммаризация ЭМК; ГОСТ Р 72313-2025"],
+ ["FDA CDS 2026: одна рекомендация с прозрачной основой","Подсказка врачу со ссылкой на пункт клинической рекомендации и возможностью проверить основу — лучшая форма и для доверия, и для регуляторной позиции","СППВР; ГОСТ Р 71671-2024"],
+ ["FDA PCCP: заранее согласованные изменения модели","Описывать допустимые изменения модели и процедуру их проверки ещё до регистрации","Упрощённая процедура для модификаций ИИ-ПО; ГОСТ Р 59921.3-2021"],
+ ["ЕС: двойной контур MDR и AI Act","Распределение ответственности между разработчиком модели, оператором и владельцем сервиса стоит закладывать в договоры уже сейчас","Законопроект Минцифры о регулировании ИИ"],
+ ["Данные о скрайбах: 13–16 минут в день, а не час","Согласовывать с заказчиком реалистичные метрики эффекта; главная продуктовая метрика — регулярное использование","Критерии приёмки пилотов"],
+ ["Epic встраивает собственный скрайб","Производитель МИС — канал и конкурент одновременно; стратегия интеграции нужна до выхода на рынок","Интеграция с МИС и региональными сегментами ЕГИСЗ; ПП РФ № 447"],
+ ["ChatGPT Health недоступен в ЕС и Великобритании","Регуляторика определяет географию пациентского продукта; локальные требования к данным — конкурентное преимущество локального игрока","152-ФЗ; региональные пациентские сервисы"],
+ ["OpenEvidence лидирует среди врачей","Врачи выбирают инструменты с цитатами доказательной базы; ответ без источника теряет доверие","Базы клинических рекомендаций как слой знаний"],
+ ["Claude for Healthcare: коннекторы к справочникам плательщика","Ценность — в подключении к отраслевым справочникам и процессам, а не в самой модели","Коннекторы к НСИ, клиническим рекомендациям, правилам ОМС"]
+];
+
+/* ссылки к урокам: [источник внутри зарубежной базы], [российская точка применения] */
+const LESSL=[
+ [["#dengi","Заказчики и деньги"],["00-ukazatel-bz-ii-medicina.html#put","Стадия «Оплата и контроль качества»"],["00-ukazatel-bz-ii-medicina.html#scen","Сценарии контроля качества"]],
+ [["#qual","Квалификатор: голосовой ввод"],["00-ukazatel-bz-ii-medicina.html#reestr","ГОСТ Р 72313-2025 в реестре"],["00-ukazatel-bz-ii-medicina.html#put","Стадия «Медицинская документация»"]],
+ [["#qual","Квалификатор: подсказка врачу"],["00-ukazatel-bz-ii-medicina.html#reestr","ГОСТ Р 71671-2024 в реестре"],["02-paralleli-i-modeli.html#rezh","Модель режимов: когда ИИ решает сам"]],
+ [["#reestr","Реестр: PCCP"],["00-ukazatel-bz-ii-medicina.html#reestr","Модификации ИИ-ПО в реестре"],["00-ukazatel-bz-ii-medicina.html#cikl","Ворота: управление изменениями"]],
+ [["#jur","Карта юрисдикций: ЕС"],["00-ukazatel-bz-ii-medicina.html#reestr","Законопроект о регулировании ИИ"],["02-paralleli-i-modeli.html#par","Параллели: распределение ответственности"]],
+ [["#kach","Данные о реальном эффекте"],["00-ukazatel-bz-ii-medicina.html#metriki","Три уровня метрик"],["03-koncentraciya-i-ii-medicina.html#pilot","Протокол пилота"]],
+ [["#rynok","Рынок: производители систем"],["00-ukazatel-bz-ii-medicina.html#reestr","ПП РФ № 447 в реестре"],["00-ukazatel-bz-ii-medicina.html#zak","Заказчики: разработчики МИС"]],
+ [["#put","Путь случая: анализы"],["00-ukazatel-bz-ii-medicina.html#reestr","152-ФЗ в реестре"],["03-koncentraciya-i-ii-medicina.html#formul","Проверка формулировок"]],
+ [["#put","Путь случая: решение врача"],["00-ukazatel-bz-ii-medicina.html#gloss","RAG и клинические рекомендации"],["00-ukazatel-bz-ii-medicina.html#risk","Риск: устаревание знаний"]],
+ [["#rynok","Рынок: коннекторы к справочникам"],["00-ukazatel-bz-ii-medicina.html#gloss","НСИ в глоссарии"],["00-ukazatel-bz-ii-medicina.html#put","Стадия «Оплата и контроль качества»"]]
+];
+const lk=a=>`<a href="${a[0]}"${/^https?:|\.html/.test(a[0])&&!a[0].startsWith("#")?"":""}>${esc(a[1])}</a>`;
+
+function renderLess(){ $("#lessBody").innerHTML=LESS.map((r,i)=>{const L=LESSL[i]||[];
+  return `<tr><td><b>${esc(r[0])}</b>${L[0]?`<br><span class="count">${lk(L[0])}</span>`:""}</td><td>${esc(r[1])}</td><td>${esc(r[2])}${L.length>1?`<br><span class="count">${L.slice(1).map(lk).join(" · ")}</span>`:""}</td></tr>`}).join(""); }
+
+/* ДРУГИЕ ЮРИСДИКЦИИ */
+const OJCMP=[
+ ["Регулятор изделий","NMPA; использование в клиниках контролирует Национальная комиссия по здравоохранению","ОАЭ: MOHAP и эмиратские регуляторы (DoH Абу-Даби, DHA Дубай); Саудовская Аравия: SFDA","Росздравнадзор и национальные органы; единые правила ЕАЭС (Решение Совета ЕЭК № 46)","Росздравнадзор"],
+ ["Подход к ИИ","Отдельные руководства по ИИ-изделиям; большинство допущенных ИИ-изделий — класс III","Эмиратские политики ИИ в здравоохранении; обязательное руководство SFDA по ИИ-изделиям","Казахстан: закон об ИИ с 18.01.2026; Беларусь: закон в разработке","Специальные положения в правилах регистрации; стандарты"],
+ ["Генеративный ИИ","Временные меры 2023 года по генеративному ИИ; первое изделие класса III на LLM допущено в мае 2026 года","Общие рамки ответственного ИИ; отдельного режима для LLM-изделий нет","Отдельного режима нет","Стандарты по генеративным моделям в проекте"],
+ ["Данные","Закон о защите персональной информации, требование согласия","В ОАЭ медицинские данные в основном должны оставаться внутри страны; доступ через обмены Malaffi и Nabidh","Национальные законы о персональных данных","152-ФЗ"],
+ ["Путь для российского продукта","Высокий барьер: локальные испытания, конкуренция национальных игроков","Локальная валидация, партнёр в стране, хранение данных внутри","Регистрация по правилам Союза даёт доступ к пяти странам; до 31.12.2027 доступна национальная регистрация","—"]
+];
+const OJ={
+ china:{t:"Китай",lead:"Крупнейший после США рынок ИИ-изделий с централизованной регистрацией высокорисковых решений, государственными целями внедрения и быстрым переходом больниц на национальные LLM.",
+  facts:[
+   ["Регуляторная система трёх уровней: NMPA регистрирует изделия, Национальная комиссия по здравоохранению надзирает за их использованием в медорганизациях, CAC и MIIT отвечают за ИИ, кибербезопасность и данные","obs","https://practiceguides.chambers.com/practice-guides/healthcare-ai-2026/china"],
+   ["Руководство NMPA 2021 года позволило относить зрелые алгоритмы без работы в реальном времени (измерения, разметка, оптимизация процесса) к классу II; до этого любое ПО с ИИ шло в класс III","doc","https://medinform.jmir.org/2026/1/e85538/PDF"],
+   ["Из 154 ИИ-изделий, допущенных в 2020–2025 годах, 79,9% — класс III, большинство на глубоком обучении","obs","https://medinform.jmir.org/2026/1/e85538/PDF"],
+   ["В 2026 году NMPA выдало свидетельства класса III ИИ-решениям для патоморфологии, эндоскопии и хирургической навигации: рынок выходит за пределы диагностической поддержки","obs","https://letsdatascience.com/news/china-approves-more-ai-medical-devices-expands-into-treatmen-75de1963"],
+   ["Проект руководства NMPA по клинической оценке ИИ-изделий диагностики (17.06.2026): сравнение врачей с ИИ-помощью и врачей, читающих исследования самостоятельно","doc","https://chinameddevice.com/nmpa-ai-assisted-diagnostic-medical-devices-2/"],
+   ["В мае 2026 года выдано первое свидетельство NMPA класса III на ПО на основе LLM — диагностика кариотипа хромосом","obs","https://practiceguides.chambers.com/practice-guides/healthcare-ai-2026/china"],
+   ["Консенсус по клинической этике генеративного ИИ начала 2026 года устанавливает пороги доли галлюцинаций для решений высокого риска","obs","https://practiceguides.chambers.com/practice-guides/healthcare-ai-2026/china"],
+   ["Государственные цели: наборы данных, специализированные модели и базы внедрения — к 2027 году; массовое применение ИИ в первичном звене — к 2030 году","obs","https://merics.org/en/comment/fusion-ai-and-healthcare-shows-china-bullish-about-intelligent-society"]],
+  less:["Порог доли галлюцинаций как норматив — готовая формулировка для критериев приёмки LLM-продуктов","Дизайн клинической оценки «врач с ИИ против врача без ИИ» — образец протокола врачебной валидации","Деление ИИ на классы II и III по зрелости алгоритма и работе в реальном времени — аргумент для обсуждения класса риска в России"]},
+ gulf:{t:"Страны Персидского залива",lead:"Рынки с высокой платёжеспособностью, государственными программами цифровизации и жёсткими требованиями к локальности данных. Вход — через эмиратских и национальных регуляторов, обмены медицинскими данными и местную валидацию.",
+  facts:[
+   ["Политика DoH Абу-Даби по использованию ИИ в здравоохранении (2018) — первая в регионе рамка уровня эмирата; принципы: прозрачность, помощь пользователю, безопасность, приватность, этика, подотчётность","doc","https://www.ibanet.org/ai-healthcare-regulation-uae"],
+   ["В 2025 году Абу-Даби ввёл стандарт ответственного ИИ с обновлёнными техническими требованиями, требованиями к данным, прозрачности и объяснимости","doc","https://www.ibanet.org/ai-healthcare-regulation-uae"],
+   ["MOHAP регистрирует программные медизделия по правилам, близким к MDR ЕС и требованиям FDA","obs","https://www.ibanet.org/ai-healthcare-regulation-uae"],
+   ["Медицинские данные пациентов в ОАЭ в большинстве случаев должны оставаться внутри страны; обмены Malaffi (Абу-Даби) и Nabidh (Дубай) дают поставщикам ИИ структурированный доступ при наличии разрешений","obs","https://themiddleeastinsider.com/2026/04/25/uae-ai-regulation-2026/"],
+   ["Руководство SFDA по медизделиям на ИИ и машинном обучении (MDS-G010) — обязательные требования для получения разрешения на рынок, близкие к подходам FDA и IMDRF","doc","https://pubmed.ncbi.nlm.nih.gov/39022374/"],
+   ["В сентябре 2026 года SFDA допустило первые разработанные в стране ИИ-программы для стоматологии и офтальмологии; обе команды провели клинические исследования в саудовских медицинских центрах","obs","https://saudishopper.com.sa/en/sfda-approves-local-ai-medical-software/"]],
+  less:["Валидация на локальной популяции — условие допуска, а не пожелание: закладывать в бюджет выхода","Хранение данных в стране и подключение к национальному обмену — архитектурное требование с первого дня","Регуляторы Залива ориентируются на FDA и MDR: досье, собранное по международным стандартам, переиспользуется"]},
+ eaeu:{t:"ЕАЭС",lead:"Ближайший рынок выхода для российского продукта: общие правила обращения медизделий, русский язык как рабочий, похожая логика регулирования. Параллельно страны Союза принимают собственные законы об ИИ.",
+  facts:[
+   ["Протокол от 29.12.2025: подавать заявления на экспертизу и регистрацию по национальным правилам можно до 31.12.2027; перерегистрация изделий, зарегистрированных по национальным правилам, — при подаче до 31.12.2028","doc","https://www.consultant.ru/law/hotdocs/92312.html"],
+   ["Правила регистрации и экспертизы медизделий ЕАЭС — Решение Совета ЕЭК № 46 от 12.02.2016; сопутствующие решения № 27, 28, 106 — требования безопасности, технические испытания, система менеджмента качества","doc","https://medreg-eurasia.kz/registraciya-medicinskih-izdelij-eaes"],
+   ["Казахстан: закон «Об искусственном интеллекте» № 230-VIII от 17.11.2025, в силе с 18.01.2026; классификация систем ИИ по степени воздействия, категорию определяет собственник или владелец; установлены запреты на отдельные возможности систем","doc","https://www.ey.com/ru_kz/technical/tax-alerts/2025/12/law-on-artificial-intelligence-kazakhstan"],
+   ["Минздрав Казахстана разработал порядок оказания медуслуг с применением ИИ: от заявки и пилота до масштабирования, клиническая проверка, биоэтическая экспертиза, перечень доверенных систем ИИ и пострегистрационный мониторинг","proj","https://kzvesti.kz/glavnye-novosti/v-kazahstane-razrabotan-porjadok-vnedrenija-ii-v-zdravoohranenie-ot-pilota-do-masshtabirovanija-152838/"],
+   ["Беларусь: специального закона об ИИ нет, проект готовится на основе Типового закона СНГ об ИИ (апрель 2025); к концу 2026 года планируется 20–25 национальных стандартов по ИИ, в том числе для здравоохранения","obs","https://www.kommersant.ru/doc/8891178"]],
+  less:["До конца 2027 года выбирать между национальной регистрацией и регистрацией по правилам Союза исходя из того, в скольких странах планируется продажа","Перечень доверенных систем ИИ в Казахстане — аналог допуска по результатам пилота; заложить подготовку материалов для него в план выхода","Классификацию системы по степени воздействия в Казахстане определяет владелец — нужна собственная документированная оценка риска"]}
+};
+
+const OJL={
+ china:[[["00-ukazatel-bz-ii-medicina.html#metriki","Метрики для LLM"],["00-ukazatel-bz-ii-medicina.html#risk","Риск галлюцинаций"]],
+        [["00-ukazatel-bz-ii-medicina.html#cikl","Ворота: врачебная валидация"],["03-koncentraciya-i-ii-medicina.html#pilot","Протокол пилота"]],
+        [["00-ukazatel-bz-ii-medicina.html#reestr","Классы риска: приказ № 686н"]]],
+ gulf:[[["00-ukazatel-bz-ii-medicina.html#cikl","Ворота: пилот в клинике"]],
+       [["00-ukazatel-bz-ii-medicina.html#gloss","Данные и системы"],["00-ukazatel-bz-ii-medicina.html#reestr","152-ФЗ и обезличивание"]],
+       [["#reestr","Стандарты в реестре"],["00-ukazatel-bz-ii-medicina.html#reestr","Российские аналоги стандартов"]]],
+ eaeu:[[["#drugie","Сравнение регионов"],["#reestr","Правила ЕАЭС в реестре"]],
+       [["00-ukazatel-bz-ii-medicina.html#cikl","Ворота: регуляторная квалификация"]],
+       [["00-ukazatel-bz-ii-medicina.html#reestr","ГОСТ Р 71737-2024, менеджмент риска"]]]
+};
+
+function renderOJ(){
+  $("#ojCmp").innerHTML=OJCMP.map(r=>`<tr><td><b>${esc(r[0])}</b></td>${r.slice(1).map(c=>`<td>${esc(c)}</td>`).join("")}</tr>`).join("");
+  $$(".ojbox").forEach(b=>{const o=OJ[b.dataset.oj];
+    b.innerHTML=`<h2>${esc(o.t)}</h2><p class="intro">${esc(o.lead)}</p>
+    <div class="scroll"><table><thead><tr><th>Факт</th><th>Происхождение</th><th>Источник</th></tr></thead><tbody>${o.facts.map(f=>`<tr><td>${esc(f[0])}</td><td>${TAG[f[1]]}</td><td>${link(f[2])}</td></tr>`).join("")}</tbody></table></div>
+    <h3>Уроки для российской команды</h3><ol>${o.less.map((x,i)=>`<li>${esc(x)}${(OJL[b.dataset.oj]||[])[i]?` <span class="count">→ ${(OJL[b.dataset.oj][i]).map(lk).join(" · ")}</span>`:""}</li>`).join("")}</ol>
+    <p class="count">Раздел «Уроки» — <span class="tag t-inf">вывод</span>. Сводка по трём регионам: <button class="lnk" data-go="drugie" style="background:none;border:0;padding:0;color:var(--accent);font:inherit;cursor:pointer;text-decoration:underline">обзор и сравнение</button>.</p>`;});
+}
+
+/* ГЛОССАРИЙ */
+const RG="#reestr";
+const GL=[
+ ["Регуляторы и программы",[
+  ["FDA","Food and Drug Administration — Управление по санитарному надзору за качеством пищевых продуктов и медикаментов США","Федеральный регулятор, допускающий медицинские изделия на рынок США. Работает не по отдельному закону об ИИ, а по общему закону о пищевых продуктах, лекарствах и косметике, поэтому статус ИИ-продукта определяется его назначением, а не технологией.","FDA: список ИИ-изделий","https://www.fda.gov/medical-devices/digital-health-center-excellence/artificial-intelligence-enabled-medical-devices"],
+  ["CDRH","Center for Devices and Radiological Health — Центр приборов и радиологического здоровья","Подразделение FDA, отвечающее за медицинские изделия, включая программные. Ведёт базы допущенных изделий и выпускает руководства, по которым определяется периметр регулирования ИИ.","FDA: пути вывода изделия на рынок","https://www.fda.gov/medical-devices/device-advice-comprehensive-regulatory-assistance/how-study-and-market-your-device"],
+  ["CMS","Centers for Medicare & Medicaid Services — Центры услуг Medicare и Medicaid","Крупнейший плательщик США: администрирует государственные программы медицинского страхования для пожилых и малоимущих. Решает, что и как оплачивается, поэтому именно его решения открывают или закрывают рынок для ИИ-сервиса.","CMS: руководство по модели WISeR","https://www.cms.gov/priorities/innovation/files/wiser-provider-supplier-guide.pdf"],
+  ["CMMI","Center for Medicare and Medicaid Innovation — Инновационный центр CMS","Подразделение CMS, запускающее пилотные модели оплаты на ограниченной территории и на срок. Через него проходят эксперименты вроде WISeR: это способ проверить новую схему оплаты без изменения закона.","CMS: руководство по модели WISeR","https://www.cms.gov/priorities/innovation/files/wiser-provider-supplier-guide.pdf"],
+  ["ONC, ASTP","Office of the National Coordinator for Health Information Technology — Офис национального координатора по медицинским информационным технологиям","Ведомство, сертифицирующее электронные медицинские системы. Через сертификацию ввело первые в США обязательные требования к прозрачности предиктивных алгоритмов внутри EHR, поэтому его правила доходят до продукта через производителя системы.","ONC: финальное правило HTI-1","https://healthit.gov/regulations/hti-rules/hti-1-final-rule/"],
+  ["MHRA","Medicines and Healthcare products Regulatory Agency — Агентство по регулированию лекарств и медицинских изделий Великобритании","Британский регулятор изделий. В 2026 году провёл границу для инструментов, которые лишь готовят документацию под проверкой врача, выведя их из-под режима медицинского изделия.","Реестр документов базы знаний",RG],
+  ["NICE","National Institute for Health and Care Excellence — Национальный институт здоровья и совершенствования медицинской помощи","Британский орган оценки медицинских технологий: решает, оправданы ли затраты на технологию для системы здравоохранения. Допуск на рынок и рекомендация к закупке — разные вещи, и вторая часто важнее для продаж.","Реестр документов базы знаний",RG],
+  ["NMPA","National Medical Products Administration — Государственное управление по контролю лекарственных средств КНР","Китайский регулятор изделий. Централизованно регистрирует высокорисковые ИИ-изделия, большинство из которых относит к классу III; с 2021 года допускает зрелые алгоритмы без работы в реальном времени в класс II.","Обзор регулирования ИИ в здравоохранении Китая","https://practiceguides.chambers.com/practice-guides/healthcare-ai-2026/china"],
+  ["SFDA","Saudi Food and Drug Authority — Управление по продовольствию и лекарствам Саудовской Аравии","Регулятор Саудовской Аравии. Его руководство по изделиям на ИИ и машинном обучении содержит обязательные требования для выхода на рынок и близко по подходу к FDA и IMDRF.","Обзор требований SFDA к ИИ-изделиям","https://pubmed.ncbi.nlm.nih.gov/39022374/"],
+  ["Notified Body","Нотифицированный орган","Независимая организация, уполномоченная государством ЕС проводить оценку соответствия изделия. Её участие — это не формальность: именно оно переводит ИИ-изделие в категорию высокого риска по регламенту об ИИ.","Регламент ЕС 2017/745 (MDR)","http://data.europa.eu/eli/reg/2017/745/oj"],
+  ["WISeR","Wasteful and Inappropriate Service Reduction — сокращение излишних и необоснованных услуг","Модель CMS 2026–2031 годов: в шести штатах отдельные услуги Medicare проходят предварительную авторизацию с применением ИИ, а вознаграждение подрядчика привязано к доле полученной экономии. Ближайший зарубежный аналог российского контроля обоснованности помощи.","CMS: руководство по модели WISeR","https://www.cms.gov/priorities/innovation/files/wiser-provider-supplier-guide.pdf"],
+  ["AI Airlock","Регуляторная песочница MHRA для ИИ как медицинского изделия","Режим, в котором разработчик испытывает продукт вместе с регулятором, а полученный опыт идёт в будущие правила. Второй этап завершён в мае 2026 года, выводы переданы национальной комиссии.","Реестр документов базы знаний",RG]]],
+ ["Пути выхода на рынок",[
+  ["510(k)","Premarket Notification — предрыночное уведомление по разделу 510(k) закона","Основной путь в США: производитель доказывает существенную эквивалентность ранее допущенному изделию-предикату. Быстрее и дешевле остальных путей, поэтому выбор предиката — ключевое регуляторное решение продукта.","FDA: процесс допуска по 510(k)","https://www.fda.gov/medical-devices/510k-clearances/medical-device-safety-and-510k-clearance-process"],
+  ["De Novo","De Novo Classification Request — запрос о классификации нового типа изделия","Путь для новых изделий низкого и среднего риска, у которых нет предиката. Успешный запрос создаёт новый тип изделия, и оно само становится предикатом для последующих заявок по 510(k).","FDA: De Novo Classification Request","https://www.fda.gov/medical-devices/premarket-submissions-selecting-and-preparing-correct-submission/de-novo-classification-request"],
+  ["PMA","Premarket Approval — предрыночное одобрение","Самый строгий путь, для изделий высокого риска (класс III): требует собственных клинических доказательств безопасности и эффективности. Для медицинского ИИ применяется редко.","FDA: Premarket Approval (PMA)","https://www.fda.gov/medical-devices/premarket-submissions-selecting-and-preparing-correct-submission/premarket-approval-pma"],
+  ["Breakthrough Device","Breakthrough Devices Program — программа прорывных изделий","Режим ускоренного взаимодействия с FDA для технологий, дающих существенное преимущество при тяжёлых состояниях. Через него сегодня проходят первые генеративные инструменты, влияющие на диагностическое заключение.","Обзор допущенных ИИ-изделий FDA","https://intuitionlabs.ai/articles/fda-approved-ai-medical-devices-list"],
+  ["PCCP","Predetermined Change Control Plan — заранее согласованный план управления изменениями","Механизм, позволяющий описать в досье, какие изменения модели допустимы и как они будут проверяться, и вносить их без новой заявки. Ключевой ответ регулятора на вопрос, как жить с обучающимися системами.","Реестр документов базы знаний",RG],
+  ["CE marking","Маркировка соответствия ЕС","Знак, дающий доступ на рынок Евросоюза. Для ИИ-изделия означает пройденную оценку соответствия по регламенту о медизделиях, а с 2028 года — и выполнение требований к ИИ высокого риска.","Регламент ЕС 2017/745 (MDR)","http://data.europa.eu/eli/reg/2017/745/oj"],
+  ["UKCA","UK Conformity Assessed — британская маркировка соответствия","Аналог CE для рынка Великобритании после выхода из ЕС. Действует на основе британских правил об изделиях, которые сейчас реформируются.","Реестр документов базы знаний",RG]]],
+ ["Классы продуктов",[
+  ["SaMD","Software as a Medical Device — программное обеспечение как медицинское изделие","Программа, предназначенная для медицинских целей и выполняющая их самостоятельно, не будучи частью аппаратного изделия. Определение введено международным форумом регуляторов и принято FDA, ЕС и большинством стран — это общий язык, на котором обсуждается статус любого медицинского ИИ.","IMDRF, определение SaMD (принято FDA)","https://www.fda.gov/medical-devices/digital-health-center-excellence/software-medical-device-samd"],
+  ["IMDRF","International Medical Device Regulators Forum — Международный форум регуляторов медицинских изделий","Объединение регуляторов, вырабатывающее согласованные определения и рамки. Ему принадлежат определение SaMD и категоризация риска, на которые опираются национальные правила.","IMDRF","https://www.imdrf.org/"],
+  ["AIaMD","Artificial Intelligence as a Medical Device — искусственный интеллект как медицинское изделие","Термин MHRA для подмножества SaMD, где медицинскую функцию выполняет модель. Выделен отдельно, потому что у обучающихся систем иначе устроены испытания, изменения и надзор.","Реестр документов базы знаний",RG],
+  ["CDS, Non-Device CDS","Clinical Decision Support — поддержка клинических решений; вариант, выведенный из определения изделия","Программа, предлагающая врачу вариант действия. В США часть таких программ прямо исключена из определения изделия, если врач может независимо проверить основание рекомендации. С 2026 года FDA расширило это исключение на программы, дающие одну клинически обоснованную рекомендацию, но не на анализ изображений и сигналов и не на срочные решения.","Закон о пищевых продуктах, лекарствах и косметике, раздел 520(o)",RG],
+  ["AVT, ambient scribe","Ambient Voice Technology — технология фоновой записи речи","Инструмент, который слушает приём, расшифровывает разговор и готовит черновик медицинской записи. Самый быстро принятый класс медицинского ИИ; в Великобритании выведен из-под режима изделия при условии проверки врачом.","Реестр документов базы знаний",RG],
+  ["General wellness","Продукты общего благополучия","Категория низкого риска: продукты для поддержания здорового образа жизни без заявлений о диагностике и лечении. Маркировка определяет статус, поэтому именно формулировки решают, останется ли продукт вне регулирования изделий.","Реестр документов базы знаний",RG],
+  ["Predictive DSI","Predictive Decision Support Intervention — предиктивное вмешательство поддержки решений","Термин правила HTI-1: технология, которая на основе обученной модели выдаёт прогноз, классификацию или рекомендацию внутри сертифицированной медицинской системы. Для таких инструментов раскрывается набор атрибутов источника — своего рода паспорт алгоритма для пользователя.","ONC: финальное правило HTI-1","https://healthit.gov/regulations/hti-rules/hti-1-final-rule/"]]],
+ ["Данные и рынок",[
+  ["EHR","Electronic Health Record — электронная медицинская запись","Американский аналог ЭМК и одновременно название класса систем. Рынок сконцентрирован у нескольких производителей, поэтому интеграция с ними — обязательное условие дистрибуции, а их собственные ИИ-функции — прямая конкуренция.","Обзор рынка ИИ-скрайбов","https://www.statnews.com/2026/02/04/epic-ai-charting-ambient-scribe-abridge-microsoft/"],
+  ["PHI","Protected Health Information — защищённая медицинская информация","Данные о здоровье, идентифицирующие человека, в понимании американского закона о переносимости и подотчётности медицинского страхования. Их обработка сторонним поставщиком требует отдельного договора.","Реестр документов базы знаний",RG],
+  ["HIPAA","Health Insurance Portability and Accountability Act — закон о переносимости и подотчётности медицинского страхования","Базовый закон США о защите медицинской информации. Именно соответствие ему делает возможной продажу LLM-сервисов системам здравоохранения: корпоративные версии продаются прежде всего как HIPAA-совместимые.","Реестр документов базы знаний",RG],
+  ["BAA","Business Associate Agreement — договор с деловым партнёром","Договор, которым поставщик, обрабатывающий защищённую медицинскую информацию, принимает на себя обязанности по её защите. Без него использование внешнего ИИ-сервиса с реальными данными пациентов незаконно.","Реестр документов базы знаний",RG],
+  ["IDN","Integrated Delivery Network — интегрированная сеть оказания медицинской помощи","Объединение больниц, клиник и врачебных практик под общим управлением. Основной корпоративный покупатель ИИ в США: решение принимает комитет, а не отдельный врач.","Обзор внедрения ИИ-скрайбов в системах здравоохранения","https://www.aha.org/aha-center-health-innovation-market-scan/2026-04-14-6-health-systems-enhancing-care-delivery-ambient-ai-scribes"],
+  ["Prior authorization","Предварительная авторизация","Согласование плательщиком услуги до её оказания. Административная процедура, не медицинское изделие, но с высокой ценой ошибки для пациента, поэтому применение ИИ здесь вызывает наибольшее внимание регуляторов и отрасли.","CMS: руководство по модели WISeR","https://www.cms.gov/priorities/innovation/files/wiser-provider-supplier-guide.pdf"],
+  ["CPT","Current Procedural Terminology — текущая процедурная терминология","Система кодов медицинских услуг в США. Появление отдельного кода означает, что процедура с ИИ становится оплачиваемой услугой: это и есть переход технологии в устойчивую экономику.","Реестр документов базы знаний",RG],
+  ["NTAP","New Technology Add-on Payment — надбавка за новую технологию","Доплата CMS к оплате стационарного случая при применении новой технологии. Временный механизм, дающий доход до появления постоянного кода.","Реестр документов базы знаний",RG],
+  ["Medicare Advantage","Частные планы в рамках Medicare","Программы частных страховщиков, заменяющие традиционное покрытие Medicare. Активно применяют автоматизацию согласований, из-за чего оказались в центре регуляторного внимания к ИИ в отказах.","Реестр документов базы знаний",RG],
+  ["EHDS","European Health Data Space — Европейское пространство данных здравоохранения","Регламент ЕС, устанавливающий правила обмена медицинскими данными и их вторичного использования для исследований и обучения моделей через уполномоченные органы доступа. Для разработчика это легальный канал к данным, которого раньше не было.","Регламент ЕС 2025/327 (EHDS)","https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:32025R0327"],
+  ["Malaffi, Nabidh","Обмены медицинскими данными Абу-Даби и Дубая","Национальные платформы обмена медицинскими данными в эмиратах ОАЭ. Дают поставщикам ИИ структурированный доступ к данным при наличии разрешений и одновременно закрепляют требование хранить данные внутри страны.","Обзор регулирования ИИ в здравоохранении ОАЭ","https://themiddleeastinsider.com/2026/04/25/uae-ai-regulation-2026/"]]],
+ ["Регулирование ИИ",[
+  ["AI Act","Regulation (EU) 2024/1689 — Регламент ЕС об искусственном интеллекте","Первый комплексный закон об ИИ: классифицирует системы по риску и вводит требования к данным, документации, прозрачности и человеческому надзору. Для медицины действует поверх регламента об изделиях, а не вместо него.","Регламент ЕС 2024/1689, EUR-Lex","https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=OJ%3AL_202401689"],
+  ["High-risk AI","ИИ высокого риска","Категория регламента ЕС, к которой автоматически относится ИИ-изделие, требующее участия нотифицированного органа. Влечёт систему управления рисками, требования к качеству данных, журналирование и обязательный человеческий надзор.","Регламент ЕС 2024/1689, ст. 6","https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=OJ%3AL_202401689"],
+  ["Annex I, Annex III","Приложения I и III регламента об ИИ","Приложение I — ИИ внутри уже регулируемых продуктов, включая медизделия; приложение III — самостоятельные системы высокого риска. Деление определяет сроки: для медизделий требования применяются позже, с августа 2028 года.","Регламент ЕС 2026/1744 (Digital Omnibus)","https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=OJ%3AL_202601744"],
+  ["Digital Omnibus","Пакет поправок ЕС 2026 года","Регламент, сдвинувший сроки применения требований к ИИ высокого риска. Отраслевые ассоциации медтеха добивались полного вывода медизделий из-под регламента об ИИ, но добились только отсрочки.","Регламент ЕС 2026/1744","https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=OJ%3AL_202601744"],
+  ["MDR, IVDR","Medical Device Regulation и In Vitro Diagnostic Regulation — регламенты ЕС о медизделиях и об изделиях для диагностики in vitro","Основные европейские акты об изделиях: классификация, клиническая оценка, участие нотифицированного органа, надзор после выхода на рынок. Под них попадает самостоятельное ПО с медицинским назначением.","Регламент ЕС 2017/745 (MDR)","http://data.europa.eu/eli/reg/2017/745/oj"],
+  ["GDPR","General Data Protection Regulation — Общий регламент по защите данных","Европейский закон о персональных данных. Данные о здоровье отнесены к особой категории, а полностью автоматизированные решения о человеке ограничены — это прямо касается автоматических отказов и триажа.","Регламент ЕС 2016/679","https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX%3A32016R0679"],
+  ["GPAI","General-Purpose AI — модели ИИ общего назначения","Базовые модели, применимые к множеству задач. Регламент ЕС предусматривает для них отдельные обязанности поставщика, независимые от того, в каком продукте модель в итоге используется.","Регламент ЕС 2024/1689","https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=OJ%3AL_202401689"],
+  ["GMLP","Good Machine Learning Practice — надлежащая практика машинного обучения","Десять принципов, согласованных регуляторами США, Канады и Великобритании: представительность данных, разделение выборок, оценка в реальных условиях, мониторинг. Общий язык, на котором регуляторы разных стран описывают качество разработки.","Реестр документов базы знаний",RG],
+  ["PIPL","Personal Information Protection Law — Закон КНР о защите персональной информации","Китайский закон о персональных данных. Медицинские данные отнесены к чувствительной информации, обработка которой требует отдельного согласия.","Обзор регулирования ИИ в здравоохранении Китая","https://practiceguides.chambers.com/practice-guides/healthcare-ai-2026/china"],
+  ["ЕЭК","Евразийская экономическая комиссия","Наднациональный орган ЕАЭС. Её решения устанавливают единые правила регистрации медизделий, действующие в странах союза наряду с национальными в течение переходного периода.","Правила регистрации медизделий ЕАЭС, Решение № 46","https://medreg-eurasia.kz/registraciya-medicinskih-izdelij-eaes"]]],
+ ["Оценка качества",[
+  ["TRIPOD+AI","Transparent Reporting of a multivariable prediction model for Individual Prognosis Or Diagnosis, версия для ИИ","Международный стандарт отчётности о разработке и валидации прогностических моделей. Определяет, что именно должно быть описано, чтобы результат считался воспроизводимым: данные, выборки, метрики, ограничения.","Реестр документов базы знаний",RG],
+  ["CONSORT-AI, SPIRIT-AI","Расширения стандартов отчётности о клинических испытаниях для вмешательств с ИИ","SPIRIT-AI описывает протокол испытания, CONSORT-AI — отчёт о результатах. Нужны, когда эффект продукта доказывается рандомизированным исследованием, а не сравнением метрик.","Реестр документов базы знаний",RG],
+  ["DECIDE-AI","Стандарт отчётности о ранней клинической оценке систем поддержки решений","Описывает, как отчитываться о первом применении системы в реальной клинике: взаимодействие врача и модели, ошибки, безопасность. Заполняет разрыв между лабораторными метриками и полноценным испытанием.","Реестр документов базы знаний",RG],
+  ["HealthBench","Открытый бенчмарк оценки языковых моделей в медицинских сценариях","Набор реалистичных диалогов с рубриками оценки, написанными врачами. Полезен для сравнения базовых моделей между собой, но не заменяет валидацию на собственном потоке пациентов.","Реестр документов базы знаний",RG],
+  ["CHAI","Coalition for Health AI — Коалиция по ИИ в здравоохранении","Отраслевое объединение систем здравоохранения, разработчиков и исследователей. Совместно с аккредитующим органом выпустило руководство по ответственному применению ИИ, которое становится источником требований заказчика к поставщику.","Реестр документов базы знаний",RG]]]
+];
+function renderGl(){
+  const f=()=>{const q=$("#glQ").value.toLowerCase(); let n=0,total=0;
+    $("#glBody").innerHTML=GL.map(([g,items])=>{total+=items.length;
+      const it=items.filter(x=>!q||x.join(" ").toLowerCase().includes(q)); n+=it.length;
+      return it.length?`<div class="grp">${esc(g)}</div><dl>`+it.map(([t,full,d,sn,su])=>
+        `<dt>${esc(t)}</dt><dd><div style="color:var(--ink);font-weight:500">${esc(full)}</div><div>${esc(d)}</div><div class="count" style="margin-top:3px">Источник: <a href="${esc(su)}"${/^https?:/.test(su)?' target="_blank" rel="noopener"':""}>${esc(sn)}</a></div></dd>`).join("")+"</dl>":""}).join("")||"<p>Термин не найден. Попробуйте другое написание или сокращение.</p>";
+    $("#glCount").textContent=n+" из "+total;};
+  $("#glQ").addEventListener("input",f); f();
+}
+
+/* НАВИГАЦИЯ */
+const panes=$$("section.pane");
+function go(id,push){
+  const target=panes.find(p=>p.id===id)||panes[0];
+  panes.forEach(p=>p.classList.toggle("on",p===target));
+  $$("nav.side button").forEach(b=>b.setAttribute("aria-current",b.dataset.go===target.id?"true":"false"));
+  $("#mob").value=target.id;
+  if(push!==false){try{history.replaceState(null,"","#"+target.id)}catch(e){}}
+  window.scrollTo({top:$(".layout").offsetTop-10,behavior:"auto"});
+}
+function renderNav(){
+  const order=["ukaz","gloss","jur","qual","reestr","put","dengi","rynok","kach","drugie","china","gulf","eaeu","perenos"];
+  const sorted=order.map(id=>panes.find(p=>p.id===id)).filter(Boolean); let html="",last="";
+  sorted.forEach(p=>{if(p.dataset.grp!==last){html+=`<li class="grp">${esc(p.dataset.grp)}</li>`;last=p.dataset.grp;} html+=`<li><button data-go="${p.id}">${esc(p.dataset.title)}</button></li>`;});
+  $("#sidenav").innerHTML=html;
+  $("#mob").innerHTML=sorted.map(p=>`<option value="${p.id}">${esc(p.dataset.grp)}: ${esc(p.dataset.title)}</option>`).join("");
+  $("#mob").addEventListener("change",e=>go(e.target.value));
+  document.addEventListener("click",e=>{const b=e.target.closest("[data-go]");if(b){e.preventDefault();go(b.dataset.go)}});
+}
+function renderTree(){
+  const cnt=a=>a.reduce((s,[,i])=>s+i.length,0);
+  const T=[
+   ["Вход в материал",[["ukaz","Указатель","дерево и порядок чтения · вы здесь"],["gloss","Глоссарий",cnt(GL)+" терминов с раскрытыми сокращениями и источниками"]]],
+   ["Регуляторика",[["jur","Карта юрисдикций","США, ЕС, Великобритания и Россия по семи измерениям"],["qual","Квалификатор сценария",Q.length+" сценариев: статус изделия в четырёх юрисдикциях"],["reestr","Реестр документов",REG.length+" позиций с фильтрами по юрисдикции и типу"]]],
+   ["Модель рынка",[["put","Путь случая: зарубежная практика","9 стадий: продукты, игроки, оплата"],["dengi","Заказчики и деньги",PAY.length+" механизмов оплаты и "+CUST.length+" типов заказчиков"],["rynok","Рынок и игроки",MKT.length+" фактов с источниками"]]],
+   ["Качество",[["kach","Оценка качества","регуляторные принципы, стандарты отчётности, данные о реальном эффекте"]]],
+   ["Другие юрисдикции",[["drugie","Обзор трёх регионов","сравнение Китая, стран Залива, ЕАЭС и России по пяти измерениям"],["china","Китай",OJ.china.facts.length+" фактов и 3 урока"],["gulf","Страны Персидского залива",OJ.gulf.facts.length+" фактов и 3 урока"],["eaeu","ЕАЭС",OJ.eaeu.facts.length+" фактов и 3 урока"]]],
+   ["Перенос опыта",[["perenos","Уроки для России",LESS.length+" уроков с российскими точками применения"],[null,"Стратегия выхода российского продукта за рубеж","планируется"]]]
+  ];
+  let total=0;
+  const inner=T.map(([b,items])=>{const built=items.filter(i=>i[0]).length; total+=built;
+    return `<li><span class="branch">${esc(b)}</span><span class="cnt">${built}</span><ul>`+items.map(([id,t,n])=>id?`<li><button class="lnk" data-go="${id}">${esc(t)}</button> <span class="note">${esc(n)}</span></li>`:`<li><span class="plan">${esc(t)}</span> <span class="note">· ${esc(n)}</span></li>`).join("")+"</ul></li>"}).join("");
+  $("#tree").innerHTML=`<ul><li><span class="branch">База знаний по ИИ в медицине: зарубежный сегмент</span><span class="cnt">${total} разделов</span><ul>${inner}<li><a href="00-ukazatel-bz-ii-medicina.html">Российский сегмент</a> <span class="note">парная база</span></li></ul></li></ul>`;
+}
+$("#printBtn").addEventListener("click",()=>window.print());
+renderNav(); renderJur(); renderQual(); renderPath(); renderDengi(); renderReg(); renderKach(); renderMkt(); renderLess(); renderOJ(); renderGl(); renderTree();
+go((location.hash||"").slice(1)||"ukaz",false);
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Концентрация и дыхание × ИИ-медицина: инструменты</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Serif:wght@500;600&family=IBM+Plex+Sans+Condensed:wght@500&family=IBM+Plex+Mono&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#F7FAF9; --panel:#FFFFFF; --ink:#16302C; --ink2:#4A615C; --line:#CFDDD9;
+  --tint:#E4F0EC; --accent:#0B6E60; --accent2:#084F45; --warn:#9A5B00; --warntint:#FBF0DE;
+  --danger:#A3322A; --dangertint:#FBE7E4; --info:#2F5D8A; --infotint:#E6EEF7;
+  --serif:"IBM Plex Serif", Georgia, "Times New Roman", serif;
+  --sans:"IBM Plex Sans", "Segoe UI", Roboto, Arial, sans-serif;
+  --cond:"IBM Plex Sans Condensed", "Arial Narrow", Arial, sans-serif;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#0F1B19; --panel:#152623; --ink:#E3EFEC; --ink2:#A4BAB5; --line:#2C4540;
+    --tint:#1B332F; --accent:#4FC2AE; --accent2:#7ED9C8; --warn:#E3A64A; --warntint:#33280F;
+    --danger:#EE8A80; --dangertint:#3A1D1A; --info:#8DB6E0; --infotint:#172A3D;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#0F1B19; --panel:#152623; --ink:#E3EFEC; --ink2:#A4BAB5; --line:#2C4540;
+  --tint:#1B332F; --accent:#4FC2AE; --accent2:#7ED9C8; --warn:#E3A64A; --warntint:#33280F;
+  --danger:#EE8A80; --dangertint:#3A1D1A; --info:#8DB6E0; --infotint:#172A3D;
+}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*::before,*::after{box-sizing:inherit}
+body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.6 var(--sans);-webkit-text-size-adjust:100%}
+a{color:var(--accent)}
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.wrap{max-width:1180px;margin:0 auto;padding:0 20px}
+header.top{border-bottom:1px solid var(--line);background:var(--panel)}
+.top .wrap{display:flex;flex-wrap:wrap;gap:8px 18px;align-items:center;padding-top:12px;padding-bottom:12px}
+.brand{font-family:var(--cond);font-size:14px;color:var(--ink2)}
+.toplinks{display:flex;flex-wrap:wrap;gap:6px;margin-left:auto}
+.toplinks a.home{text-decoration:none;white-space:nowrap}
+.toplinks button,.toplinks a.home,.btn{font:500 14px var(--sans);background:transparent;color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:5px 10px;cursor:pointer}
+.toplinks button:hover,.btn:hover{border-color:var(--accent);color:var(--accent)}
+.hero{padding:40px 0 18px}
+.hero h1{font:600 clamp(28px,4.4vw,44px)/1.12 var(--serif);margin:0 0 14px;max-width:22ch;letter-spacing:-.01em}
+.hero p.lead{font-size:18px;max-width:70ch;color:var(--ink2);margin:0 0 10px}
+.task{border-left:3px solid var(--accent);background:var(--tint);padding:12px 16px;margin:18px 0 6px;max-width:80ch;border-radius:0 6px 6px 0}
+.task b{font-weight:600}
+.meta{font-family:var(--cond);font-size:14px;color:var(--ink2);margin-top:10px}
+.layout{display:grid;grid-template-columns:250px 1fr;gap:28px;padding:18px 0 60px}
+nav.side{position:sticky;top:env(safe-area-inset-top,0px);align-self:start;max-height:100vh;overflow:auto;padding-top:8px}
+nav.side ol{list-style:none;margin:0;padding:0}
+nav.side li{margin:0}
+nav.side .grp{font-family:var(--cond);font-size:13px;color:var(--ink2);margin:14px 0 4px}
+nav.side button{display:block;width:100%;text-align:left;background:none;border:0;border-left:2px solid transparent;padding:5px 10px;font:15px/1.35 var(--sans);color:var(--ink);cursor:pointer}
+nav.side button:hover{color:var(--accent)}
+nav.side button[aria-current="true"]{border-left-color:var(--accent);color:var(--accent);font-weight:600;background:var(--tint)}
+.mobnav{display:none;margin:10px 0}
+.mobnav select{width:100%;font:16px var(--sans);padding:8px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--ink)}
+section.pane{display:none}
+section.pane.on{display:block}
+h2{font:600 28px/1.2 var(--serif);margin:4px 0 8px}
+h3{font:600 19px/1.3 var(--serif);margin:26px 0 8px}
+.pane > p.intro{color:var(--ink2);max-width:75ch;margin:0 0 18px}
+p,li{max-width:78ch}
+.tree{font:15px/1.55 var(--sans);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:16px 18px;overflow-x:auto}
+.tree ul{list-style:none;margin:0;padding-left:20px;border-left:1px solid var(--line)}
+.tree > ul{border-left:0;padding-left:0}
+.tree li{position:relative;padding:3px 0 3px 12px;max-width:none}
+.tree li::before{content:"";position:absolute;left:-20px;top:15px;width:26px;border-top:1px solid var(--line)}
+.tree > ul > li::before{display:none}
+.tree .branch{font-weight:600}
+.tree .cnt{font-family:var(--cond);color:var(--ink2);font-size:13px;margin-left:6px}
+.tree button.lnk{background:none;border:0;padding:0;color:var(--accent);font:inherit;cursor:pointer;text-decoration:underline;text-underline-offset:2px}
+.tree .note{color:var(--ink2)}
+.tree .plan{color:var(--ink2);font-style:italic}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px;margin:10px 0}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:14px 16px}
+.card h4{margin:0 0 6px;font:600 16px/1.3 var(--sans)}
+.card p{margin:0;color:var(--ink2);font-size:15px}
+.card .foot{margin-top:8px;font-family:var(--cond);font-size:13px;color:var(--ink2)}
+.scroll{overflow-x:auto;border:1px solid var(--line);border-radius:8px;background:var(--panel);margin:10px 0}
+table{border-collapse:collapse;width:100%;font-size:14.5px;line-height:1.45}
+th,td{text-align:left;vertical-align:top;padding:9px 12px;border-bottom:1px solid var(--line)}
+th{font:500 13.5px var(--cond);color:var(--ink2);background:var(--tint);position:sticky;top:0}
+tr:last-child td{border-bottom:0}
+td.num{white-space:nowrap}
+.tag{display:inline-block;font:500 12.5px var(--cond);padding:1px 7px;border-radius:10px;border:1px solid var(--line);white-space:nowrap;margin:1px 2px 1px 0}
+.t-doc{background:var(--tint);color:var(--accent2);border-color:transparent}
+.t-obs{background:var(--infotint);color:var(--info);border-color:transparent}
+.t-inf{background:var(--warntint);color:var(--warn);border-color:transparent}
+.t-proj{background:var(--dangertint);color:var(--danger);border-color:transparent}
+.filters{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:8px 0}
+.filters input,.filters select{font:15px var(--sans);padding:6px 9px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--ink);min-width:0}
+.filters input[type=search]{flex:1 1 220px}
+.chip{font:500 14px var(--sans);border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:16px;padding:4px 11px;cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--panel)}
+.count{font-family:var(--cond);font-size:13.5px;color:var(--ink2)}
+/* путь случая — главная интерактивная полоса */
+.path{display:grid;grid-template-columns:repeat(9,minmax(96px,1fr));gap:0;margin:16px 0 4px;overflow-x:auto;padding-bottom:4px}
+.stage{position:relative;background:none;border:0;cursor:pointer;padding:34px 6px 8px;text-align:center;color:var(--ink);font:500 14px/1.25 var(--sans)}
+.stage::before{content:"";position:absolute;left:0;right:0;top:15px;border-top:2px solid var(--line)}
+.stage .dot{position:absolute;left:50%;top:6px;width:20px;height:20px;margin-left:-10px;border-radius:50%;background:var(--panel);border:2px solid var(--line);font:600 11px/16px var(--cond);color:var(--ink2)}
+.stage:hover .dot{border-color:var(--accent)}
+.stage[aria-pressed="true"] .dot{background:var(--accent);border-color:var(--accent);color:var(--panel)}
+.stage[aria-pressed="true"]{color:var(--accent)}
+.stage[aria-pressed="true"]::before{border-top-color:var(--accent)}
+.detail{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:16px 18px;margin-top:8px}
+.detail h3{margin-top:0}
+.dgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px 22px}
+.dgrid h5{margin:0 0 4px;font:500 13.5px var(--cond);color:var(--ink2)}
+.dgrid ul{margin:0;padding-left:18px}
+.dgrid li{font-size:15px;margin:2px 0}
+.steps{counter-reset:s;list-style:none;padding:0;margin:10px 0}
+.steps > li{counter-increment:s;position:relative;padding:12px 14px 12px 52px;border:1px solid var(--line);border-radius:8px;background:var(--panel);margin-bottom:8px;max-width:none}
+.steps > li::before{content:counter(s);position:absolute;left:14px;top:12px;width:26px;height:26px;border-radius:50%;background:var(--tint);color:var(--accent2);font:600 14px/26px var(--cond);text-align:center}
+.steps h4{margin:0 0 4px;font:600 16px var(--sans)}
+.steps .row{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:4px 18px;font-size:14.5px;color:var(--ink2);margin-top:6px}
+.steps .row b{color:var(--ink);font-weight:500}
+.calc{display:grid;grid-template-columns:minmax(240px,320px) 1fr;gap:18px;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:16px 18px;margin:12px 0}
+.calc label{display:block;font-size:14.5px;margin:10px 0 2px}
+.calc input[type=range]{width:100%;accent-color:var(--accent)}
+.calc output{font-family:var(--cond);font-weight:500}
+.cm{display:grid;grid-template-columns:auto 1fr 1fr;gap:4px;font-size:14.5px;align-self:start}
+.cm div{padding:9px 10px;border-radius:6px;background:var(--tint)}
+.cm .h{background:none;font:500 13.5px var(--cond);color:var(--ink2);padding:4px 6px}
+.cm .bad{background:var(--dangertint);color:var(--danger)}
+.cm .big{font:600 20px var(--cond);display:block}
+.res{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:10px 26px;border-top:1px solid var(--line);padding-top:12px;font-size:15px}
+.res b{font:600 22px var(--cond);display:block;color:var(--accent)}
+.callout{border-left:3px solid var(--warn);background:var(--warntint);padding:10px 14px;border-radius:0 6px 6px 0;margin:12px 0;max-width:80ch}
+.callout.ok{border-left-color:var(--accent);background:var(--tint)}
+.gl dt{font-weight:600;margin-top:12px}
+.gl dd{margin:2px 0 0;color:var(--ink2);max-width:78ch}
+.gl .grp{font:600 17px var(--serif);margin:22px 0 4px;color:var(--accent2)}
+footer.foot{border-top:1px solid var(--line);padding:18px 0 30px;color:var(--ink2);font-size:14px}
+@media (max-width:860px){
+  .layout{grid-template-columns:1fr}
+  nav.side{display:none}
+  .mobnav{display:block}
+  .calc{grid-template-columns:1fr}
+  .path{grid-template-columns:repeat(9,112px)}
+}
+@media print{
+  header.top,nav.side,.mobnav,.filters,.toplinks{display:none!important}
+  section.pane{display:block!important;page-break-before:always}
+  .layout{display:block}
+  body{background:#fff;color:#000}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+<style>
+.two{display:grid;grid-template-columns:minmax(260px,340px) 1fr;gap:16px}
+.out{border:1px solid var(--line);border-radius:8px;padding:12px 14px;background:var(--panel)}
+.ctrl label{display:block;font-size:14.5px;margin:10px 0 3px}
+.ctrl select,.ctrl input[type=range],.ctrl input[type=number]{width:100%}
+.ctrl select,.ctrl input[type=number],textarea{font:15px var(--sans);padding:6px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--ink)}
+textarea{width:100%;min-height:110px;resize:vertical}
+.ctrl input[type=range]{accent-color:var(--accent)}
+.verdict{font:600 20px var(--serif);margin:0 0 6px}
+.v-ok{color:var(--accent)} .v-hold{color:var(--warn)} .v-stop{color:var(--danger)}
+.hl-r{background:var(--dangertint);color:var(--danger);border-radius:3px;padding:0 2px}
+.hl-y{background:var(--warntint);color:var(--warn);border-radius:3px;padding:0 2px}
+.hl-g{background:var(--tint);color:var(--accent2);border-radius:3px;padding:0 2px}
+.chk label{display:flex;gap:8px;align-items:flex-start;font-size:15px;margin:6px 0;max-width:none}
+.chk input{margin-top:4px;accent-color:var(--accent)}
+pre{font:13px/1.5 "IBM Plex Mono",Consolas,monospace;background:var(--tint);border:1px solid var(--line);border-radius:8px;padding:12px;overflow-x:auto;white-space:pre;max-width:100%}
+.kpis{display:flex;flex-wrap:wrap;gap:10px 24px;margin:8px 0}
+.kpis div{font-size:14px;color:var(--ink2)}
+.kpis b{display:block;font:600 22px "IBM Plex Sans Condensed",var(--cond);color:var(--ink)}
+.kpis .bad b{color:var(--danger)}
+canvas{width:100%;height:220px;border:1px solid var(--line);border-radius:8px;background:var(--panel);display:block}
+.phase{font:600 18px var(--serif)}
+.btnrow{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+.btn.pri{background:var(--accent);color:var(--panel);border-color:var(--accent)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.log{font-size:13.5px;max-height:160px;overflow:auto;border-top:1px solid var(--line);margin-top:8px;padding-top:6px}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.seg button{border:0;background:var(--panel);color:var(--ink);padding:6px 12px;font:500 14px var(--sans);cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--accent);color:var(--panel)}
+@media (max-width:860px){.two{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap">
+  <span class="brand">База знаний · ИИ в медицине · модель концентрации и дыхания</span>
+  <div class="toplinks">
+    <a class="btn home" href="index.html" title="К начальному меню комплекта">← Комплект</a>
+    <button data-go="formul">Формулировки</button>
+    <button data-go="skrin">Скрининг</button>
+    <button data-go="mandat">Мандат сессии</button>
+    <button data-go="sessia">Сессия с датчиком</button>
+    <button data-go="zhurnal">Журнал</button>
+    <button id="printBtn">Печать</button>
+  </div>
+</div></header>
+
+<div class="wrap"><div class="hero">
+  <h1>Концентрация и дыхание в контуре ИИ-медицины: инструменты</h1>
+  <p class="lead">Два направления с рабочими инструментами. Первое — встроить модель в ИИ-медицину так, чтобы она прошла регуляторную границу: формулировки, скрининг, каналы, протокол пилота. Второе — дополнить модель средствами ИИ-медицины: мандат сессии, объективная обратная связь с датчика, стоп-правила, журнал и гипотезы.</p>
+  <div class="task"><b>Условие для всех инструментов.</b> Практика с задержкой дыхания после выдоха — нагрузка на организм. Инструменты на этой странице не ставят диагнозов и не заменяют врача. Пороги стоп-правил — ориентиры для согласования с врачом, а не медицинская норма. При боли в груди, обмороке или выраженном головокружении практику нужно прекратить и обратиться за медицинской помощью.</div>
+  <div class="meta">Редакция 1 · 28.09.2026 · 10 разделов · <a href="04-processnaya-model.html">процессная модель карты</a> · связано с <a href="02-paralleli-i-modeli.html">моделями ИИ-медицины</a> и <a href="00-ukazatel-bz-ii-medicina.html">российской базой</a></div>
+</div></div>
+
+<div class="wrap">
+  <div class="mobnav"><label for="mob" class="count">Раздел</label><select id="mob"></select></div>
+  <div class="layout">
+    <nav class="side" aria-label="Разделы"><ol id="sidenav"></ol></nav>
+    <main id="main">
+
+<section class="pane" id="karta" data-title="Карта инструментов" data-grp="Вход">
+  <h2>Карта инструментов</h2>
+  <p class="intro">Какой инструмент какую задачу решает и на какую модель медицинского пула опирается.</p>
+  <div class="scroll"><table><thead><tr><th>Инструмент</th><th>Задача</th><th>Опора в пуле</th><th>Статус</th></tr></thead><tbody>
+   <tr><td colspan="4" style="background:var(--tint);font:600 15px var(--serif)">Направление 1. Встроить модель в ИИ-медицину</td></tr>
+   <tr><td><button class="lnk tl" data-go="formul">Проверка формулировок</button></td><td>Найти в тексте заявления, превращающие практику в медизделие, и переписать их</td><td>Квалификатор сценария, руководство FDA по общему благополучию</td><td>работает, правила</td></tr>
+   <tr><td><button class="lnk tl" data-go="skrin">Скрининг противопоказаний</button></td><td>Консервативно допустить человека к полной, облегчённой практике или направить к врачу</td><td>Модель режимов, реестр рисков</td><td>работает, правила</td></tr>
+   <tr><td><button class="lnk tl" data-go="kanaly">Каналы и позиционирование</button></td><td>Выбрать, куда встраивать: ДМС, корпоративные программы, реабилитация, приложение</td><td>Заказчики и деньги</td><td>справочник</td></tr>
+   <tr><td><button class="lnk tl" data-go="pilot">Протокол пилота</button></td><td>Спланировать проверку эффекта и рассчитать выборку</td><td>От PoC до промышленности, метрики</td><td>работает, расчёт</td></tr>
+   <tr><td colspan="4" style="background:var(--tint);font:600 15px var(--serif)">Направление 2. Дополнить модель ИИ-медициной</td></tr>
+   <tr><td><button class="lnk tl" data-go="mandat">Мандат сессии</button></td><td>Превратить личную модель человека в проверяемые границы: цель, лимиты, стоп-правила</td><td>Параллели: намерение → мандат → ограничения</td><td>работает, выдаёт JSON</td></tr>
+   <tr><td><button class="lnk tl" data-go="sessia">Сессия с датчиком</button></td><td>Объективная обратная связь в реальном времени и автоматическая остановка</td><td>Модель режимов, вектор обратной связи «вариант А»</td><td>симуляция и Bluetooth-пульсометр</td></tr>
+   <tr><td><button class="lnk tl" data-go="zhurnal">Журнал и гипотезы</button></td><td>Накопить сессии и получить гипотезы о том, что работает у конкретного человека</td><td>Вектор обратной связи «вариант Б»</td><td>работает, в этом браузере</td></tr>
+   <tr><td><button class="lnk tl" data-go="prompt">Промпт вопросника</button></td><td>Живой диалог ИИ с человеком, который строит его личную модель и мандат</td><td>Режимы, мандат, скрининг</td><td>текст для копирования</td></tr>
+   <tr><td><button class="lnk tl" data-go="vstroit">Встраивание в виджет</button></td><td>Как подключить модули к существующему виджету модели</td><td>—</td><td>архитектура и код</td></tr>
+  </tbody></table></div>
+</section>
+
+<section class="pane" id="formul" data-title="Проверка формулировок" data-grp="Направление 1: встроить">
+  <h2>Проверка формулировок</h2>
+  <p class="intro">Статус продукта определяет заявленное назначение. Вставьте текст описания практики — инструмент подсветит заявления медицинского назначения, оценит статус в четырёх юрисдикциях и предложит формулировки общего благополучия. Это правила, а не юридическое заключение. <span class="tag t-inf">вывод</span></p>
+  <textarea id="fText" aria-label="Текст описания">Практика концентрации и дыхания лечит хронические боли и помогает справиться с неизлечимыми заболеваниями. Снижает давление, заменяет лекарства. Помогает расслабиться, снять стресс и лучше сосредоточиться.</textarea>
+  <div class="btnrow"><button class="btn pri" id="fRun">Проверить</button></div>
+  <div class="out" id="fOut" aria-live="polite"></div>
+</section>
+
+<section class="pane" id="skrin" data-title="Скрининг противопоказаний" data-grp="Направление 1: встроить">
+  <h2>Скрининг противопоказаний</h2>
+  <p class="intro">Консервативный отбор до первой сессии. Любой положительный ответ из первой группы закрывает практику с задержкой дыхания до разговора с врачом; из второй — оставляет только дыхательную часть без задержки после выдоха. Это не диагностика, а правило осторожности. <span class="tag t-inf">вывод</span></p>
+  <div class="two">
+    <div class="chk" id="sList"></div>
+    <div class="out" id="sOut" aria-live="polite"></div>
+  </div>
+</section>
+
+<section class="pane" id="kanaly" data-title="Каналы и позиционирование" data-grp="Направление 1: встроить">
+  <h2>Каналы и позиционирование</h2>
+  <p class="intro">Куда встраивать практику, в каком статусе и что нужно для входа. Строки упорядочены от самого короткого пути к самому длинному. <span class="tag t-inf">вывод</span></p>
+  <div class="scroll"><table><thead><tr><th>Канал</th><th>Позиционирование</th><th>Кто платит</th><th>Что нужно для входа</th><th>Статус продукта</th></tr></thead><tbody id="kBody"></tbody></table></div>
+</section>
+
+<section class="pane" id="pilot" data-title="Протокол пилота" data-grp="Направление 1: встроить">
+  <h2>Протокол пилота</h2>
+  <p class="intro">Проверка эффекта до и после курса у одних и тех же людей. Калькулятор оценивает число участников для парного сравнения; протокол ниже собирается из выбранных параметров. Объём выборки — ориентир для планирования, окончательный дизайн согласуется с врачом-исследователем.</p>
+  <div class="two">
+    <div class="ctrl">
+      <label for="pD">Ожидаемый размер эффекта (d Коэна): <output id="oD"></output></label><input type="range" id="pD" min="0.2" max="1.2" step="0.05" value="0.5">
+      <label for="pPow">Мощность</label><select id="pPow"><option value="0.8">80%</option><option value="0.9">90%</option></select>
+      <label for="pDrop">Выбывание: <output id="oDrop"></output></label><input type="range" id="pDrop" min="0" max="40" step="5" value="20">
+      <label for="pWeeks">Длительность курса, недель</label><select id="pWeeks"><option>2</option><option selected>4</option><option>8</option></select>
+      <label for="pOut">Основной показатель</label><select id="pOut"><option value="stress">Уровень стресса (шкала PSS-10)</option><option value="hrv">Вариабельность ритма в покое (RMSSD)</option><option value="anx">Тревога (шкала GAD-7)</option><option value="focus">Субъективная сосредоточенность 0–10</option></select>
+    </div>
+    <div class="out"><div class="kpis" id="pK"></div><div id="pNote" style="font-size:14.5px;color:var(--ink2)"></div></div>
+  </div>
+  <h3>Протокол</h3>
+  <ol class="steps" id="pProt"></ol>
+</section>
+
+<section class="pane" id="mandat" data-title="Мандат сессии" data-grp="Направление 2: дополнить">
+  <h2>Мандат сессии</h2>
+  <p class="intro">Цепочка из рамки EMVCo «намерение → мандат и ограничения → исполнение» в модели концентрации: контекст задаётся до концентрации, превращается в границы, а сессия проверяется против них. Мандат использует следующий раздел. Результат скрининга подставляется автоматически.</p>
+  <div class="two">
+    <div class="ctrl">
+      <label for="mGoal">Контекст и цель (задаётся до концентрации)</label><select id="mGoal"><option>Расслабление и снятие напряжения</option><option>Сосредоточенность перед задачей</option><option>Работа с ощущением в области тела</option><option>Интуиция: поиск решения</option></select>
+      <label for="mArea">Область, орган или точка</label><select id="mArea"><option>Область сердца</option><option>Солнечное сплетение</option><option>Поясница</option><option>Голова, затылок</option><option>Шея и плечи</option><option>Живот</option><option>Колено</option></select>
+      <label for="mMode">Режим модели</label><select id="mMode"><option value="0">0 · привлечение</option><option value="1" selected>1 · регулярный</option><option value="2">2 · экстренный</option></select>
+      <label for="mHold">Максимальная задержка после выдоха: <output id="oHold"></output> с</label><input type="range" id="mHold" min="3" max="60" value="30">
+      <label for="mSpo">Стоп при насыщении кислородом ниже: <output id="oSpo"></output>%</label><input type="range" id="mSpo" min="85" max="95" value="90">
+      <label for="mHr">Стоп при пульсе вне диапазона: <output id="oHr"></output></label><input type="range" id="mHr" min="100" max="160" step="5" value="130">
+      <label for="mDay">Сессий в день, не больше</label><select id="mDay"><option>1</option><option selected>3</option><option>5</option></select>
+    </div>
+    <div>
+      <div class="out" id="mOut" aria-live="polite"></div>
+      <pre id="mJson" aria-label="Мандат в формате JSON"></pre>
+    </div>
+  </div>
+</section>
+
+<section class="pane" id="sessia" data-title="Сессия с датчиком" data-grp="Направление 2: дополнить">
+  <h2>Сессия с датчиком: объективная обратная связь</h2>
+  <p class="intro">Вектор обратной связи «орган → мозг», вариант А: сигнал в реальном времени во время задержки. Источник — симуляция или реальный пульсометр по Bluetooth (стандартный профиль пульса, передаёт пульс и интервалы между ударами). Стоп-правила из мандата прерывают задержку автоматически. Отметки перехода А→Б, Б1→Б2 и отпускание задержки делает человек, как в модели.</p>
+  <div class="filters">
+    <div class="seg" id="srcSeg"><button data-v="sim" aria-pressed="true">Симуляция</button><button data-v="ble" aria-pressed="false">Пульсометр Bluetooth</button></div>
+    <span class="count" id="bleStat"></span>
+  </div>
+  <div class="two">
+    <div>
+      <div class="phase" id="sPhase">Готово к старту</div>
+      <div class="kpis" id="sK"></div>
+      <div class="btnrow">
+        <button class="btn pri" id="sStart">Начать цикл</button>
+        <button class="btn" id="sAB" disabled>Переход А→Б</button>
+        <button class="btn" id="sB2" disabled>Граница Б1→Б2</button>
+        <button class="btn" id="sRel" disabled>Отпустить задержку</button>
+      </div>
+      <div class="ctrl"><label for="sInt">Интенсивность концентрации (напряжение мышц головы): <output id="oInt"></output></label><input type="range" id="sInt" min="1" max="10" value="5"></div>
+      <div class="ctrl"><label>Самочувствие до сессии, напряжение 0–10: <output id="oPre"></output></label><input type="range" id="sPre" min="0" max="10" value="6"></div>
+    </div>
+    <div><canvas id="cv" width="800" height="220" aria-label="График пульса и насыщения кислородом"></canvas><div class="log" id="sLog"></div></div>
+  </div>
+  <div class="callout">Симуляция показывает логику, а не физиологию конкретного человека: снижение насыщения кислородом во время задержки, первичное замедление и последующий рост пульса. Насыщение кислородом стандартный пульсометр не передаёт — для него нужен пульсоксиметр; в режиме Bluetooth стоп-правило по насыщению работает только если датчик его передаёт.</div>
+</section>
+
+<section class="pane" id="zhurnal" data-title="Журнал и гипотезы" data-grp="Направление 2: дополнить">
+  <h2>Журнал и гипотезы</h2>
+  <p class="intro">Вариант Б обратной связи: после сессий. Журнал хранится только в этом браузере. Гипотезы строятся правилами по накопленным данным и помечены как гипотезы: их подтверждает или отвергает дальнейшая практика. <span class="tag t-inf">вывод</span></p>
+  <div class="btnrow"><button class="btn" id="jDemo">Добавить 8 демо-сессий</button><button class="btn" id="jClear">Очистить журнал</button></div>
+  <div class="scroll"><table><thead><tr><th>Дата</th><th>Область</th><th>Задержка, с</th><th>А→Б, с</th><th>Мин. SpO₂</th><th>Пульс, изменение</th><th>RMSSD до → после</th><th>Напряжение до → после</th><th>Итог</th></tr></thead><tbody id="jBody"></tbody></table></div>
+  <h3>Гипотезы</h3><div class="out" id="jHyp"></div>
+</section>
+
+<section class="pane" id="prompt" data-title="Промпт вопросника" data-grp="Направление 2: дополнить">
+  <h2>Промпт вопросника</h2>
+  <p class="intro">Системный промпт для ИИ-диалога, который строит личную модель человека. Встроены скрининг, запрет медицинских обещаний, выдача мандата в формате предыдущего раздела и правила эскалации. Скопируйте и используйте в любом ассистенте.</p>
+  <div class="btnrow"><button class="btn" id="copyPrompt">Скопировать промпт</button><span class="count" id="copyStat"></span></div>
+  <pre id="promptText"></pre>
+</section>
+
+<section class="pane" id="vstroit" data-title="Встраивание в виджет" data-grp="Направление 2: дополнить">
+  <h2>Встраивание в существующий виджет модели</h2>
+  <p class="intro">Виджет модели уже умеет фазы дыхания, органы, журнал и аналитику. Модули этой страницы подключаются к нему через события фаз, не меняя визуализацию.</p>
+  <div class="scroll"><table><thead><tr><th>Модуль</th><th>Вход</th><th>Выход</th><th>Где в виджете</th></tr></thead><tbody>
+   <tr><td><b>Скрининг</b></td><td>Ответы анкеты</td><td>Допуск: полный, облегчённый, к врачу</td><td>Экран перед первым запуском; облегчённый допуск отключает фазу «задержка↓»</td></tr>
+   <tr><td><b>Мандат</b></td><td>Цель, область, режим, лимиты</td><td>JSON мандата</td><td>Режим настройки целевых точек; хранится вместе с профилем</td></tr>
+   <tr><td><b>Источник сигнала</b></td><td>Bluetooth-датчик или симуляция</td><td>Пульс, RR-интервалы, SpO₂</td><td>Новый слой поверх звука пульса: реальный пульс вместо синтетического</td></tr>
+   <tr><td><b>Стоп-правила</b></td><td>Сигнал и мандат</td><td>Событие «стоп» с причиной</td><td>Прерывает фазу «задержка↓», пишет причину в журнал причин</td></tr>
+   <tr><td><b>Журнал и гипотезы</b></td><td>Итоги сессий</td><td>Таблица, гипотезы</td><td>Вкладка аналитики</td></tr>
+  </tbody></table></div>
+  <h3>Код: стоп-правила и подключение пульсометра</h3>
+  <pre id="codeText"></pre>
+</section>
+
+    </main>
+  </div>
+</div>
+
+<footer class="foot"><div class="wrap">
+  <p>Концентрация и дыхание × ИИ-медицина · редакция 1 от 28.09.2026 · <a href="index.html">комплект</a> · <a href="02-paralleli-i-modeli.html">параллели и модели</a> · <a href="00-ukazatel-bz-ii-medicina.html">российский сегмент</a> · <a href="01-zarubezhnyy-segment.html">зарубежный сегмент</a></p>
+  <p>Инструменты не являются медицинским изделием и не предназначены для диагностики или лечения.</p>
+</div></footer>
+
+<script>
+(function(){
+"use strict";
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>Array.from(r.querySelectorAll(s));
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const li=a=>"<ul>"+a.map(x=>"<li>"+x+"</li>").join("")+"</ul>";
+const st={get(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+
+/* ---------- ФОРМУЛИРОВКИ ---------- */
+const FR=[
+ {re:/неизлечим\w*/gi,lv:"r",why:"обещание в отношении неизлечимых заболеваний",fix:"удалить; допустимо: «практика поддерживает самочувствие и не заменяет лечение»"},
+ {re:/(вы|из)?леч(ит|ит|ат|ение|ебн\w*|ить)|излечива\w*|исцел\w*/gi,lv:"r",why:"лечебное назначение",fix:"«помогает расслабиться», «поддерживает самочувствие»"},
+ {re:/диагност\w*|выявля\w* (заболеван|болезн)\w*/gi,lv:"r",why:"диагностическое назначение",fix:"удалить или «помогает замечать телесные ощущения»"},
+ {re:/замен\w* (лекарств|лечени|врач|терапи)\w*/gi,lv:"r",why:"призыв отказаться от лечения",fix:"«не заменяет медицинскую помощь и назначенное лечение»"},
+ {re:/(снижа|нормализ|понижа|повыша)\w* (давлени|сахар|холестерин|пульс)\w*/gi,lv:"r",why:"утверждение о влиянии на клинический показатель",fix:"удалить до получения доказательств; допустимо: «помогает замедлить дыхание»"},
+ {re:/(хроническ\w* )?бол(ь|и|ей|ям)(?![а-яё])|обезбол\w*/gi,lv:"y",why:"боль — пограничное: при привязке к заболеванию становится медицинским назначением",fix:"«помогает снять телесное напряжение»"},
+ {re:/гарантир\w*|100 ?%|навсегда/gi,lv:"y",why:"гарантия результата",fix:"«многие отмечают…», без гарантий"},
+ {re:/(заболевани|болезн|недуг|синдром|расстройств)\w*/gi,lv:"y",why:"упоминание заболевания рядом с эффектом",fix:"убрать связь практики с конкретным заболеванием"},
+ {re:/расслаб\w*|стресс\w*|сосредоточ\w*|концентрац\w*|внимани\w*|самочувстви\w*|спокойстви\w*|напряжени\w*/gi,lv:"g",why:"общее благополучие",fix:"—"}
+];
+function runF(){
+  const t=$("#fText").value; let html=esc(t); const found={r:[],y:[],g:[]};
+  FR.forEach(r=>{(t.match(r.re)||[]).forEach(m=>found[r.lv].push({m,why:r.why,fix:r.fix}));});
+  const marks=[];FR.forEach(r=>{let m;const re=new RegExp(r.re.source,"gi");while((m=re.exec(t))){marks.push([m.index,m.index+m[0].length,r.lv]);if(!m[0].length)re.lastIndex++;}});
+  marks.sort((a,b)=>a[0]-b[0]); let out="",pos=0;
+  marks.forEach(([a,b,l])=>{if(a<pos)return;out+=esc(t.slice(pos,a))+`<span class="hl-${l}">${esc(t.slice(a,b))}</span>`;pos=b;}); out+=esc(t.slice(pos));
+  const red=found.r.length, yel=found.y.length;
+  let v,cls; if(red){v="Медицинское назначение: продукт становится медизделием";cls="v-stop";} else if(yel){v="Пограничные формулировки: нужна правка";cls="v-hold";} else {v="Формулировки общего благополучия";cls="v-ok";}
+  const J=red?[["Россия","медизделие: регистрация по ПП РФ № 1684, клиническая оценка"],["США","медицинское изделие; не проходит как продукт общего благополучия"],["ЕС","медизделие по MDR; при классе IIa и выше — ИИ высокого риска"],["Великобритания","медизделие по UK MDR"]]
+   :yel?[["Россия","зависит от контекста; убрать связь с заболеваниями"],["США","возможно общее благополучие после правки"],["ЕС","зависит от заявленной цели"],["Великобритания","зависит от заявленной цели"]]
+   :[["Россия","вне регистрации медизделий"],["США","общее благополучие (руководство FDA 2026)"],["ЕС","вне MDR"],["Великобритания","вне UK MDR"]];
+  const uniq=a=>{const s=new Set();return a.filter(x=>{const k=x.why+x.m.toLowerCase();if(s.has(k))return false;s.add(k);return true})};
+  $("#fOut").innerHTML=`<p class="verdict ${cls}">${v}</p><p style="line-height:1.8">${out}</p>
+   <div class="scroll"><table><thead><tr><th>Фрагмент</th><th>Почему</th><th>Как переписать</th></tr></thead><tbody>${uniq(found.r.concat(found.y)).map(x=>`<tr><td><span class="hl-${found.r.includes(x)?"r":"y"}">${esc(x.m)}</span></td><td>${esc(x.why)}</td><td>${esc(x.fix)}</td></tr>`).join("")||'<tr><td colspan="3">Спорных фрагментов нет.</td></tr>'}</tbody></table></div>
+   <div class="scroll"><table><thead><tr><th>Юрисдикция</th><th>Оценка</th></tr></thead><tbody>${J.map(j=>`<tr><td>${j[0]}</td><td>${j[1]}</td></tr>`).join("")}</tbody></table></div>
+   <p style="margin:6px 0 0;font-size:14px;color:var(--ink2)">Формулировки общего благополучия найдены: ${found.g.length}. Рекомендуемая строка в описание: «Практика направлена на расслабление и сосредоточенность. Не является медицинской услугой, не предназначена для диагностики и лечения и не заменяет медицинскую помощь».</p>`;
+}
+
+/* ---------- СКРИНИНГ ---------- */
+const SQ=[
+ {g:"stop",t:"Есть сердечно-сосудистое заболевание: нарушения ритма, ишемическая болезнь, сердечная недостаточность, перенесённый инфаркт или инсульт"},
+ {g:"stop",t:"Давление повышено и не контролируется лечением"},
+ {g:"stop",t:"Эпилепсия или были обмороки без ясной причины"},
+ {g:"stop",t:"Беременность"},
+ {g:"stop",t:"Тяжёлое заболевание лёгких или дыхательная недостаточность"},
+ {g:"stop",t:"Возраст до 18 лет"},
+ {g:"soft",t:"Бывают панические атаки или ощущение нехватки воздуха вызывает сильную тревогу"},
+ {g:"soft",t:"Бронхиальная астма"},
+ {g:"soft",t:"Недавняя операция или травма в области, выбранной для концентрации"},
+ {g:"soft",t:"Глаукома, отслойка сетчатки или операции на глазах"},
+ {g:"soft",t:"Принимаю препараты, влияющие на ритм сердца или давление"}
+];
+function renderS(){
+  $("#sList").innerHTML=`<div class="count">Отметьте, что относится к вам</div>`+SQ.map((q,i)=>`<label><input type="checkbox" data-i="${i}"> <span>${esc(q.t)}</span></label>`).join("");
+  $("#sList").addEventListener("change",calcS); calcS();
+}
+let admit="full";
+function calcS(){
+  const on=$$("#sList input:checked").map(x=>SQ[+x.dataset.i]);
+  const stop=on.filter(q=>q.g==="stop"), soft=on.filter(q=>q.g==="soft");
+  let h;
+  if(stop.length){admit="doctor";h=`<p class="verdict v-stop">К врачу до начала практики</p><p>Задержка дыхания не рекомендуется, пока врач не оценит риск. Причины:</p>${li(stop.map(q=>esc(q.t)))}<p>Без задержки после выдоха доступно спокойное дыхание с медленным выдохом — тоже лучше после разговора с врачом.</p>`;}
+  else if(soft.length){admit="light";h=`<p class="verdict v-hold">Облегчённая практика</p><p>Доступны дыхание и концентрация без задержки после выдоха; задержку можно добавить после консультации. Причины:</p>${li(soft.map(q=>esc(q.t)))}`;}
+  else{admit="full";h=`<p class="verdict v-ok">Полная практика с ограничениями мандата</p><p>Противопоказаний из списка не отмечено. Стоп-правила мандата действуют всегда. При боли в груди, обмороке или сильном головокружении — прекратить и обратиться за помощью.</p>`;}
+  $("#sOut").innerHTML=h+`<p class="count" style="margin-top:8px">Скрининг — правило осторожности, а не медицинское заключение. Список не исчерпывающий.</p>`;
+  st.set("cb_admit",admit); if(typeof renderM==="function")renderM();
+}
+
+/* ---------- КАНАЛЫ ---------- */
+const KAN=[
+ ["Личная практика и приложение для пользователей","Общее благополучие: расслабление, сосредоточенность","Пользователь, подписка","Проверенные формулировки, скрининг, стоп-правила, дисклеймер","вне регистрации"],
+ ["Корпоративные программы благополучия","Управление стрессом и вниманием сотрудников","Работодатель","Пилот с метриками стресса и вовлечённости, договор без медицинских обещаний","вне регистрации"],
+ ["Программы здоровья в ДМС","Сервис профилактики и управления стрессом для застрахованных","Страховая компания","Пилот с метриками обращаемости и удовлетворённости; интеграция с приложением страховщика","вне регистрации при нейтральных формулировках"],
+ ["Сопровождение в клиниках: подготовка к процедурам, снижение тревоги","Немедикаментозная поддержка, назначает специалист","Клиника","Протокол применения, согласие пациента, обучение персонала, доказательства пилота","зависит от назначения; при лечебных заявлениях — медизделие"],
+ ["Реабилитация","Компонент программы реабилитации под контролем врача","Клиника, ОМС через программы реабилитации","Клиническое исследование, включение в протокол, при заявлении эффекта — регистрация","медизделие или часть медицинской технологии"]
+];
+
+/* ---------- ПИЛОТ ---------- */
+const OUTN={stress:"уровень стресса по шкале PSS-10",hrv:"вариабельность ритма в покое (RMSSD)",anx:"тревога по шкале GAD-7",focus:"субъективная сосредоточенность 0–10"};
+function calcP(){
+  const d=+$("#pD").value, pw=+$("#pPow").value, dr=+$("#pDrop").value/100, wk=$("#pWeeks").value, o=$("#pOut").value;
+  $("#oD").textContent=d.toFixed(2).replace(".",","); $("#oDrop").textContent=Math.round(dr*100)+"%";
+  const za=1.96, zb=pw===0.8?0.8416:1.2816;
+  const n=Math.ceil(Math.pow((za+zb)/d,2)+za*za/2), nd=Math.ceil(n/(1-dr));
+  $("#pK").innerHTML=`<div><b>${n}</b>участников нужно закончить курс</div><div><b>${nd}</b>набрать с учётом выбывания</div><div><b>${wk} нед.</b>курс</div>`;
+  $("#pNote").innerHTML=`Парное сравнение до и после, уровень значимости 5%, мощность ${Math.round(pw*100)}%. Размер эффекта 0,5 — умеренный; для первой оценки на себе и нескольких добровольцах выборка не рассчитывается, это пилот осуществимости.`;
+  const P=[
+   ["Цель","Проверить, меняется ли "+OUTN[o]+" после "+wk+"-недельного курса практики, и измерима ли обратная связь с датчика."],
+   ["Участники","Взрослые без противопоказаний по скринингу; облегчённый допуск — отдельная группа без задержки после выдоха. Набор: "+nd+" человек."],
+   ["Согласие","Письменное информированное согласие с описанием практики, рисков и права прекратить участие в любой момент; согласие на обработку данных."],
+   ["Практика","Режим 1 (регулярный), до 3 сессий в день по мандату; задержка после выдоха в пределах мандата; стоп-правила по датчику действуют всегда."],
+   ["Измерения","До курса и после: "+OUTN[o]+"; в каждой сессии: пульс, RR-интервалы, при наличии — насыщение кислородом, время перехода А→Б, длительность задержки, напряжение 0–10 до и после."],
+   ["Безопасность","Журнал нежелательных явлений: головокружение, обмороки, боль в груди, панические реакции. Любое серьёзное явление — остановка участия и консультация врача."],
+   ["Критерии успеха","Изменение основного показателя в ожидаемую сторону; ни одного серьёзного нежелательного явления; не менее 70% участников завершили курс."],
+   ["Анализ","Парный t-критерий или критерий Уилкоксона; отдельно — связь длительности задержки и изменения RMSSD внутри сессии."]
+  ];
+  $("#pProt").innerHTML=P.map(p=>`<li><h4>${esc(p[0])}</h4><div>${esc(p[1])}</div></li>`).join("");
+}
+
+/* ---------- МАНДАТ ---------- */
+let mandate=null;
+function renderM(){
+  const hold=+$("#mHold").value, spo=+$("#mSpo").value, hr=+$("#mHr").value, day=+$("#mDay").value, mode=+$("#mMode").value;
+  $("#oHold").textContent=hold; $("#oSpo").textContent=spo; $("#oHr").textContent="45–"+hr;
+  const a=st.get("cb_admit","full");
+  const effHold=a==="full"?hold:0;
+  mandate={version:"1.0",intent:{context:$("#mGoal").value,target:$("#mArea").value,mode:mode},
+   admission:a,constraints:{stateless:{max_hold_after_exhale_s:effHold,spo2_floor_pct:spo,hr_range_bpm:[45,hr]},stateful:{max_sessions_per_day:day}},
+   escalation:{on_stop:"прекратить задержку, записать причину",on_symptom:["боль в груди","обморок","сильное головокружение"],action_on_symptom:"прекратить практику, обратиться за медицинской помощью"},
+   labeling:"общее благополучие; не диагностика и не лечение",created:new Date().toISOString().slice(0,10)};
+  st.set("cb_mandate",mandate);
+  const warn=[]; if(mode===2)warn.push("Режим 2 (экстренный) не заменяет экстренную медицинскую помощь.");
+  if(a==="doctor")warn.push("Скрининг направил к врачу: задержка дыхания в мандате отключена, сессии с задержкой недоступны.");
+  if(a==="light")warn.push("Облегчённый допуск: задержка после выдоха отключена.");
+  if(effHold>45)warn.push("Задержка больше 45 с — оставьте её только при стабильной переносимости на меньших значениях.");
+  $("#mOut").innerHTML=`<p class="verdict ${a==="full"?"v-ok":a==="light"?"v-hold":"v-stop"}">Мандат: ${a==="full"?"полный допуск":a==="light"?"облегчённый допуск":"только после врача"}</p>
+   ${li([`Цель: ${esc(mandate.intent.context)}; область: ${esc(mandate.intent.target)}`,`Задержка после выдоха до ${effHold} с`,`Стоп: SpO₂ ниже ${spo}%, пульс вне 45–${hr}`,`Не больше ${day} сессий в день — ограничение с состоянием, счётчик ведёт журнал`].concat(warn))}`;
+  $("#mJson").textContent=JSON.stringify(mandate,null,2);
+}
+
+/* ---------- СЕССИЯ ---------- */
+let src="sim", sim=null, bleHR=null, bleRR=[], raf=null;
+const S={phase:"idle",t0:0,holdStart:0,ab:null,b2:null,hr:[],spo:[],rr:[],events:[],minSpo:100,hrStart:null};
+const PH=[["Вдох",4],["Короткая задержка после вдоха",2],["Выдох",6],["Задержка после выдоха: концентрация",0]];
+function logS(t){S.events.push(t);$("#sLog").innerHTML=S.events.slice().reverse().map(x=>`<div>${esc(x)}</div>`).join("");}
+function todayCount(){const j=st.get("cb_journal",[]);const d=new Date().toISOString().slice(0,10);return j.filter(x=>x.date===d&&!x.demo).length;}
+function startCycle(){
+  const m=st.get("cb_mandate",mandate); if(!m){logS("Сначала заполните мандат.");return;}
+  if(m.admission==="doctor"){logS("Скрининг направил к врачу: сессия с задержкой недоступна.");return;}
+  if(todayCount()>=m.constraints.stateful.max_sessions_per_day){logS("Лимит сессий на сегодня исчерпан (ограничение с состоянием).");return;}
+  Object.assign(S,{phase:"prep",t0:performance.now(),holdStart:0,ab:null,b2:null,hr:[],spo:[],rr:[],events:[],minSpo:100,hrStart:null});
+  sim={hr:72,spo:98,t:0}; $("#sStart").disabled=true; logS("Цикл начат: подготовка — вдох, короткая задержка, выдох.");
+  loop();
+}
+function phaseAt(el){let acc=0;for(let i=0;i<3;i++){acc+=PH[i][1];if(el<acc)return i;}return 3;}
+function loop(){
+  const m=st.get("cb_mandate",mandate); const el=(performance.now()-S.t0)/1000; const p=phaseAt(el);
+  const hold=m.admission==="light"?0:m.constraints.stateless.max_hold_after_exhale_s;
+  if(p===3&&S.phase!=="hold"){ if(hold===0){endS("облегчённый допуск: без задержки");return;} S.phase="hold";S.holdStart=el;["#sAB","#sRel"].forEach(x=>$(x).disabled=false);logS("Задержка после выдоха: этап А — поиск ощущений.");}
+  const hs=S.phase==="hold"?el-S.holdStart:0, inten=+$("#sInt").value;
+  // сигнал
+  let hr,spo=null,rr=null;
+  if(src==="sim"){
+    if(S.phase==="hold"){const dip=Math.min(8,hs*0.8); const rise=Math.max(0,(hs-12)*0.9)*(0.6+inten/10); hr=72-dip+rise; spo=98-Math.max(0,(hs-10)*0.22*(0.7+inten/12));}
+    else{hr=72+2*Math.sin(el*1.3); spo=98;}
+    hr+= (Math.random()-.5)*1.5; spo=Math.max(80,spo+(Math.random()-.5)*0.3); rr=60000/hr+(Math.random()-.5)*40*(S.phase==="hold"?1.4:1);
+  } else { hr=bleHR; if(bleRR.length)rr=bleRR.shift(); }
+  if(hr){S.hr.push([el,hr]); if(S.hrStart===null)S.hrStart=hr;} if(spo!==null){S.spo.push([el,spo]);S.minSpo=Math.min(S.minSpo,spo);} if(rr)S.rr.push(rr);
+  $("#sPhase").textContent=S.phase==="hold"?(S.b2?"Задержка · этап Б2 — за границей сред":S.ab?"Задержка · этап Б1 — наведение в области точки":"Задержка · этап А — поиск ощущений"):PH[p][0];
+  $("#sK").innerHTML=`<div><b>${hr?Math.round(hr):"—"}</b>пульс</div><div class="${spo!==null&&spo<m.constraints.stateless.spo2_floor_pct+2?"bad":""}"><b>${spo!==null?spo.toFixed(1).replace(".",","):"—"}</b>SpO₂, %</div><div><b>${hs?hs.toFixed(0):"0"} / ${hold}</b>задержка, с</div><div><b>${rmssd(S.rr.slice(-20))||"—"}</b>RMSSD, мс</div>`;
+  draw();
+  // стоп-правила
+  if(S.phase==="hold"){
+    const c=m.constraints.stateless;
+    if(spo!==null&&spo<c.spo2_floor_pct){endS(`стоп-правило: SpO₂ ${spo.toFixed(1)}% ниже ${c.spo2_floor_pct}%`);return;}
+    if(hr&&(hr<c.hr_range_bpm[0]||hr>c.hr_range_bpm[1])){endS(`стоп-правило: пульс ${Math.round(hr)} вне ${c.hr_range_bpm.join("–")}`);return;}
+    if(hs>=hold){endS(`достигнут предел мандата ${hold} с`);return;}
+  }
+  raf=setTimeout(loop,200);
+}
+function rmssd(a){if(a.length<3)return 0;let s=0;for(let i=1;i<a.length;i++)s+=Math.pow(a[i]-a[i-1],2);return Math.round(Math.sqrt(s/(a.length-1)));}
+function endS(reason){
+  clearTimeout(raf); const el=(performance.now()-S.t0)/1000, hs=S.phase==="hold"?el-S.holdStart:0;
+  logS("Задержка завершена: "+reason+".");
+  ["#sAB","#sB2","#sRel"].forEach(x=>$(x).disabled=true); $("#sStart").disabled=false;
+  const m=st.get("cb_mandate",mandate), pre=+$("#sPre").value;
+  const post=Math.max(0,pre-Math.round(hs/15)-(reason.startsWith("стоп")?0:1));
+  const rrAll=S.rr, half=Math.floor(rrAll.length/2);
+  const rec={date:new Date().toISOString().slice(0,10),area:m.intent.target,hold:Math.round(hs),ab:S.ab!==null?Math.round(S.ab):null,minSpo:S.spo.length?+S.minSpo.toFixed(1):null,hrd:S.hr.length?Math.round(S.hr[S.hr.length-1][1]-S.hrStart):null,r0:rmssd(rrAll.slice(0,half)),r1:rmssd(rrAll.slice(half)),pre,post,end:reason,src};
+  const j=st.get("cb_journal",[]); j.push(rec); st.set("cb_journal",j); renderJ();
+  S.phase="idle"; $("#sPhase").textContent="Сессия записана в журнал";
+}
+function draw(){
+  const c=$("#cv"),x=c.getContext&&c.getContext("2d"); if(!x)return; const W=c.width,H=c.height; x.clearRect(0,0,W,H);
+  const cs=getComputedStyle(document.documentElement); const acc=cs.getPropertyValue("--accent").trim()||"#0B6E60", dan=cs.getPropertyValue("--danger").trim()||"#A3322A", ink=cs.getPropertyValue("--ink2").trim()||"#555";
+  const tMax=Math.max(20,S.hr.length?S.hr[S.hr.length-1][0]:20);
+  const X=t=>t/tMax*(W-40)+30;
+  x.fillStyle=ink;x.font="12px sans-serif";x.fillText("пульс",34,14);x.fillStyle=dan;x.fillText("SpO₂",84,14);
+  if(S.holdStart){x.fillStyle="rgba(128,128,128,.12)";x.fillRect(X(S.holdStart),0,W-X(S.holdStart),H);}
+  const line=(pts,col,lo,hi)=>{x.strokeStyle=col;x.lineWidth=2;x.beginPath();pts.forEach(([t,v],i)=>{const y=H-10-(v-lo)/(hi-lo)*(H-30);i?x.lineTo(X(t),y):x.moveTo(X(t),y)});x.stroke();};
+  line(S.hr,acc,40,140); line(S.spo,dan,80,100);
+  const m=st.get("cb_mandate",mandate); if(m){const y=H-10-(m.constraints.stateless.spo2_floor_pct-80)/20*(H-30);x.setLineDash([4,4]);x.strokeStyle=dan;x.beginPath();x.moveTo(30,y);x.lineTo(W-10,y);x.stroke();x.setLineDash([]);}
+  [[S.ab,"А→Б"],[S.b2,"Б1→Б2"]].forEach(([t,l])=>{if(t!==null){const xx=X(S.holdStart+t);x.strokeStyle=ink;x.beginPath();x.moveTo(xx,18);x.lineTo(xx,H);x.stroke();x.fillStyle=ink;x.fillText(l,xx+3,28);}});
+}
+async function connectBLE(){
+  const s=$("#bleStat");
+  if(!navigator.bluetooth){s.textContent="Bluetooth недоступен в этом браузере или окне. Нужен Chrome или Edge и открытие страницы напрямую.";return false;}
+  try{
+    const dev=await navigator.bluetooth.requestDevice({filters:[{services:["heart_rate"]}]});
+    const srv=await dev.gatt.connect(); const svc=await srv.getPrimaryService("heart_rate"); const ch=await svc.getCharacteristic("heart_rate_measurement");
+    await ch.startNotifications();
+    ch.addEventListener("characteristicvaluechanged",e=>{const v=e.target.value;const f=v.getUint8(0);let i=1;bleHR=(f&1)?v.getUint16(i,true):v.getUint8(i);i+=(f&1)?2:1;if(f&8)i+=2;if(f&16){while(i+1<v.byteLength){bleRR.push(v.getUint16(i,true)/1024*1000);i+=2;}}});
+    s.textContent="Подключено: "+(dev.name||"пульсометр"); return true;
+  }catch(e){s.textContent="Подключение не выполнено: "+e.message;return false;}
+}
+
+/* ---------- ЖУРНАЛ ---------- */
+function renderJ(){
+  const j=st.get("cb_journal",[]);
+  $("#jBody").innerHTML=j.slice().reverse().map(r=>`<tr><td>${r.date}${r.demo?" · демо":""}</td><td>${esc(r.area)}</td><td>${r.hold}</td><td>${r.ab??"—"}</td><td>${r.minSpo??"—"}</td><td>${r.hrd!=null?(r.hrd>0?"+":"")+r.hrd:"—"}</td><td>${r.r0||"—"} → ${r.r1||"—"}</td><td>${r.pre} → ${r.post}</td><td>${esc(r.end)}</td></tr>`).join("")||'<tr><td colspan="9">Журнал пуст. Проведите сессию в предыдущем разделе или добавьте демо-сессии.</td></tr>';
+  const H=[]; const n=j.length;
+  if(n<5){H.push(`Сессий: ${n}. Для первых гипотез нужно не меньше пяти.`);}
+  else{
+    const long=j.filter(r=>r.hold>=25), short=j.filter(r=>r.hold<25);
+    const dT=a=>a.length?a.reduce((s,r)=>s+(r.pre-r.post),0)/a.length:null;
+    if(long.length>=2&&short.length>=2){const a=dT(long),b=dT(short);H.push(`Гипотеза: задержки от 25 с снижают напряжение в среднем на ${a.toFixed(1).replace(".",",")} балла, короткие — на ${b.toFixed(1).replace(".",",")}. ${a>b?"Длинные задержки работают сильнее — при хорошей переносимости.":"Длина задержки на эффект не влияет — нет смысла её увеличивать."}`);}
+    const withAB=j.filter(r=>r.ab!=null); if(withAB.length>=3){const m=withAB.reduce((s,r)=>s+r.ab,0)/withAB.length;H.push(`Переход А→Б в среднем на ${Math.round(m)}-й секунде задержки. Если стоп-правило срабатывает раньше этого времени, этап Б не наступает — стоит сократить интенсивность или длительность, а не наоборот.`);}
+    const rr=j.filter(r=>r.r0&&r.r1); if(rr.length>=3){const up=rr.filter(r=>r.r1>r.r0).length;H.push(`RMSSD во второй половине сессии выше, чем в первой, в ${up} из ${rr.length} сессий. ${up/rr.length>=0.6?"Кандидат в объективный признак резонанса — проверить на большем числе сессий.":"Устойчивой связи пока не видно."}`);}
+    const stops=j.filter(r=>/стоп-правило/.test(r.end)).length; if(stops)H.push(`Стоп-правило срабатывало в ${stops} из ${n} сессий. ${stops/n>0.3?"Это часто: снизьте предел задержки в мандате.":"Частота допустимая."}`);
+    const areas={};j.forEach(r=>{(areas[r.area]=areas[r.area]||[]).push(r.pre-r.post)});const best=Object.entries(areas).filter(([k,v])=>v.length>=2).map(([k,v])=>[k,v.reduce((s,x)=>s+x,0)/v.length]).sort((a,b)=>b[1]-a[1]);
+    if(best.length>=2)H.push(`Наибольшее снижение напряжения — при работе с областью «${best[0][0]}». Гипотеза для следующих сессий.`);
+  }
+  $("#jHyp").innerHTML=li(H.map(esc))+`<p class="count">Гипотезы — правила по журналу, не выводы о здоровье. Следующий шаг — передавать журнал ИИ-ассистенту вместе с мандатом для более тонких гипотез.</p>`;
+}
+function demoJ(){
+  const areas=["Область сердца","Солнечное сплетение","Шея и плечи","Поясница"], j=st.get("cb_journal",[]);
+  for(let i=0;i<8;i++){const hold=10+Math.round(Math.random()*35), pre=5+Math.round(Math.random()*4);const stop=hold>38&&Math.random()<0.5;
+    j.push({date:"2026-09-"+String(10+i).padStart(2,"0"),area:areas[i%4],hold,ab:hold>12?Math.round(6+Math.random()*8):null,minSpo:+(98-Math.max(0,(hold-10)*0.22)).toFixed(1),hrd:Math.round(hold>20?hold*0.3:-4),r0:30+Math.round(Math.random()*10),r1:32+Math.round(Math.random()*16),pre,post:Math.max(0,pre-1-Math.round(hold/15)-(i%4===2?1:0)),end:stop?"стоп-правило: SpO₂ ниже порога":"отпущена человеком",src:"demo",demo:true});}
+  st.set("cb_journal",j); renderJ();
+}
+
+/* ---------- ПРОМПТ И КОД ---------- */
+const PROMPT=`Ты — ассистент практики «Концентрация и дыхание». Твоя задача — в живом диалоге построить личную модель человека и выдать мандат сессии.
+
+Роль и тон
+- Сначала по первым ответам определи, как человеку удобнее общаться: коротко или подробно, образно или по шагам. Держи этот тон.
+- Ты отражаешь и усиливаешь то, что уже есть у человека, а не навязываешь готовую схему.
+
+Границы
+- Практика относится к общему благополучию: расслабление, сосредоточенность, внимание к телу.
+- Не ставь диагнозов, не обещай лечения и излечения, не предлагай отменять или заменять лечение.
+- Если человек описывает симптомы заболевания, мягко посоветуй обсудить их с врачом и продолжай только в рамках благополучия.
+
+Порядок диалога
+1. Контекст и намерение: чего человек хочет от практики сейчас. Это главный определитель, он задаётся до концентрации.
+2. Скрининг: спроси по одному пункту — сердечно-сосудистые заболевания, неконтролируемое давление, эпилепсия или обмороки, беременность, тяжёлые заболевания лёгких, возраст до 18 лет; затем панические атаки, астма, недавние операции в выбранной области, глаукома, препараты для сердца и давления.
+   - Если есть пункт из первой группы: задержку дыхания не предлагай, посоветуй сначала поговорить с врачом.
+   - Если из второй: только дыхание без задержки после выдоха.
+3. Опыт: практиковал ли раньше задержки, какую длительность переносит комфортно.
+4. Область, орган или точка для концентрации и что человек обычно там ощущает.
+5. Режим: 0 — привлечение, 1 — регулярный, 2 — экстренный. Предупреди, что режим 2 не заменяет экстренную медицинскую помощь.
+
+Итог
+Выдай краткое резюме личной модели на естественном языке без лишних подробностей о здоровье, затем мандат строго в JSON:
+{"version":"1.0","intent":{"context":"...","target":"...","mode":0|1|2},"admission":"full"|"light"|"doctor","constraints":{"stateless":{"max_hold_after_exhale_s":число,"spo2_floor_pct":90,"hr_range_bpm":[45,130]},"stateful":{"max_sessions_per_day":число}},"escalation":{"on_symptom":["боль в груди","обморок","сильное головокружение"],"action_on_symptom":"прекратить практику, обратиться за медицинской помощью"},"labeling":"общее благополучие; не диагностика и не лечение"}
+
+Правила мандата
+- Для новичка задержка после выдоха — не больше 15–20 секунд; увеличивать постепенно.
+- При admission "light" или "doctor" max_hold_after_exhale_s = 0.
+- Пороги SpO₂ и пульса — ориентиры; если у человека есть лечащий врач, предложи согласовать их с ним.
+
+После сессий
+Если человек присылает журнал, предлагай гипотезы о том, что у него работает, и прямо помечай их как гипотезы. Если стоп-правила срабатывают часто — предлагай снизить нагрузку, а не увеличить.`;
+const CODE=`// 1. Стоп-правила: вызывать на каждом отсчёте сигнала во время фазы «задержка↓»
+function checkStop(mandate, sig, holdSec){
+  const c = mandate.constraints.stateless;
+  if (sig.spo2 != null && sig.spo2 < c.spo2_floor_pct) return 'SpO2 ниже порога';
+  if (sig.hr != null && (sig.hr < c.hr_range_bpm[0] || sig.hr > c.hr_range_bpm[1])) return 'пульс вне диапазона';
+  if (holdSec >= c.max_hold_after_exhale_s) return 'предел задержки';
+  return null;
+}
+// В цикле виджета:
+// const reason = checkStop(mandate, signal, holdSec);
+// if (reason) { endHold(); journal.addReason(reason); }
+
+// 2. Ограничение с состоянием: перед стартом сессии
+function canStart(mandate, journal){
+  const today = new Date().toISOString().slice(0,10);
+  const n = journal.filter(s => s.date === today).length;
+  return mandate.admission !== 'doctor' && n < mandate.constraints.stateful.max_sessions_per_day;
+}
+
+// 3. Пульсометр по Bluetooth (стандартный профиль Heart Rate, Chrome/Edge)
+async function connectHR(onData){
+  const dev = await navigator.bluetooth.requestDevice({ filters:[{ services:['heart_rate'] }] });
+  const ch = await (await (await dev.gatt.connect()).getPrimaryService('heart_rate'))
+                .getCharacteristic('heart_rate_measurement');
+  await ch.startNotifications();
+  ch.addEventListener('characteristicvaluechanged', e => {
+    const v = e.target.value, f = v.getUint8(0); let i = 1;
+    const hr = (f & 1) ? v.getUint16(i, true) : v.getUint8(i); i += (f & 1) ? 2 : 1;
+    if (f & 8) i += 2;                       // энергия — пропустить
+    const rr = [];
+    if (f & 16) while (i + 1 < v.byteLength) { rr.push(v.getUint16(i, true) / 1024 * 1000); i += 2; }
+    onData({ hr, rr });                     // rr — интервалы в мс для RMSSD
+  });
+}
+
+// 4. RMSSD по последним интервалам
+const rmssd = a => a.length < 3 ? null :
+  Math.sqrt(a.slice(1).reduce((s, x, k) => s + (x - a[k]) ** 2, 0) / (a.length - 1));`;
+
+/* ---------- НАВИГАЦИЯ ---------- */
+const panes=$$("section.pane");
+function go(id,push){const t=panes.find(p=>p.id===id)||panes[0];panes.forEach(p=>p.classList.toggle("on",p===t));$$("nav.side button").forEach(b=>b.setAttribute("aria-current",b.dataset.go===t.id?"true":"false"));$("#mob").value=t.id;if(push!==false){try{history.replaceState(null,"","#"+t.id)}catch(e){}}window.scrollTo({top:$(".layout").offsetTop-10,behavior:"auto"});if(t.id==="sessia")draw();}
+function renderNav(){let h="",last="";panes.forEach(p=>{if(p.dataset.grp!==last){h+=`<li class="grp">${esc(p.dataset.grp)}</li>`;last=p.dataset.grp;}h+=`<li><button data-go="${p.id}">${esc(p.dataset.title)}</button></li>`;});$("#sidenav").innerHTML=h;$("#mob").innerHTML=panes.map(p=>`<option value="${p.id}">${esc(p.dataset.grp)}: ${esc(p.dataset.title)}</option>`).join("");$("#mob").addEventListener("change",e=>go(e.target.value));document.addEventListener("click",e=>{const b=e.target.closest("[data-go]");if(b){e.preventDefault();go(b.dataset.go)}});}
+
+$$(".tl").forEach(b=>{b.style.cssText="background:none;border:0;padding:0;color:var(--accent);font:inherit;cursor:pointer;text-decoration:underline"});
+$("#printBtn").addEventListener("click",()=>window.print());
+$("#fRun").addEventListener("click",runF);
+$("#kBody").innerHTML=KAN.map(r=>`<tr><td><b>${esc(r[0])}</b></td><td>${esc(r[1])}</td><td>${esc(r[2])}</td><td>${esc(r[3])}</td><td>${esc(r[4])}</td></tr>`).join("");
+["#pD","#pPow","#pDrop","#pWeeks","#pOut"].forEach(s=>$(s).addEventListener("input",calcP));
+["#mGoal","#mArea","#mMode","#mHold","#mSpo","#mHr","#mDay"].forEach(s=>$(s).addEventListener("input",renderM));
+$("#srcSeg").addEventListener("click",async e=>{const b=e.target.closest("button");if(!b)return;if(b.dataset.v==="ble"){const ok=await connectBLE();if(!ok)return;}src=b.dataset.v;$$("#srcSeg button").forEach(x=>x.setAttribute("aria-pressed",x===b?"true":"false"));if(src==="sim")$("#bleStat").textContent="";});
+$("#sStart").addEventListener("click",startCycle);
+$("#sAB").addEventListener("click",()=>{if(S.phase!=="hold"||S.ab!==null)return;S.ab=(performance.now()-S.t0)/1000-S.holdStart;$("#sAB").disabled=true;$("#sB2").disabled=false;logS(`Переход А→Б на ${S.ab.toFixed(0)}-й секунде задержки: наведение в области точки.`);});
+$("#sB2").addEventListener("click",()=>{if(S.phase!=="hold"||S.b2!==null)return;S.b2=(performance.now()-S.t0)/1000-S.holdStart;$("#sB2").disabled=true;logS(`Граница сред на ${S.b2.toFixed(0)}-й секунде: этап Б2.`);});
+$("#sRel").addEventListener("click",()=>{if(S.phase==="hold")endS("отпущена человеком");});
+$("#sInt").addEventListener("input",()=>$("#oInt").textContent=$("#sInt").value); $("#oInt").textContent=$("#sInt").value;
+$("#sPre").addEventListener("input",()=>$("#oPre").textContent=$("#sPre").value); $("#oPre").textContent=$("#sPre").value;
+$("#jDemo").addEventListener("click",demoJ);
+$("#jClear").addEventListener("click",()=>{st.set("cb_journal",[]);renderJ();});
+$("#promptText").textContent=PROMPT; $("#codeText").textContent=CODE;
+$("#copyPrompt").addEventListener("click",async()=>{try{await navigator.clipboard.writeText(PROMPT);$("#copyStat").textContent="Скопировано";}catch(e){$("#copyStat").textContent="Выделите текст и скопируйте вручную";}});
+
+renderNav(); runF(); renderS(); calcP(); renderM(); renderJ(); draw();
+go((location.hash||"").slice(1)||"karta",false);
+})();
+</script>
+</body>
+</html>

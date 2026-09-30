@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>База знаний: ИИ в медицине — дерево материалов</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Serif:wght@500;600&family=IBM+Plex+Sans+Condensed:wght@500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#F7FAF9; --panel:#FFFFFF; --ink:#16302C; --ink2:#4A615C; --line:#CFDDD9;
+  --tint:#E4F0EC; --accent:#0B6E60; --accent2:#084F45; --warn:#9A5B00; --warntint:#FBF0DE;
+  --danger:#A3322A; --dangertint:#FBE7E4; --info:#2F5D8A; --infotint:#E6EEF7;
+  --serif:"IBM Plex Serif", Georgia, "Times New Roman", serif;
+  --sans:"IBM Plex Sans", "Segoe UI", Roboto, Arial, sans-serif;
+  --cond:"IBM Plex Sans Condensed", "Arial Narrow", Arial, sans-serif;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#0F1B19; --panel:#152623; --ink:#E3EFEC; --ink2:#A4BAB5; --line:#2C4540;
+    --tint:#1B332F; --accent:#4FC2AE; --accent2:#7ED9C8; --warn:#E3A64A; --warntint:#33280F;
+    --danger:#EE8A80; --dangertint:#3A1D1A; --info:#8DB6E0; --infotint:#172A3D;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#0F1B19; --panel:#152623; --ink:#E3EFEC; --ink2:#A4BAB5; --line:#2C4540;
+  --tint:#1B332F; --accent:#4FC2AE; --accent2:#7ED9C8; --warn:#E3A64A; --warntint:#33280F;
+  --danger:#EE8A80; --dangertint:#3A1D1A; --info:#8DB6E0; --infotint:#172A3D;
+}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*::before,*::after{box-sizing:inherit}
+body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.6 var(--sans);-webkit-text-size-adjust:100%}
+a{color:var(--accent)}
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.wrap{max-width:1180px;margin:0 auto;padding:0 20px}
+header.top{border-bottom:1px solid var(--line);background:var(--panel)}
+.top .wrap{display:flex;flex-wrap:wrap;gap:8px 18px;align-items:center;padding-top:12px;padding-bottom:12px}
+.brand{font-family:var(--cond);font-size:14px;color:var(--ink2)}
+.toplinks{display:flex;flex-wrap:wrap;gap:6px;margin-left:auto}
+.toplinks a.home{text-decoration:none;white-space:nowrap}
+.toplinks button,.toplinks a.home,.btn{font:500 14px var(--sans);background:transparent;color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:5px 10px;cursor:pointer}
+.toplinks button:hover,.btn:hover{border-color:var(--accent);color:var(--accent)}
+.hero{padding:40px 0 18px}
+.hero h1{font:600 clamp(28px,4.4vw,44px)/1.12 var(--serif);margin:0 0 14px;max-width:22ch;letter-spacing:-.01em}
+.hero p.lead{font-size:18px;max-width:70ch;color:var(--ink2);margin:0 0 10px}
+.task{border-left:3px solid var(--accent);background:var(--tint);padding:12px 16px;margin:18px 0 6px;max-width:80ch;border-radius:0 6px 6px 0}
+.task b{font-weight:600}
+.meta{font-family:var(--cond);font-size:14px;color:var(--ink2);margin-top:10px}
+.layout{display:grid;grid-template-columns:250px 1fr;gap:28px;padding:18px 0 60px}
+nav.side{position:sticky;top:env(safe-area-inset-top,0px);align-self:start;max-height:100vh;overflow:auto;padding-top:8px}
+nav.side ol{list-style:none;margin:0;padding:0}
+nav.side li{margin:0}
+nav.side .grp{font-family:var(--cond);font-size:13px;color:var(--ink2);margin:14px 0 4px}
+nav.side button{display:block;width:100%;text-align:left;background:none;border:0;border-left:2px solid transparent;padding:5px 10px;font:15px/1.35 var(--sans);color:var(--ink);cursor:pointer}
+nav.side button:hover{color:var(--accent)}
+nav.side button[aria-current="true"]{border-left-color:var(--accent);color:var(--accent);font-weight:600;background:var(--tint)}
+.mobnav{display:none;margin:10px 0}
+.mobnav select{width:100%;font:16px var(--sans);padding:8px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--ink)}
+section.pane{display:none}
+section.pane.on{display:block}
+h2{font:600 28px/1.2 var(--serif);margin:4px 0 8px}
+h3{font:600 19px/1.3 var(--serif);margin:26px 0 8px}
+.pane > p.intro{color:var(--ink2);max-width:75ch;margin:0 0 18px}
+p,li{max-width:78ch}
+.tree{font:15px/1.55 var(--sans);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:16px 18px;overflow-x:auto}
+.tree ul{list-style:none;margin:0;padding-left:20px;border-left:1px solid var(--line)}
+.tree > ul{border-left:0;padding-left:0}
+.tree li{position:relative;padding:3px 0 3px 12px;max-width:none}
+.tree li::before{content:"";position:absolute;left:-20px;top:15px;width:26px;border-top:1px solid var(--line)}
+.tree > ul > li::before{display:none}
+.tree .branch{font-weight:600}
+.tree .cnt{font-family:var(--cond);color:var(--ink2);font-size:13px;margin-left:6px}
+.tree button.lnk{background:none;border:0;padding:0;color:var(--accent);font:inherit;cursor:pointer;text-decoration:underline;text-underline-offset:2px}
+.tree .note{color:var(--ink2)}
+.tree .plan{color:var(--ink2);font-style:italic}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px;margin:10px 0}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:14px 16px}
+.card h4{margin:0 0 6px;font:600 16px/1.3 var(--sans)}
+.card p{margin:0;color:var(--ink2);font-size:15px}
+.card .foot{margin-top:8px;font-family:var(--cond);font-size:13px;color:var(--ink2)}
+.scroll{overflow-x:auto;border:1px solid var(--line);border-radius:8px;background:var(--panel);margin:10px 0}
+table{border-collapse:collapse;width:100%;font-size:14.5px;line-height:1.45}
+th,td{text-align:left;vertical-align:top;padding:9px 12px;border-bottom:1px solid var(--line)}
+th{font:500 13.5px var(--cond);color:var(--ink2);background:var(--tint);position:sticky;top:0}
+tr:last-child td{border-bottom:0}
+td.num{white-space:nowrap}
+.tag{display:inline-block;font:500 12.5px var(--cond);padding:1px 7px;border-radius:10px;border:1px solid var(--line);white-space:nowrap;margin:1px 2px 1px 0}
+.t-doc{background:var(--tint);color:var(--accent2);border-color:transparent}
+.t-obs{background:var(--infotint);color:var(--info);border-color:transparent}
+.t-inf{background:var(--warntint);color:var(--warn);border-color:transparent}
+.t-proj{background:var(--dangertint);color:var(--danger);border-color:transparent}
+.filters{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:8px 0}
+.filters input,.filters select{font:15px var(--sans);padding:6px 9px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--ink);min-width:0}
+.filters input[type=search]{flex:1 1 220px}
+.chip{font:500 14px var(--sans);border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:16px;padding:4px 11px;cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--panel)}
+.count{font-family:var(--cond);font-size:13.5px;color:var(--ink2)}
+/* путь случая — главная интерактивная полоса */
+.path{display:grid;grid-template-columns:repeat(9,minmax(96px,1fr));gap:0;margin:16px 0 4px;overflow-x:auto;padding-bottom:4px}
+.stage{position:relative;background:none;border:0;cursor:pointer;padding:34px 6px 8px;text-align:center;color:var(--ink);font:500 14px/1.25 var(--sans)}
+.stage::before{content:"";position:absolute;left:0;right:0;top:15px;border-top:2px solid var(--line)}
+.stage .dot{position:absolute;left:50%;top:6px;width:20px;height:20px;margin-left:-10px;border-radius:50%;background:var(--panel);border:2px solid var(--line);font:600 11px/16px var(--cond);color:var(--ink2)}
+.stage:hover .dot{border-color:var(--accent)}
+.stage[aria-pressed="true"] .dot{background:var(--accent);border-color:var(--accent);color:var(--panel)}
+.stage[aria-pressed="true"]{color:var(--accent)}
+.stage[aria-pressed="true"]::before{border-top-color:var(--accent)}
+.detail{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:16px 18px;margin-top:8px}
+.detail h3{margin-top:0}
+.dgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px 22px}
+.dgrid h5{margin:0 0 4px;font:500 13.5px var(--cond);color:var(--ink2)}
+.dgrid ul{margin:0;padding-left:18px}
+.dgrid li{font-size:15px;margin:2px 0}
+.steps{counter-reset:s;list-style:none;padding:0;margin:10px 0}
+.steps > li{counter-increment:s;position:relative;padding:12px 14px 12px 52px;border:1px solid var(--line);border-radius:8px;background:var(--panel);margin-bottom:8px;max-width:none}
+.steps > li::before{content:counter(s);position:absolute;left:14px;top:12px;width:26px;height:26px;border-radius:50%;background:var(--tint);color:var(--accent2);font:600 14px/26px var(--cond);text-align:center}
+.steps h4{margin:0 0 4px;font:600 16px var(--sans)}
+.steps .row{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:4px 18px;font-size:14.5px;color:var(--ink2);margin-top:6px}
+.steps .row b{color:var(--ink);font-weight:500}
+.calc{display:grid;grid-template-columns:minmax(240px,320px) 1fr;gap:18px;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:16px 18px;margin:12px 0}
+.calc label{display:block;font-size:14.5px;margin:10px 0 2px}
+.calc input[type=range]{width:100%;accent-color:var(--accent)}
+.calc output{font-family:var(--cond);font-weight:500}
+.cm{display:grid;grid-template-columns:auto 1fr 1fr;gap:4px;font-size:14.5px;align-self:start}
+.cm div{padding:9px 10px;border-radius:6px;background:var(--tint)}
+.cm .h{background:none;font:500 13.5px var(--cond);color:var(--ink2);padding:4px 6px}
+.cm .bad{background:var(--dangertint);color:var(--danger)}
+.cm .big{font:600 20px var(--cond);display:block}
+.res{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:10px 26px;border-top:1px solid var(--line);padding-top:12px;font-size:15px}
+.res b{font:600 22px var(--cond);display:block;color:var(--accent)}
+.callout{border-left:3px solid var(--warn);background:var(--warntint);padding:10px 14px;border-radius:0 6px 6px 0;margin:12px 0;max-width:80ch}
+.callout.ok{border-left-color:var(--accent);background:var(--tint)}
+.gl dt{font-weight:600;margin-top:12px}
+.gl dd{margin:2px 0 0;color:var(--ink2);max-width:78ch}
+.gl .grp{font:600 17px var(--serif);margin:22px 0 4px;color:var(--accent2)}
+footer.foot{border-top:1px solid var(--line);padding:18px 0 30px;color:var(--ink2);font-size:14px}
+@media (max-width:860px){
+  .layout{grid-template-columns:1fr}
+  nav.side{display:none}
+  .mobnav{display:block}
+  .calc{grid-template-columns:1fr}
+  .path{grid-template-columns:repeat(9,112px)}
+}
+@media print{
+  header.top,nav.side,.mobnav,.filters,.toplinks{display:none!important}
+  section.pane{display:block!important;page-break-before:always}
+  .layout{display:block}
+  body{background:#fff;color:#000}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+.lnk2{background:none;border:0;padding:0;color:var(--accent);font:inherit;cursor:pointer;text-decoration:underline;text-underline-offset:2px}
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap">
+  <span class="brand">База знаний · ИИ в медицине · указатель</span>
+  <div class="toplinks">
+    <a class="btn home" href="index.html" title="К начальному меню комплекта">← Комплект</a>
+    <button data-go="put">Путь случая</button>
+    <button data-go="primer">Сквозной пример</button>
+    <button data-go="reestr">Реестр документов</button>
+    <button data-go="metriki">Метрики</button>
+    <button data-go="rol">Карта роли</button>
+    <button id="printBtn" title="Печать всех разделов">Печать</button>
+  </div>
+</div></header>
+
+<div class="wrap">
+  <div class="hero">
+    <h1>Дерево материалов по применению ИИ в медицине</h1>
+    <p class="lead">Рабочая база знаний для команды, которая превращает ML- и LLM-разработки в промышленные медицинские продукты. Одна ось связывает всё: путь медицинского случая от профилактики до оплаты и контроля качества.</p>
+    <div class="task"><b>Задача команды.</b> Создавать цифровые продукты на базе ИИ для медицины, которые меняют здравоохранение: от расшифровки анализов до автоматической проверки качества медицинской помощи. Роль соединяет потребности медицинских заказчиков с возможностями AI-команд и доводит разработки до работающих промышленных решений.</div>
+    <div class="meta">Редакция 2 · 28.09.2026 · 12 разделов · глоссарий с источниками, реестр по уровням юридической силы · нормативная часть требует пересмотра после утверждения ГОСТов по генеративным моделям</div>
+  </div>
+</div>
+
+<div class="wrap">
+  <div class="mobnav"><label for="mob" class="count">Раздел</label><select id="mob"></select></div>
+  <div class="layout">
+    <nav class="side" aria-label="Разделы базы знаний"><ol id="sidenav"></ol></nav>
+    <main id="main">
+
+<!-- 0 УКАЗАТЕЛЬ -->
+<section class="pane" id="ukaz" data-title="Указатель" data-grp="Вход в материал">
+  <h2>Указатель</h2>
+  <p class="intro">Семь ветвей: вход, модель отрасли, заказчики и деньги, регуляторика, продуктовый цикл, качество и риск, рынок. В этой редакции все разделы собраны в одном файле; ветви, помеченные курсивом, запланированы отдельными страницами пула.</p>
+  <div class="tree" id="tree"></div>
+
+  <h3>Порядок чтения</h3>
+  <ol>
+    <li><b>Путь случая</b> — если нужна сама модель: стадии, ИИ-сценарии, данные, заказчики, документы и метрики на одной оси.</li>
+    <li><b>Сквозной пример</b> — если нужно быстро понять, как ИИ проходит через один реальный случай от анализа до экспертизы.</li>
+    <li><b>Заказчики и деньги</b> — если готовится разговор с B2G-заказчиком или ДМС.</li>
+    <li><b>Реестр документов</b> и <b>продуктовый цикл</b> — если решается, что нужно для выхода из пилота в промышленную эксплуатацию.</li>
+    <li><b>Метрики</b> и <b>цена ошибки</b> — если согласуются критерии приёмки.</li>
+  </ol>
+
+  <h3>Как пользоваться материалом</h3>
+  <ol>
+    <li>У каждой позиции есть происхождение. <span class="tag t-doc">документ</span> — нормативный акт, стандарт или официальный источник; можно предъявлять заказчику. <span class="tag t-obs">наблюдение</span> — новость, рыночные данные, заявление участника рынка; требует проверки актуальности. <span class="tag t-inf">вывод</span> — наша реконструкция и постановка, не факт. <span class="tag t-proj">проект</span> — документ в разработке или обсуждении.</li>
+    <li>Путь случая — авторская рамка команды. Виды контроля в ОМС (ФЛК, МЭК, МЭЭ, ЭКМП) — общепринятая схема.</li>
+    <li>Отнесение сценария к медицинским изделиям в каталоге — предварительная оценка. Окончательно его определяет назначение продукта, заявленное производителем, и позиция Росздравнадзора.</li>
+    <li>Раздел «Рынок» фиксирует состояние на сентябрь 2026 года и устаревает быстрее остальных.</li>
+    <li>Печать выводит все разделы подряд.</li>
+  </ol>
+</section>
+
+<!-- 1 ПУТЬ СЛУЧАЯ -->
+<section class="pane" id="put" data-title="Путь случая" data-grp="Модель отрасли">
+  <h2>Путь медицинского случая</h2>
+  <p class="intro">Девять стадий, через которые проходит случай пациента. На каждой видно, где работает ИИ, какие данные нужны, кто заказчик, по каким документам и какими метриками оценивается результат. Выберите стадию; названия документов и сценариев — ссылки, они открывают соответствующий раздел уже с нужным фильтром. <span class="tag t-inf">вывод</span> рамка команды</p>
+  <div class="path" id="path" role="group" aria-label="Стадии случая"></div>
+  <div class="detail" id="stageDetail" aria-live="polite"></div>
+</section>
+
+<!-- 2 СКВОЗНОЙ ПРИМЕР -->
+<section class="pane" id="primer" data-title="Сквозной пример" data-grp="Вход в материал">
+  <h2>Сквозной пример: один случай от анализа до экспертизы</h2>
+  <p class="intro">Пациентка 52 лет получает результаты биохимии крови. Прослеживаем, где в её случае работает ИИ, какие данные он берёт, какое правило его ограничивает и чем измеряется результат. Сценарий собран из действующих на рынке классов решений. <span class="tag t-inf">вывод</span></p>
+  <ol class="steps" id="primerSteps"></ol>
+  <p class="count" id="primerNote" style="margin:6px 0 10px"></p>
+  <div class="callout">Что показывает пример. Ценность для пациента, врача и плательщика возникает на разных стадиях, а данные — одни и те же: ЭМК и реестр случаев. Продукт, который проектируется на одну стадию, но знает о соседних, дешевле масштабировать.</div>
+</section>
+
+<!-- 3 КАТАЛОГ СЦЕНАРИЕВ -->
+<section class="pane" id="scen" data-title="Каталог ИИ-сценариев" data-grp="Модель отрасли">
+  <h2>Каталог ИИ-сценариев</h2>
+  <p class="intro">Классы решений с ценностью, данными, заказчиком и ключевой метрикой. Колонка «МИ» — предварительная оценка: скорее медицинское изделие, зависит от назначения или скорее нет. <span class="tag t-inf">вывод</span></p>
+  <div class="filters">
+    <input type="search" id="scQ" placeholder="Поиск по сценариям" aria-label="Поиск по сценариям">
+    <select id="scStage" aria-label="Стадия"><option value="">Все стадии</option></select>
+    <select id="scTech" aria-label="Технология"><option value="">Все технологии</option><option>CV</option><option>ML</option><option>LLM</option><option>Агент</option></select>
+    <select id="scSeg" aria-label="Сегмент"><option value="">Все сегменты</option><option>B2G</option><option>B2B</option><option>B2C</option></select>
+    <span class="count" id="scCount"></span>
+  </div>
+  <div class="scroll"><table id="scTable"><thead><tr><th>Сценарий</th><th>Стадия</th><th>Технология</th><th>Сегмент</th><th>Ценность</th><th>Данные</th><th>Ключевая метрика</th><th>МИ</th></tr></thead><tbody></tbody></table></div>
+</section>
+
+<!-- 4 ЗАКАЗЧИКИ -->
+<section class="pane" id="zak" data-title="Заказчики и деньги" data-grp="Заказчики и деньги">
+  <h2>Заказчики и деньги</h2>
+  <p class="intro">Кто покупает, за что платит и как принимает решение. В B2G пользователь, заказчик и плательщик — обычно три разных субъекта, и продукт должен давать ценность каждому. <span class="tag t-inf">вывод</span> если не указано иное</p>
+  <div class="scroll"><table><thead><tr><th>Заказчик</th><th>Что покупает</th><th>Его показатель успеха</th><th>Кто решает и как платит</th><th>Происхождение</th></tr></thead><tbody id="zakBody"></tbody></table></div>
+  <h3>Три роли в одной сделке</h3>
+  <div class="cards">
+    <div class="card"><h4>Пользователь</h4><p>Врач, эксперт страховой, пациент. Ему нужно, чтобы продукт экономил время и не добавлял работы. Метрика: доля принятых подсказок, время на случай.</p></div>
+    <div class="card"><h4>Заказчик</h4><p>Орган управления здравоохранением, фонд, клиника. Ему нужен измеримый эффект по его показателям и отсутствие инцидентов. Метрика: KPI программы, отчётность.</p></div>
+    <div class="card"><h4>Плательщик</h4><p>Бюджет, ОМС, ДМС, пациент. Ему нужна экономика: стоимость на случай против сэкономленных или найденных средств.</p></div>
+  </div>
+  <h3>Вопросы к заказчику на первой встрече</h3>
+  <ol>
+    <li>Какой показатель заказчика должен измениться и кто отчитывается за него наверх?</li>
+    <li>Где сейчас узкое место: время врача, выявляемость, нагрузка экспертов, дефекты документации?</li>
+    <li>Какие данные есть, в каких системах (МИС, ЛИС, РИС/PACS, региональный сегмент ЕГИСЗ, реестры счетов), и на каком основании их можно использовать?</li>
+    <li>Кто будет пользователем и как изменится его рабочий процесс? Кто его руководитель?</li>
+    <li>Кто и по каким критериям будет принимать пилот? Есть ли врачи-эксперты для валидации?</li>
+    <li>Из какого источника финансируется внедрение и тиражирование после пилота?</li>
+    <li>Требуется ли регистрация как медицинского изделия, и кто несёт ответственность за решение?</li>
+  </ol>
+</section>
+
+<!-- 5 РЕЕСТР -->
+<section class="pane" id="reestr" data-title="Реестр документов" data-grp="Регуляторика">
+  <h2>Реестр документов и стандартов</h2>
+  <p class="intro">Реестр упорядочен по юридической силе: шесть уровней от федеральных законов до международных аналогов. Внутри уровня документы, принятые в развитие другого документа, показаны с отступом под ним. У каждой позиции: что она означает для продукта и на какой стадии пути случая работает.</p>
+  <div class="callout ok"><b>Как читать иерархию.</b> Нижестоящий акт не может противоречить вышестоящему и обычно принимается в его развитие: правила регистрации медизделий приняты во исполнение закона об охране здоровья, регламент Росздравнадзора — во исполнение этих правил. Стандарты стоят особняком: применяются добровольно, но становятся обязательными, когда на них ссылается акт или когда производитель заявил соответствие им в регистрационном досье. Международные документы приведены справочно и в России силы не имеют.</div>
+  <div class="filters">
+    <input type="search" id="rgQ" placeholder="Поиск: номер, название, смысл" aria-label="Поиск по реестру">
+    <select id="rgType" aria-label="Тип"><option value="">Все типы</option></select>
+    <select id="rgLvl" aria-label="Уровень"><option value="">Все уровни</option></select>
+    <select id="rgOrigin" aria-label="Происхождение"><option value="">Любое происхождение</option><option value="doc">документ</option><option value="obs">наблюдение</option><option value="proj">проект</option></select>
+    <span class="count" id="rgCount"></span>
+  </div>
+  <div class="scroll"><table id="rgTable"><thead><tr><th>Документ</th><th>Тип</th><th>Что означает для продукта</th><th>Стадии</th><th>Происхождение</th></tr></thead><tbody></tbody></table></div>
+  <div class="callout">Ориентир по регистрации. Правила государственной регистрации медицинских изделий (ПП РФ № 1684) ввели специальные положения для ПО с ИИ. Регламент Росздравнадзора 2026 года сокращает срок процедуры без клинических испытаний до 31 рабочего дня. Разработчики на практике называют сроки от полугода до полутора лет с учётом испытаний и подготовки досье. Закладывайте в дорожную карту именно практический срок.</div>
+</section>
+
+<!-- 6 ПРОДУКТОВЫЙ ЦИКЛ -->
+<section class="pane" id="cikl" data-title="От PoC до промышленности" data-grp="Продуктовый цикл">
+  <h2>От PoC до промышленного внедрения</h2>
+  <p class="intro">Восемь ворот с критериями прохождения. Большинство медицинских AI-проектов застревает между пилотом и промышленной эксплуатацией: модель работает, но нет регистрации, интеграции, владельца процесса или источника финансирования. Ворота построены так, чтобы эти вопросы решались заранее. <span class="tag t-inf">вывод</span> со ссылками на стандарты</p>
+  <ol class="steps" id="gates"></ol>
+</section>
+
+<!-- 7 МЕТРИКИ -->
+<section class="pane" id="metriki" data-title="Метрики и оценка качества" data-grp="Качество и риск">
+  <h2>Метрики и оценка качества</h2>
+  <p class="intro">Три уровня метрик согласуются с заказчиком до начала разработки и попадают в критерии приёмки. Модельная метрика без продуктовой не доказывает пользы, продуктовая без клинико-экономической не продаёт тиражирование.</p>
+  <div class="scroll"><table><thead><tr><th>Уровень</th><th>Метрика</th><th>Что показывает</th><th>Где применять</th></tr></thead><tbody id="metBody"></tbody></table></div>
+
+  <h3>Калькулятор цены ошибки</h3>
+  <p>Одна и та же модель с чувствительностью 95% и специфичностью 90% даёт совсем разную картину при разной распространённости патологии. При скрининге редкого заболевания большинство срабатываний окажется ложными, и эту нагрузку понесут врачи. Меняйте параметры.</p>
+  <div class="calc">
+    <div>
+      <label for="cSens">Чувствительность: <output id="oSens"></output></label>
+      <input type="range" id="cSens" min="50" max="99.9" step="0.1" value="95">
+      <label for="cSpec">Специфичность: <output id="oSpec"></output></label>
+      <input type="range" id="cSpec" min="50" max="99.9" step="0.1" value="90">
+      <label for="cPrev">Распространённость: <output id="oPrev"></output></label>
+      <input type="range" id="cPrev" min="0.1" max="50" step="0.1" value="2">
+      <label for="cN">Случаев в потоке</label>
+      <select id="cN" class="btn" style="width:100%"><option value="1000">1 000</option><option value="10000" selected>10 000</option><option value="100000">100 000</option></select>
+    </div>
+    <div class="cm" id="cm"></div>
+    <div class="res" id="cres"></div>
+  </div>
+
+  <h3>Почему BLEU и ROUGE не годятся для медицинских LLM</h3>
+  <p>Эти метрики считают совпадение слов с эталонным текстом. Сводка, почти дословно совпадающая с эталоном, может содержать неверную дозу или пропущенный диагноз, и метрика этого не заметит. Для медицинских LLM измеряют фактическую точность относительно источника, полноту извлечения по полям, долю галлюцинаций и согласие с врачами-экспертами. Национальный стандарт на извлечение данных из неструктурированных медицинских записей (ГОСТ Р 72313-2025) задаёт методы формирования наборов данных и метрики именно для такой задачи.</p>
+</section>
+
+<!-- 8 ЦЕНА ОШИБКИ -->
+<section class="pane" id="risk" data-title="Цена ошибки и ограничения" data-grp="Качество и риск">
+  <h2>Цена ошибки и ограничения моделей</h2>
+  <p class="intro">Реестр рисков медицинских AI-продуктов: как проявляется риск, ранний признак и что с ним делать в продукте. <span class="tag t-inf">вывод</span></p>
+  <div class="scroll"><table><thead><tr><th>Риск</th><th>Как проявляется</th><th>Ранний признак</th><th>Что делать в продукте</th></tr></thead><tbody id="riskBody"></tbody></table></div>
+  <div class="callout ok">Общий принцип. Решение принимает врач, а продукт должен делать ошибку модели видимой до того, как она дойдёт до пациента: показывать источник каждого утверждения, степень уверенности и явный отказ при нехватке данных.</div>
+</section>
+
+<!-- 9 РЫНОК -->
+<section class="pane" id="rynok" data-title="Рынок и игроки" data-grp="Рынок">
+  <h2>Рынок и игроки: состояние на сентябрь 2026</h2>
+  <p class="intro">Факты с источниками. Всё в разделе — <span class="tag t-obs">наблюдение</span>: перед использованием в документах для заказчика проверяйте актуальность.</p>
+  <div class="scroll"><table><thead><tr><th>Факт</th><th>Что это значит для команды</th><th>Источник</th></tr></thead><tbody id="mktBody"></tbody></table></div>
+</section>
+
+<!-- 10 ГЛОССАРИЙ -->
+<section class="pane" id="gloss" data-title="Глоссарий" data-grp="Вход в материал">
+  <h2>Глоссарий</h2>
+  <p class="intro">Сокращения раскрыты полностью, у каждого термина — определение и ссылка на документ, где он введён или объяснён лучше всего. Если единого официального текста нет, ссылка ведёт в реестр документов базы.</p>
+  <div class="filters"><input type="search" id="glQ" placeholder="Поиск термина" aria-label="Поиск термина"><span class="count" id="glCount"></span></div>
+  <div class="gl" id="glBody"></div>
+</section>
+
+<!-- 11 КАРТА РОЛИ -->
+<section class="pane" id="rol" data-title="Карта роли" data-grp="Продуктовый цикл">
+  <h2>Карта роли руководителя AI-продукта</h2>
+  <p class="intro">Задачи роли и разделы базы знаний, которые их поддерживают. Колонка «Артефакт» — что роль производит на выходе.</p>
+  <div class="scroll"><table><thead><tr><th>Задача роли</th><th>Артефакт</th><th>Разделы</th></tr></thead><tbody id="rolBody"></tbody></table></div>
+  <h3>Что предстоит дописать в пул</h3>
+  <ol>
+    <li>Отдельные страницы по сценариям-флагманам: расшифровка анализов, СППВР, автоматический контроль качества.</li>
+    <li>Шаблон протокола врачебной валидации с расчётом объёма выборки.</li>
+    <li>Шаблон технического задания по ГОСТ Р 71752-2024 для ИИ-продукта.</li>
+    <li>Сценарий интеграции с региональным сегментом ЕГИСЗ и МИС.</li>
+    <li>Дорожная карта регистрации медицинского изделия с практическими сроками.</li>
+  </ol>
+</section>
+
+    </main>
+  </div>
+</div>
+
+<footer class="foot"><div class="wrap">
+  <p>База знаний по применению ИИ в медицине · редакция 1 от 28.09.2026 · собрана по образцу пула материалов по агентной коммерции · <a href="index.html">комплект</a> · парная база: <a href="01-zarubezhnyy-segment.html">зарубежный сегмент</a> · <a href="02-paralleli-i-modeli.html">параллели с платежами и модели</a>.</p>
+  <p>Нормативная часть требует пересмотра: после утверждения проектов национальных стандартов по большим генеративным моделям и методам испытаний; по мере продвижения законопроекта о регулировании ИИ; при обновлении правил регистрации медицинских изделий.</p>
+</div></footer>
+
+<script>
+(function(){
+"use strict";
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>Array.from(r.querySelectorAll(s));
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const TAG={doc:'<span class="tag t-doc">документ</span>',obs:'<span class="tag t-obs">наблюдение</span>',inf:'<span class="tag t-inf">вывод</span>',proj:'<span class="tag t-proj">проект</span>'};
+
+/* ---------- СТАДИИ ---------- */
+const STAGES=[
+ {id:"s1",name:"Профилактика и мониторинг",short:"Профилактика",
+  what:"Диспансеризация, профосмотры, наблюдение хронических пациентов, мониторинг показателей здоровья.",
+  ai:["Прогноз риска заболеваний и осложнений по данным ЭМК","Выявление пациентов, пропустивших диспансерное наблюдение","Мониторинг показателей с носимых устройств и сигналы врачу"],
+  data:["ЭМК, история обращений","Результаты диспансеризации","Показатели мониторинга"],
+  cust:["Региональный орган здравоохранения","Медицинские организации первичного звена","Страховые ДМС"],
+  docs:["ГОСТ Р 71672-2024","ГОСТ Р 72356-2025","ПП РФ № 140 (ЕГИСЗ)"],
+  met:["AUC-ROC и калибровка модели риска","Доля пациентов группы риска, дошедших до врача","Предотвращённые госпитализации"],
+  risk:"Смещение модели на данных другого региона; ложные срабатывания перегружают участкового врача."},
+ {id:"s2",name:"Обращение и маршрутизация",short:"Маршрутизация",
+  what:"Пациент формулирует жалобы, получает запись к нужному специалисту, поток пациентов распределяется между организациями.",
+  ai:["Ассистент пациента: сбор анамнеза, вероятные гипотезы, выбор специалиста","Триаж обращений по срочности","Оптимизация потоков пациентов и расписаний"],
+  data:["Жалобы пациента в свободной форме","Расписания и мощности МО","История обращений"],
+  cust:["Региональный орган здравоохранения","Сети частных клиник","Сервисы для пациентов"],
+  docs:["ПНСТ 962-2024","152-ФЗ (персональные данные)"],
+  met:["Доля корректной маршрутизации по оценке врача","Время до записи к нужному специалисту","Доля пропущенных срочных случаев"],
+  risk:"Пациент принимает подсказку за диагноз и откладывает визит; пропуск неотложного состояния."},
+ {id:"s3",name:"Лабораторная диагностика",short:"Анализы",
+  what:"Назначение, выполнение и интерпретация лабораторных исследований.",
+  ai:["Расшифровка результатов анализов для пациента простым языком","Интерпретация результатов для врача с учётом динамики и анамнеза","Контроль качества в лаборатории, выявление аномальных серий"],
+  data:["ЛИС, результаты с референсными интервалами","Предыдущие результаты пациента","Назначения и диагнозы из ЭМК"],
+  cust:["Региональные сервисы для пациентов","Лабораторные сети","Страховые ДМС"],
+  docs:["ГОСТ Р 72484-2025 (классификация)","ПП РФ № 1684 (регистрация МИ)"],
+  met:["Фактическая точность пересказа относительно результатов","Доля ответов с корректной рекомендацией обратиться к врачу","Использование сервиса и повторные обращения"],
+  risk:"Граница между справкой и медицинским заключением: от формулировок зависит, становится ли продукт медицинским изделием."},
+ {id:"s4",name:"Инструментальная и лучевая диагностика",short:"Лучевая",
+  what:"КТ, МРТ, рентген, флюорография, маммография, ЭКГ и другие исследования.",
+  ai:["Поиск патологий на изображениях и приоритизация исследований","Автоматические измерения","Черновик протокола описания"],
+  data:["DICOM-исследования из PACS","Протоколы описаний","Данные клинической физиологии (ЭКГ)"],
+  cust:["Региональный орган здравоохранения","Центры лучевой диагностики","Частные диагностические сети"],
+  docs:["ГОСТ Р 59921.7-2022","ГОСТ Р 71738-2024","ГОСТ Р 71673-2024","ГОСТ Р 71674-2024","ГОСТ Р 59921.9-2022"],
+  met:["Чувствительность и специфичность на тестовом наборе","Устойчивость на данных разных аппаратов","Время описания исследования"],
+  risk:"Снижение точности на оборудовании, которого не было в обучении; пропуск находок вне обученного класса."},
+ {id:"s5",name:"Врачебное решение",short:"Решение врача",
+  what:"Постановка диагноза, выбор тактики и назначений в соответствии с клиническими рекомендациями.",
+  ai:["Системы поддержки принятия врачебных решений (СППВР)","Проверка назначений: взаимодействия, противопоказания, дозы","Сверка тактики с клиническими рекомендациями"],
+  data:["ЭМК: диагнозы, назначения, анамнез","Клинические рекомендации","Справочники лекарственных средств"],
+  cust:["Медицинские организации","Региональный орган здравоохранения"],
+  docs:["ГОСТ Р 71671-2024","ГОСТ Р 72357-2025","ПНСТ 872-2023"],
+  met:["Доля принятых врачом подсказок","Найденные ошибки назначений на 1000 случаев","Доля подсказок с корректной ссылкой на клиническую рекомендацию"],
+  risk:"Автоматизационное доверие: врач перестаёт проверять подсказку. Устаревание знаний при обновлении клинических рекомендаций."},
+ {id:"s6",name:"Медицинская документация",short:"Документы",
+  what:"Ведение ЭМК, протоколы осмотров, выписки, эпикризы.",
+  ai:["Голосовой ввод и структурирование протокола осмотра","Суммаризация истории болезни и выписок","Извлечение структурированных данных из свободного текста"],
+  data:["Записи ЭМК в свободной форме","Шаблоны протоколов","Справочники НСИ"],
+  cust:["Медицинские организации","Разработчики МИС","Региональный орган здравоохранения"],
+  docs:["ГОСТ Р 72313-2025","Приказ Минздрава № 906н (НСИ)","Проект стандарта по суммаризации генеративными моделями"],
+  met:["Точность и полнота извлечения по полям","Доля фактических ошибок в сводке","Время врача на документацию","Доля правок врача"],
+  risk:"Галлюцинации в сводке: несуществующий диагноз или доза попадают в юридически значимый документ."},
+ {id:"s7",name:"Лечение и лекарства",short:"Лечение",
+  what:"Лекарственная терапия, лекарственное обеспечение, фармаконадзор, клинические исследования.",
+  ai:["Подбор пациентов для клинических исследований","Выявление нежелательных реакций в записях","Анализ лекарственной терапии"],
+  data:["Назначения и отпуск препаратов","Записи о нежелательных реакциях","Протоколы исследований"],
+  cust:["Фармацевтические компании","Медицинские организации","Страховые ДМС"],
+  docs:["ГОСТ Р 72357-2025","ГОСТ Р ИСО 14155-2014"],
+  met:["Полнота выявления нежелательных реакций","Скорость набора в исследования"],
+  risk:"Использование данных пациентов за пределами согласия и законного основания."},
+ {id:"s8",name:"Оплата и контроль качества",short:"Контроль качества",
+  what:"Счета за медицинскую помощь проходят контроль: форматно-логический, медико-экономический контроль, медико-экономическая экспертиза и экспертиза качества медицинской помощи. В ДМС страховая проверяет счета клиник.",
+  ai:["Автоматическая проверка случаев на соответствие клиническим рекомендациям и стандартам","Отбор случаев на экспертизу по вероятности дефекта","Внутренний контроль качества документации в клинике","Экспертиза счетов клиник в ДМС"],
+  data:["Реестры счетов","ЭМК и первичная документация","Акты экспертиз прошлых периодов","Клинические рекомендации и стандарты"],
+  cust:["ФОМС и территориальные фонды","Страховые медицинские организации","Страховые ДМС","Медицинские организации (внутренний контроль)"],
+  docs:["Программа госгарантий на 2026–2028 годы","ГОСТ Р 72313-2025","152-ФЗ"],
+  met:["Совпадение с решением эксперта","Доля найденных дефектов, пропущенных при ручной проверке","Нагрузка на экспертов от ложных срабатываний","Выявленные суммы на случай"],
+  risk:"Спор о правомерности санкций по решению модели. Решение о дефекте должен подтверждать эксперт, модель лишь отбирает и обосновывает."},
+ {id:"s9",name:"Управление и мониторинг ИИ",short:"Мониторинг",
+  what:"Управление системой здравоохранения по данным и контроль работы самих ИИ-изделий после внедрения.",
+  ai:["Аналитика для органа управления","Мониторинг качества работы моделей и дрейфа данных","Автоматическая передача сведений о работе МИ с ИИ регулятору"],
+  data:["Агрегированные данные ЕГИСЗ","Журналы работы моделей","Обратная связь врачей"],
+  cust:["Минздрав и региональные органы","Росздравнадзор (как получатель сведений)"],
+  docs:["Порядок передачи данных о МИ с ИИ в АИС Росздравнадзора","ГОСТ Р 59921.4-2021","ГОСТ Р 59921.3-2021"],
+  met:["Стабильность метрик во времени","Время обнаружения деградации","Полнота передачи сведений регулятору"],
+  risk:"Тихая деградация модели после смены оборудования, справочников или практики."}
+];
+
+function renderPath(){
+  const p=$("#path");
+  p.innerHTML=STAGES.map((s,i)=>`<button class="stage" data-s="${s.id}" aria-pressed="false"><span class="dot">${i+1}</span>${esc(s.short)}</button>`).join("");
+  p.addEventListener("click",e=>{const b=e.target.closest(".stage");if(b)selStage(b.dataset.s)});
+  selStage("s3");
+}
+function li(a){return "<ul>"+a.map(x=>"<li>"+esc(x)+"</li>").join("")+"</ul>"}
+function selStage(id){
+  $$(".stage").forEach(b=>b.setAttribute("aria-pressed",b.dataset.s===id?"true":"false"));
+  const s=STAGES.find(x=>x.id===id);
+  const scen=SCEN.filter(x=>x.st===id);
+  const docs=REG.filter(r=>r.st.includes(id));
+  /* документы: ссылка открывает реестр с этим документом в поиске */
+  const dl=docs.length?"<ul>"+docs.map(r=>{
+     const key=(r.n.match(/^[^(«]+/)||[r.n])[0].trim().slice(0,40);
+     return `<li><a href="#reestr" data-doc="${esc(key)}">${esc(r.n)}</a> <span class="count">${esc(r.ty)}</span></li>`}).join("")+"</ul>"
+   :li(s.docs);
+  /* сценарии: ссылка открывает каталог, отфильтрованный по этой стадии */
+  const sl=scen.length?"<ul>"+scen.map(x=>`<li><a href="#scen" data-scen="${esc(id)}">${esc(x.n)}</a> <span class="count">${esc(x.t)} · ${esc(x.g)}</span></li>`).join("")+"</ul>":"<p>—</p>";
+  /* данные, заказчики, метрики: ссылки в соответствующие разделы */
+  const dataL="<ul>"+s.data.map(x=>`<li>${esc(x)}</li>`).join("")+`</ul><p class="count" style="margin:4px 0 0"><a href="#gloss">Термины по данным и системам в глоссарии</a></p>`;
+  const custL="<ul>"+s.cust.map(x=>`<li>${esc(x)}</li>`).join("")+`</ul><p class="count" style="margin:4px 0 0"><a href="#zak">Кто платит и как принимает решение</a></p>`;
+  const metL="<ul>"+s.met.map(x=>`<li>${esc(x)}</li>`).join("")+`</ul><p class="count" style="margin:4px 0 0"><a href="#metriki">Три уровня метрик и калькулятор цены ошибки</a></p>`;
+  const aiL="<ul>"+s.ai.map(x=>`<li>${esc(x)}</li>`).join("")+`</ul><p class="count" style="margin:4px 0 0"><a href="#cikl">Путь такого сценария от PoC до внедрения</a></p>`;
+  $("#stageDetail").innerHTML=`<h3>${STAGES.indexOf(s)+1}. ${esc(s.name)}</h3><p>${esc(s.what)}</p>
+  <div class="dgrid">
+   <div><h5>Где работает ИИ</h5>${aiL}</div>
+   <div><h5>Данные</h5>${dataL}</div>
+   <div><h5>Заказчики</h5>${custL}</div>
+   <div><h5>Метрики</h5>${metL}</div>
+   <div><h5>Документы и стандарты</h5>${dl}</div>
+   <div><h5>Сценарии из каталога</h5>${sl}</div>
+  </div>
+  <div class="callout" style="margin-bottom:0"><b>Главный риск стадии.</b> ${esc(s.risk)} <a href="#risk">Реестр рисков и что делать в продукте</a>.</div>
+  <p class="count" style="margin:10px 0 0">Как этот участок устроен за рубежом: <a href="01-zarubezhnyy-segment.html#put">зарубежная практика по стадиям</a> · транзакционная сторона того же случая: <a href="02-paralleli-i-modeli.html#osi">две оси случая</a>.</p>`;
+}
+
+/* переход к стадии пути случая из любого места файла */
+document.addEventListener("click",e=>{const b=e.target.closest("[data-stage]");
+ if(b){e.preventDefault();go("put");selStage(b.dataset.stage);}},true);
+
+/* переходы из карточки стадии: подставляют фильтр в целевой раздел */
+document.addEventListener("click",e=>{
+  const d=e.target.closest("[data-doc]");
+  if(d){e.preventDefault();go("reestr");const q=$("#rgQ");if(q){q.value=d.dataset.doc;q.dispatchEvent(new Event("input"));}
+    const lv=$("#rgLvl"),ty=$("#rgType"),or=$("#rgOrigin");[lv,ty,or].forEach(x=>{if(x&&x.value){x.value="";x.dispatchEvent(new Event("input"))}});return;}
+  const c=e.target.closest("[data-scen]");
+  if(c){e.preventDefault();go("scen");const st=$("#scStage");if(st){st.value=c.dataset.scen;st.dispatchEvent(new Event("input"));}
+    const q=$("#scQ");if(q&&q.value){q.value="";q.dispatchEvent(new Event("input"));}return;}
+},true);
+
+/* ---------- СЦЕНАРИИ ---------- */
+const SCEN=[
+ {n:"Прогноз риска по ЭМК",st:"s1",t:"ML",g:"B2G",v:"Раннее выявление пациентов с высоким риском осложнений",d:"ЭМК, диспансеризация",m:"AUC-ROC, PPV на рабочем пороге",mi:"скорее да"},
+ {n:"Контроль диспансерного наблюдения",st:"s1",t:"ML",g:"B2G",v:"Возврат пациентов, выпавших из наблюдения",d:"ЭМК, регистры",m:"Доля возвращённых под наблюдение",mi:"скорее нет"},
+ {n:"Ассистент пациента: анамнез и выбор специалиста",st:"s2",t:"LLM",g:"B2C",v:"Пациент быстрее попадает к нужному врачу",d:"Жалобы в свободной форме",m:"Доля корректной маршрутизации",mi:"зависит"},
+ {n:"Оптимизация потоков пациентов",st:"s2",t:"ML",g:"B2G",v:"Меньше очередей, выше загрузка мощностей",d:"Расписания, обращения",m:"Время ожидания, загрузка",mi:"скорее нет"},
+ {n:"Расшифровка анализов для пациента",st:"s3",t:"LLM",g:"B2C",v:"Пациент понимает результат и знает, когда идти к врачу",d:"ЛИС, референсы, прошлые результаты",m:"Фактическая точность, корректность направления к врачу",mi:"зависит"},
+ {n:"Интерпретация анализов для врача",st:"s3",t:"LLM",g:"B2B",v:"Врач видит отклонения в контексте динамики",d:"ЛИС, ЭМК",m:"Согласие с врачом-экспертом",mi:"скорее да"},
+ {n:"Анализ медицинских изображений",st:"s4",t:"CV",g:"B2G",v:"Приоритизация исследований и меньше пропусков",d:"DICOM, протоколы",m:"Чувствительность, специфичность",mi:"скорее да"},
+ {n:"Черновик протокола описания",st:"s4",t:"LLM",g:"B2B",v:"Врач-рентгенолог тратит меньше времени на текст",d:"Результат CV-модели, шаблоны",m:"Доля правок врача",mi:"зависит"},
+ {n:"СППВР по клиническим рекомендациям",st:"s5",t:"LLM",g:"B2G",v:"Меньше отклонений от клинических рекомендаций",d:"ЭМК, клинические рекомендации",m:"Доля принятых подсказок, ошибки на 1000 случаев",mi:"скорее да"},
+ {n:"Проверка лекарственных назначений",st:"s5",t:"ML",g:"B2B",v:"Предотвращение опасных сочетаний и доз",d:"Назначения, справочник ЛС",m:"Найденные ошибки, ложные срабатывания",mi:"скорее да"},
+ {n:"Голосовой ввод протокола осмотра",st:"s6",t:"LLM",g:"B2B",v:"Время врача переходит от клавиатуры к пациенту",d:"Речь врача, шаблоны",m:"Время на документацию, доля правок",mi:"скорее нет"},
+ {n:"Суммаризация истории болезни",st:"s6",t:"LLM",g:"B2G",v:"Врач за минуту видит историю пациента",d:"ЭМК",m:"Доля фактических ошибок, полнота",mi:"зависит"},
+ {n:"Извлечение данных из свободного текста",st:"s6",t:"LLM",g:"B2G",v:"Неструктурированные записи становятся данными для аналитики",d:"ЭМК",m:"Точность и полнота по полям",mi:"зависит"},
+ {n:"Выявление нежелательных реакций",st:"s7",t:"LLM",g:"B2B",v:"Полнота фармаконадзора",d:"Записи ЭМК",m:"Полнота выявления",mi:"скорее нет"},
+ {n:"Автоматическая проверка качества медпомощи",st:"s8",t:"Агент",g:"B2G",v:"Экспертиза охватывает больше случаев при той же численности экспертов",d:"Реестры счетов, ЭМК, клинические рекомендации",m:"Совпадение с экспертом, пропущенные дефекты",mi:"скорее нет"},
+ {n:"Отбор случаев на экспертизу",st:"s8",t:"ML",g:"B2G",v:"Эксперты смотрят случаи с наибольшей вероятностью дефекта",d:"Реестры счетов, акты экспертиз",m:"Доля дефектных среди отобранных",mi:"скорее нет"},
+ {n:"Экспертиза счетов клиник в ДМС",st:"s8",t:"LLM",g:"B2B",v:"Меньше необоснованных оплат, быстрее урегулирование",d:"Счета, медицинские документы, договор ДМС",m:"Выявленные суммы, спорность решений",mi:"скорее нет"},
+ {n:"Внутренний контроль качества документации",st:"s8",t:"LLM",g:"B2B",v:"Клиника исправляет дефекты до внешней экспертизы",d:"Истории болезни, критерии качества",m:"Снижение санкций по внешним экспертизам",mi:"скорее нет"},
+ {n:"Мониторинг работы ИИ-изделий",st:"s9",t:"ML",g:"B2G",v:"Деградация модели обнаруживается до инцидента",d:"Журналы работы, обратная связь",m:"Время обнаружения дрейфа",mi:"скорее нет"}
+];
+function renderScen(){
+  const sSel=$("#scStage"); STAGES.forEach(s=>sSel.insertAdjacentHTML("beforeend",`<option value="${s.id}">${esc(s.short)}</option>`));
+  const f=()=>{
+    const q=$("#scQ").value.toLowerCase(), st=sSel.value, t=$("#scTech").value, g=$("#scSeg").value;
+    const rows=SCEN.filter(x=>(!st||x.st===st)&&(!t||x.t===t)&&(!g||x.g===g)&&(!q||JSON.stringify(x).toLowerCase().includes(q)));
+    $("#scTable tbody").innerHTML=rows.map(x=>{const s=STAGES.find(y=>y.id===x.st);
+      return `<tr><td><b>${esc(x.n)}</b></td><td><button class="lnk2" data-stage="${x.st}">${esc(s.short)}</button></td><td>${esc(x.t)}</td><td>${esc(x.g)}</td><td>${esc(x.v)}</td><td>${esc(x.d)}</td><td>${esc(x.m)}</td><td class="num">${esc(x.mi)}</td></tr>`}).join("")||'<tr><td colspan="8">Ничего не найдено. Сбросьте фильтры или измените запрос.</td></tr>';
+    $("#scCount").textContent=rows.length+" из "+SCEN.length;
+  };
+  ["#scQ","#scTech","#scSeg"].forEach(s=>$(s).addEventListener("input",f)); sSel.addEventListener("input",f); f();
+}
+
+/* ---------- ЗАКАЗЧИКИ ---------- */
+const ZAK=[
+ ["Минздрав России, федеральные платформы ЕГИСЗ","Сервисы для федеральных подсистем, централизованные ИИ-сервисы для регионов","Показатели нацпроекта и стратегического направления цифровой трансформации здравоохранения","Федеральные проекты, государственные контракты","doc"],
+ ["Региональный орган здравоохранения (например, ДЗМ, Минздрав Московской области)","Внедрение ИИ-сервисов во все медицинские организации региона, сервисы для жителей","Доступность и качество помощи, нагрузка на первичное звено, цифровая зрелость","Региональный бюджет и межбюджетные трансферты на информатизацию, включая медицинские изделия с ИИ (ПП РФ № 386 от 10.04.2026)","doc"],
+ ["ФОМС и территориальные фонды","Инструменты контроля объёмов, сроков и качества медпомощи","Охват экспертизой, выявленные дефекты, законность санкций","Фонд обязательного медицинского страхования; решение через регулятора и методологию контроля","inf"],
+ ["Страховые медицинские организации в ОМС","Автоматизация МЭЭ и ЭКМП","Производительность экспертов, выявленные дефекты","Собственные средства на ведение дела","inf"],
+ ["Страховые компании ДМС","Экспертиза счетов клиник, маршрутизация застрахованных, сервисы для клиентов","Убыточность портфеля, скорость урегулирования, удовлетворённость клиентов","Собственный бюджет; быстрый цикл сделки","inf"],
+ ["Государственные медицинские организации","Пользователи сервисов, внедряемых регионом; внутренний контроль качества","Выполнение госзадания, отсутствие санкций, нагрузка на врачей","Как правило, не платят сами: внедрение идёт через регион","inf"],
+ ["Частные клиники и лабораторные сети","Сервисы для пациентов, помощь врачу, контроль качества","Выручка на пациента, повторные визиты, стоимость ошибок","Собственный бюджет, подписка или оплата за случай","inf"],
+ ["Фармацевтические компании","Фармаконадзор, подбор пациентов, аналитика реальной практики","Скорость исследований, полнота отчётности","Контракты на исследования и аналитику","inf"],
+ ["Пациенты","Расшифровка анализов, выбор врача, наблюдение за здоровьем","Понятность и доверие","Бесплатно в рамках региональных сервисов или как часть экосистемы","inf"]
+];
+function renderZak(){ $("#zakBody").innerHTML=ZAK.map((r,i)=>`<tr><td><b>${esc(r[0])}</b>${ZAKL[i]?`<br><span class="count">${goLnk(ZAKL[i][0],ZAKL[i][1])}</span>`:""}</td><td>${esc(r[1])}</td><td>${esc(r[2])}</td><td>${esc(r[3])}</td><td>${TAG[r[4]]}</td></tr>`).join(""); }
+
+/* ---------- РЕЕСТР ---------- */
+const REG=[
+ {n:"323-ФЗ «Об основах охраны здоровья граждан»",ty:"Федеральный закон",o:"doc",st:["s1","s2","s3","s4","s5","s6","s7","s8","s9"],w:"Базовый закон отрасли: медицинская помощь, её качество и контроль, обращение медицинских изделий. Определяет, кто отвечает за медицинское решение."},
+ {n:"152-ФЗ «О персональных данных»",ty:"Федеральный закон",o:"doc",st:["s2","s6","s7","s8"],w:"Данные о здоровье — специальная категория. Определяет законное основание для обучения моделей и работы с ЭМК, требования к обезличиванию."},
+ {n:"123-ФЗ от 24.04.2020 (экспериментальный режим ИИ в Москве)",ty:"Федеральный закон",o:"doc",st:["s4","s6"],w:"Позволяет в Москве разрабатывать и внедрять ИИ, обрабатывая обезличенные персональные данные без согласия граждан. Основа московских ИИ-сервисов в лучевой диагностике."},
+ {n:"243-ФЗ «О поддержке развития технологий ИИ в Российской Федерации» (2026)",ty:"Федеральный закон",o:"doc",st:["s9"],w:"Вводит понятия суверенных и национальных больших фундаментальных моделей, меры господдержки и доступ разработчиков к данным государственных ИС для обучения. Важно при выборе базовой модели продукта."},
+ {n:"Законопроект Минцифры о государственном регулировании ИИ",ty:"Федеральный закон",o:"proj",st:["s9"],w:"Вводит субъектов: разработчик модели, оператор системы, владелец сервиса, пользователь. Нормы могут заработать с 1 сентября 2027 года. Распределение ответственности придётся заложить в договоры."},
+ {n:"Указ Президента № 490 (ред. Указа № 124 от 15.02.2024), Национальная стратегия развития ИИ",ty:"Указ и поручения",o:"doc",st:["s9"],w:"Стратегическая рамка ИИ, включая здравоохранение."},
+ {n:"Поручения Президента Пр-22 от 03.01.2026 и Пр-714 от 03.04.2026",ty:"Указ и поручения",o:"doc",st:["s5","s9"],w:"Национальный план внедрения ИИ с упрощением административных барьеров; системное внедрение российских цифровых помощников и ИИ в медицинскую практику. Политический спрос со стороны B2G-заказчика."},
+ {n:"ПП РФ № 1684 «Об утверждении Правил государственной регистрации медицинских изделий»",ty:"Акт Правительства",o:"doc",st:["s3","s4","s5"],w:"Действующие правила регистрации; расширен понятийный аппарат и введены специальные положения для ПО с ИИ, включая процедуру для модификаций."},
+ {n:"ПП РФ № 447 от 12.04.2018 (взаимодействие ИС в сфере здравоохранения)",ty:"Акт Правительства",o:"doc",st:["s2","s3","s6"],w:"SaaS-сервис, работающий с ЕГИСЗ и МИС, как правило, должен быть зарегистрирован как иная информационная система. Закладывать в план интеграции."},
+ {n:"ПП РФ № 140 от 09.02.2022 «О ЕГИСЗ»",ty:"Акт Правительства",o:"doc",st:["s1","s6","s9"],w:"Состав и функции ЕГИСЗ, участники и порядок информационного обмена. Карта источников данных для продукта."},
+ {n:"ПП РФ № 386 от 10.04.2026 (трансферты на информатизацию здравоохранения)",ty:"Акт Правительства",o:"doc",st:["s9"],w:"Федеральная субсидия регионам на информатизацию, включая внедрение медицинских изделий с ИИ. Источник денег у регионального заказчика."},
+ {n:"Распоряжение Правительства № 959-р от 17.04.2024 (цифровая трансформация здравоохранения)",ty:"Акт Правительства",o:"doc",st:["s9"],w:"Проект «Искусственный интеллект» с задачами, сценариями, эффектами и контрольными точками. Язык целей B2G-заказчика."},
+ {n:"Программа госгарантий на 2026–2028 годы",ty:"Акт Правительства",o:"doc",st:["s8"],w:"Определяет, что оплачивается из ОМС, и задаёт рамку контроля объёмов и качества. Основа для сценариев контроля качества."},
+ {n:"Приказ Минздрава № 686н от 07.07.2020 (классификация медизделий по риску)",ty:"Акт Минздрава",o:"doc",st:["s3","s4","s5"],w:"Классификация программных медицинских изделий по степени риска. Класс определяет объём испытаний и досье."},
+ {n:"Приказ Минздрава № 341н от 14.06.2018 (обезличивание)",ty:"Акт Минздрава",o:"doc",st:["s6","s7"],w:"Порядок обезличивания сведений о пациентах. Применим при подготовке наборов данных."},
+ {n:"Приказ Минздрава № 906н от 27.08.2020 (НСИ)",ty:"Акт Минздрава",o:"doc",st:["s6"],w:"Справочники нормативно-справочной информации. Без них извлечённые данные не встраиваются в ЭМК и ЕГИСЗ."},
+ {n:"Регламент регистрации медицинских изделий (приказ Росздравнадзора № 750 от 19.08.2026)",ty:"Акт Росздравнадзора",o:"doc",st:["s3","s4","s5"],w:"Переводит процедуру на цифровую реестровую модель; для изделий без клинических испытаний — до 31 рабочего дня. Действует до 31.12.2028."},
+ {n:"Порядок автоматической передачи данных о МИ с ИИ в АИС Росздравнадзора (ред. май 2026)",ty:"Акт Росздравнадзора",o:"doc",st:["s9"],w:"Производители и пользователи обязаны автоматически передавать сведения о работе изделий с ИИ; обязательно указание типа решения. Действует до 31.12.2027. Функция мониторинга должна быть в продукте с первого релиза."},
+ {n:"ГОСТ Р 72484-2025 «СИИ в здравоохранении. Термины и определения. Классификация»",ty:"Национальный стандарт",o:"doc",st:["s3","s9"],w:"С 01.02.2026. Единый словарь: медицинские изделия с ИИ, сервисы на основе ИИ, данные. Использовать в ТЗ и договорах."},
+ {n:"ГОСТ Р 59921.0-2022 и серия 59921 «СИИ в клинической медицине»",ty:"Национальный стандарт",o:"doc",st:["s4","s9"],w:"Основные положения, клиническая оценка (ч.1), технические испытания (ч.2), изменения при непрерывном обучении (ч.3), контроль эксплуатационных параметров (ч.4), наборы данных (ч.5), эксплуатация (ч.6)."},
+ {n:"ГОСТ Р 59921.5-2022 (наборы данных для обучения и тестирования)",ty:"Национальный стандарт",o:"doc",st:["s1","s4","s6"],w:"Требования к структуре и применению наборов данных. Основа протокола PoC и валидации."},
+ {n:"ГОСТ Р 59921.3-2021 и 59921.4-2021 (изменения и контроль параметров)",ty:"Национальный стандарт",o:"doc",st:["s9"],w:"Как управлять изменениями модели и контролировать её параметры в эксплуатации."},
+ {n:"ГОСТ Р 71671-2024 (СППВР с ИИ. Основные положения)",ty:"Национальный стандарт",o:"doc",st:["s5"],w:"Рамка для систем поддержки врачебных решений."},
+ {n:"ГОСТ Р 72357-2025 (СППВР в лекарственной терапии: наборы данных и метрики)",ty:"Национальный стандарт",o:"doc",st:["s5","s7"],w:"Методы формирования наборов данных и метрики качества для лекарственной терапии."},
+ {n:"ГОСТ Р 72313-2025 (СППВР для извлечения данных из неструктурированных записей)",ty:"Национальный стандарт",o:"doc",st:["s6","s8"],w:"Наборы данных и метрики качества для извлечения из свободного текста. Прямо применим к LLM-продуктам на ЭМК."},
+ {n:"ГОСТ Р 71672-2024 и ГОСТ Р 72356-2025 (прогнозная аналитика по ЭМК)",ty:"Национальный стандарт",o:"doc",st:["s1"],w:"Основные положения и методы испытаний систем прогнозной аналитики."},
+ {n:"ГОСТ Р 59921.7-2022, ГОСТ Р 71673-2024, ГОСТ Р 71738-2024 (анализ изображений)",ty:"Национальный стандарт",o:"doc",st:["s4"],w:"Методы испытаний, точность измерений, устойчивость на разнородных данных."},
+ {n:"ГОСТ Р 71674-2024 (обезличивание DICOM-наборов)",ty:"Национальный стандарт",o:"doc",st:["s4"],w:"Методы обезличивания наборов DICOM и контроля отсутствия персональных данных."},
+ {n:"ГОСТ Р 71737-2024 (менеджмент риска для МИ с ИИ)",ty:"Национальный стандарт",o:"doc",st:["s3","s4","s5"],w:"Применение менеджмента риска к медицинским изделиям с ИИ, вместе с ГОСТ ISO 14971."},
+ {n:"ПНСТ 961-2024 (этические аспекты)",ty:"Национальный стандарт",o:"doc",st:["s2","s5"],w:"Этические требования к ИИ в здравоохранении."},
+ {n:"ПНСТ 962-2024 (маршрутизация потоков пациентов)",ty:"Национальный стандарт",o:"doc",st:["s2"],w:"Основные положения для систем маршрутизации и оптимизации потоков."},
+ {n:"ПНСТ 872-2023 (методы клинических испытаний СППВР)",ty:"Национальный стандарт",o:"doc",st:["s5"],w:"Как проводить клинические испытания систем поддержки врачебных решений."},
+ {n:"ГОСТ Р 71752-2024 (ТЗ на систему ИИ)",ty:"Национальный стандарт",o:"doc",st:["s9"],w:"Требования к содержанию технического задания. Шаблон для постановки задач AI-командам."},
+ {n:"ГОСТ Р МЭК 62304-2022, ГОСТ ISO 13485-2017, ГОСТ ISO 14971-2021",ty:"Национальный стандарт",o:"doc",st:["s3","s4","s5"],w:"Жизненный цикл медицинского ПО, система менеджмента качества, менеджмент риска. Нужны для регистрации ПО как медицинского изделия."},
+ {n:"ГОСТ Р ИСО/МЭК 42001-2024 (система менеджмента ИИ)",ty:"Национальный стандарт",o:"doc",st:["s9"],w:"Система менеджмента ИИ на уровне организации."},
+ {n:"Проекты стандартов ДЗМ по большим генеративным моделям, включая суммаризацию ЭМД и методы испытаний с метриками",ty:"Национальный стандарт",o:"proj",st:["s6","s9"],w:"Четыре новых проекта, из них два по генеративным моделям; обсуждение ПНСТ по методам испытаний и метрикам — до 13.07.2026. Первые нормативные ориентиры для оценки LLM-продуктов."},
+ {n:"EU AI Act и MDR (Евросоюз)",ty:"Международный аналог",o:"doc",st:["s9"],w:"ИИ в медицинских изделиях относится к системам высокого риска: требования к данным, прозрачности, человеческому надзору. Ориентир при выходе на внешние рынки и при сравнении подходов."},
+ {n:"FDA: программное обеспечение как медицинское изделие и заранее согласованные планы изменений (PCCP)",ty:"Международный аналог",o:"doc",st:["s9"],w:"Механизм заранее согласованных изменений модели без повторной регистрации. Аналог российских положений о модификациях ИИ-ПО."}
+];
+
+/* ---------- ИЕРАРХИЯ РЕЕСТРА ---------- */
+const LVL=[
+ {k:1,n:"Уровень 1 · Федеральные законы",d:"Высшая сила в отрасли после Конституции и международных договоров. Задают само понятие медицинской помощи, её качества и обращения медицинских изделий. Всё нижестоящее не может им противоречить.",ty:["Федеральный закон"]},
+ {k:2,n:"Уровень 2 · Указы Президента и поручения",d:"Задают политические цели и сроки, обязательные для органов власти. Для продукта это не требования к изделию, а источник спроса и приоритетов заказчика.",ty:["Указ и поручения"]},
+ {k:3,n:"Уровень 3 · Акты Правительства",d:"Постановления и распоряжения, которые превращают нормы законов в процедуры: регистрация изделий, состав ЕГИСЗ, подключение информационных систем, программа госгарантий, деньги регионам.",ty:["Акт Правительства"]},
+ {k:4,n:"Уровень 4 · Ведомственные акты",d:"Приказы Минздрава и Росздравнадзора: классификация по риску, обезличивание, справочники, регламент регистрации, передача сведений о работе изделий с ИИ. Обязательны, но принимаются в рамках, заданных уровнем 3.",ty:["Акт Минздрава","Акт Росздравнадзора"]},
+ {k:5,n:"Уровень 5 · Национальные стандарты",d:"ГОСТ Р и ПНСТ. Применяются добровольно, но становятся обязательными, когда на них ссылается акт или когда производитель заявил соответствие в досье. На практике именно они задают, как доказывать качество ИИ-изделия.",ty:["Национальный стандарт"]},
+ {k:6,n:"Уровень 6 · Международные аналоги",d:"Справочный уровень: в России юридической силы не имеют, но служат ориентиром при выходе на внешние рынки и при сравнении подходов.",ty:["Международный аналог"]}
+];
+const lvlOf=r=>(LVL.find(l=>l.ty.includes(r.ty))||{k:9}).k;
+/* родитель: документ, в развитие которого принят этот акт (для отступа внутри уровня) */
+const PARENT={
+ "ГОСТ Р 59921.5-2022 (наборы данных для обучения и тестирования)":"ГОСТ Р 59921.0-2022 и серия 59921 «СИИ в клинической медицине»",
+ "ГОСТ Р 59921.3-2021 и 59921.4-2021 (изменения и контроль параметров)":"ГОСТ Р 59921.0-2022 и серия 59921 «СИИ в клинической медицине»",
+ "ГОСТ Р 59921.7-2022, ГОСТ Р 71673-2024, ГОСТ Р 71738-2024 (анализ изображений)":"ГОСТ Р 59921.0-2022 и серия 59921 «СИИ в клинической медицине»",
+ "ГОСТ Р 71674-2024 (обезличивание DICOM-наборов)":"ГОСТ Р 59921.0-2022 и серия 59921 «СИИ в клинической медицине»",
+ "ГОСТ Р 72357-2025 (СППВР в лекарственной терапии: наборы данных и метрики)":"ГОСТ Р 71671-2024 (СППВР с ИИ. Основные положения)",
+ "ГОСТ Р 72313-2025 (СППВР для извлечения данных из неструктурированных записей)":"ГОСТ Р 71671-2024 (СППВР с ИИ. Основные положения)",
+ "ПНСТ 872-2023 (методы клинических испытаний СППВР)":"ГОСТ Р 71671-2024 (СППВР с ИИ. Основные положения)",
+ "Регламент регистрации медицинских изделий (приказ Росздравнадзора № 750 от 19.08.2026)":"ПП РФ № 1684 «Об утверждении Правил государственной регистрации медицинских изделий»",
+ "Приказ Минздрава № 686н от 07.07.2020 (классификация медизделий по риску)":"ПП РФ № 1684 «Об утверждении Правил государственной регистрации медицинских изделий»",
+ "Приказ Минздрава № 906н от 27.08.2020 (НСИ)":"ПП РФ № 140 от 09.02.2022 «О ЕГИСЗ»",
+ "Приказ Минздрава № 341н от 14.06.2018 (обезличивание)":"152-ФЗ «О персональных данных»"
+};
+
+function renderReg(){
+  const types=[...new Set(REG.map(r=>r.ty))]; const ts=$("#rgType");
+  types.forEach(t=>ts.insertAdjacentHTML("beforeend",`<option>${esc(t)}</option>`));
+  const ls=$("#rgLvl"); LVL.forEach(l=>ls.insertAdjacentHTML("beforeend",`<option value="${l.k}">${esc(l.n)}</option>`));
+  const row=(r,child)=>`<tr><td${child?' style="padding-left:34px"':''}>${child?'<span class="count">└ </span>':''}<b>${esc(r.n)}</b>${child?`<br><span class="count">принят в развитие: ${esc(PARENT[r.n])}</span>`:""}</td><td>${esc(r.ty)}</td><td>${esc(r.w)}</td><td>${r.st.map(id=>esc(STAGES.find(s=>s.id===id).short)).join(", ")}</td><td>${TAG[r.o]}</td></tr>`;
+  const f=()=>{
+    const q=$("#rgQ").value.toLowerCase(), t=ts.value, o=$("#rgOrigin").value, lv=ls.value;
+    const rows=REG.filter(r=>(!t||r.ty===t)&&(!o||r.o===o)&&(!lv||lvlOf(r)===+lv)&&(!q||(r.n+" "+r.w).toLowerCase().includes(q)));
+    let html="";
+    LVL.forEach(l=>{
+      const inLvl=rows.filter(r=>lvlOf(r)===l.k); if(!inLvl.length)return;
+      html+=`<tr><td colspan="5" style="background:var(--tint)"><b style="font:600 15px var(--serif)">${esc(l.n)}</b> <span class="count">· ${esc(l.d)}</span></td></tr>`;
+      const tops=inLvl.filter(r=>!PARENT[r.n]||!inLvl.some(x=>x.n===PARENT[r.n]));
+      tops.forEach(r=>{ html+=row(r,false);
+        inLvl.filter(c=>PARENT[c.n]===r.n).forEach(c=>{html+=row(c,true)});
+      });
+    });
+    const other=rows.filter(r=>lvlOf(r)===9); if(other.length){html+=`<tr><td colspan="5" style="background:var(--tint)"><b>Прочее</b></td></tr>`+other.map(r=>row(r,false)).join("")}
+    $("#rgTable tbody").innerHTML=html||'<tr><td colspan="5">Ничего не найдено. Сбросьте фильтры или измените запрос.</td></tr>';
+    $("#rgCount").textContent=rows.length+" из "+REG.length;
+  };
+  ["#rgQ","#rgOrigin"].forEach(s=>$(s).addEventListener("input",f)); ts.addEventListener("input",f); ls.addEventListener("input",f); f();
+}
+
+/* ---------- ВОРОТА ---------- */
+const GATES=[
+ {n:"Проблема и ценность",c:"Назван показатель заказчика, который должен измениться, и его владелец. Описан текущий процесс и узкое место. Подтверждена доступность данных и законное основание их использования.",a:"Карта процесса «как есть», дерево показателей, реестр данных",d:"ГОСТ Р 71752-2024, 152-ФЗ"},
+ {n:"PoC на ретроспективных данных",c:"Набор данных сформирован по требованиям к структуре и разметке; модельная метрика на отложенной выборке достигает порога, согласованного с заказчиком.",a:"Протокол набора данных, отчёт о метриках",d:"ГОСТ Р 59921.5-2022, отраслевые стандарты на наборы данных и метрики"},
+ {n:"Врачебная валидация",c:"Врачи-эксперты независимо оценили результаты модели; согласие между экспертами и с моделью измерено; разобраны ошибки и границы применимости.",a:"Протокол валидации, реестр ошибок",d:"ГОСТ Р 59921.1-2022, ПНСТ 872-2023"},
+ {n:"Регуляторная квалификация",c:"Определено, является ли продукт медицинским изделием; класс риска; нужны ли клинические испытания; план досье и практический срок.",a:"Заключение о статусе, регуляторная дорожная карта",d:"ПП РФ № 1684, приказ № 686н, ГОСТ Р МЭК 62304-2022, ГОСТ ISO 14971-2021"},
+ {n:"Пилот в медицинской организации",c:"Интеграция с МИС или ЕГИСЗ работает; измерены продуктовые метрики в реальном процессе; есть владелец процесса со стороны клиники и обратная связь врачей.",a:"Отчёт о пилоте, акт с критериями приёмки",d:"ПП РФ № 447, ГОСТ Р 59921.6-2021"},
+ {n:"Промышленное внедрение",c:"Регистрационное удостоверение получено, если требуется; SLA, поддержка, обучение пользователей, мониторинг и порядок реагирования на инциденты описаны и работают.",a:"Регламент эксплуатации, SLA, план обучения",d:"ГОСТ Р 59921.6-2021, ГОСТ ISO 13485-2017"},
+ {n:"Мониторинг и управление изменениями",c:"Метрики отслеживаются в эксплуатации, дрейф обнаруживается автоматически; сведения о работе передаются регулятору; изменения модели проходят по установленной процедуре.",a:"Дашборд качества, журнал изменений",d:"Порядок передачи данных в АИС Росздравнадзора, ГОСТ Р 59921.3-2021, ГОСТ Р 59921.4-2021"},
+ {n:"Масштабирование",c:"Подтверждён клинико-экономический эффект; есть источник финансирования тиражирования; решение переносится в другие регионы без переобучения или с описанной процедурой адаптации.",a:"Экономическая модель, пакет тиражирования",d:"ПП РФ № 386, региональные программы"}
+];
+function renderGates(){ $("#gates").innerHTML=GATES.map((g,i)=>`<li><h4>${esc(g.n)}</h4><div>${esc(g.c)}</div><div class="row"><div><b>Артефакт:</b> ${esc(g.a)}</div><div><b>Опора:</b> ${esc(g.d)}${GATEL[i]?` · ${goLnk(GATEL[i][0],GATEL[i][1])}`:""}</div></div></li>`).join(""); }
+
+/* ---------- ПРИМЕР ---------- */
+const PRIMER=[
+ {n:"Результат анализа приходит в приложение",st:"s3",ai:"LLM пересказывает результаты простым языком и отмечает отклонения с учётом прошлых анализов",data:"ЛИС: значения и референсы; прошлые результаты из ЭМК",rule:"Ответ строится только по полученным значениям; при выраженных отклонениях — рекомендация обратиться к врачу, без диагноза",met:"Фактическая точность пересказа; доля корректных направлений к врачу"},
+ {n:"Пациентка записывается к терапевту",st:"s2",ai:"Ассистент собирает жалобы и предлагает нужного специалиста и время",data:"Жалобы, расписание МО",rule:"Признаки неотложного состояния — немедленная маршрутизация, а не запись",met:"Доля корректной маршрутизации"},
+ {n:"Приём у терапевта",st:"s5",ai:"СППВР сверяет тактику с клинической рекомендацией и проверяет назначения",data:"ЭМК, клинические рекомендации, справочник ЛС",rule:"Подсказка со ссылкой на пункт рекомендации; решение принимает врач",met:"Доля принятых подсказок; найденные ошибки назначений"},
+ {n:"Протокол осмотра и направление",st:"s6",ai:"Голосовой ввод и структурирование протокола; сводка истории перед приёмом",data:"Речь врача, шаблон, ЭМК",rule:"Врач подтверждает протокол; каждое утверждение сводки ссылается на запись",met:"Время на документацию; доля фактических ошибок"},
+ {n:"Случай попадает в реестр счетов",st:"s8",ai:"Модель отбирает случай на экспертизу по вероятности дефекта",data:"Реестр счетов, история экспертиз",rule:"Отбор не является санкцией",met:"Доля дефектных среди отобранных"},
+ {n:"Экспертиза качества",st:"s8",ai:"Агент сопоставляет медицинскую документацию с критериями качества и готовит обоснование для эксперта",data:"ЭМК, клинические рекомендации, критерии",rule:"Вывод о дефекте подтверждает эксперт; каждое замечание — со ссылкой на документ и критерий",met:"Совпадение с экспертом; нагрузка от ложных срабатываний"},
+ {n:"Мониторинг",st:"s9",ai:"Сведения о работе ИИ-изделий передаются регулятору; отслеживается дрейф",data:"Журналы работы моделей",rule:"Порядок передачи данных в АИС Росздравнадзора",met:"Стабильность метрик; время обнаружения деградации"}
+];
+function renderPrimer(){ $("#primerSteps").innerHTML=PRIMER.map((p,i)=>{const s=STAGES.find(x=>x.id===p.st);const L=PRIMERL[i]||[];
+ return `<li><h4>${esc(p.n)} <button class="lnk2" data-stage="${p.st}" title="Открыть эту стадию в пути случая">${esc(s.short)}</button></h4><div>${esc(p.ai)}</div><div class="row"><div><b>Данные:</b> ${esc(p.data)}</div><div><b>Правило:</b> ${esc(p.rule)}</div><div><b>Метрика:</b> ${esc(p.met)}</div></div>${L.length?`<div class="row" style="margin-top:4px"><div><b>Подробнее:</b> ${L.map(x=>goLnk(x[0],x[1])).join(" · ")}</div></div>`:""}</li>`}).join("");
+ $("#primerNote").innerHTML=`Транзакционная сторона того же случая — ${A("02-paralleli-i-modeli.html#osi","две оси случая")}; как этот путь выглядит за рубежом — ${A("01-zarubezhnyy-segment.html#put","зарубежная практика по стадиям")}.`; }
+
+/* ---------- МЕТРИКИ ---------- */
+const MET=[
+ ["Модельный","Чувствительность и специфичность","Доля найденных больных и доля правильно отсеянных здоровых","Диагностика, отбор случаев"],
+ ["Модельный","PPV и NPV","Вероятность, что положительный или отрицательный ответ верен при данной распространённости","Скрининг; см. калькулятор"],
+ ["Модельный","AUC-ROC и калибровка","Качество ранжирования и соответствие предсказанных вероятностей реальным","Прогноз риска"],
+ ["Модельный","Точность, полнота, F1 по полям","Качество извлечения структурированных данных","Извлечение из ЭМК (ГОСТ Р 72313-2025)"],
+ ["Модельный (LLM)","Фактическая точность относительно источника","Доля утверждений ответа, подтверждённых данными","Расшифровка анализов, суммаризация, ассистенты"],
+ ["Модельный (LLM)","Доля галлюцинаций","Утверждения, которых нет в источнике","Любая генерация в медицинский документ"],
+ ["Модельный (LLM)","Доля корректных отказов","Модель говорит «недостаточно данных», а не выдумывает","Ассистенты пациента и врача"],
+ ["Модельный","Согласие с экспертами (каппа Коэна)","Совпадение модели с врачами поверх случайного","Врачебная валидация"],
+ ["Продуктовый","Доля принятых подсказок","Пользуется ли врач продуктом","СППВР, черновики протоколов"],
+ ["Продуктовый","Время на случай, доля правок","Экономит ли продукт время","Документация, описание исследований"],
+ ["Продуктовый","Латентность и доступность","Встраивается ли продукт в поток приёма","Все сценарии в реальном времени"],
+ ["Клинико-экономический","Время до диагноза, выявляемость","Клиническая польза","Диагностика, профилактика"],
+ ["Клинико-экономический","Совпадение с экспертизой и пропущенные дефекты","Можно ли доверить отбор и подготовку экспертизы","Контроль качества медпомощи"],
+ ["Клинико-экономический","Стоимость на случай против эффекта","Экономика тиражирования","Любой сценарий перед масштабированием"]
+];
+function renderMet(){ $("#metBody").innerHTML=MET.map(r=>{const L=METL[r[0]];return `<tr><td>${esc(r[0])}</td><td><b>${esc(r[1])}</b></td><td>${esc(r[2])}</td><td>${esc(r[3])}${L?`<br><span class="count">${goLnk(L[0],L[1])}</span>`:""}</td></tr>`}).join(""); }
+
+function fmt(n){return Math.round(n).toLocaleString("ru-RU")}
+function calc(){
+  const se=+$("#cSens").value/100, sp=+$("#cSpec").value/100, pr=+$("#cPrev").value/100, N=+$("#cN").value;
+  const pc=v=>(v*100).toFixed(1).replace(".",",")+"%"; $("#oSens").textContent=pc(se); $("#oSpec").textContent=pc(sp); $("#oPrev").textContent=pc(pr);
+  const P=N*pr, Ng=N-P, TP=P*se, FN=P-TP, TN=Ng*sp, FP=Ng-TN;
+  const ppv=TP/(TP+FP||1), npv=TN/(TN+FN||1);
+  $("#cm").innerHTML=`<div class="h"></div><div class="h">Есть патология</div><div class="h">Нет патологии</div>
+   <div class="h">Модель: да</div><div><span class="big">${fmt(TP)}</span>верно найдено</div><div class="bad"><span class="big">${fmt(FP)}</span>ложная тревога</div>
+   <div class="h">Модель: нет</div><div class="bad"><span class="big">${fmt(FN)}</span>пропущено</div><div><span class="big">${fmt(TN)}</span>верно отсеяно</div>`;
+  $("#cres").innerHTML=`<div><b>${(ppv*100).toFixed(1).replace(".",",")}%</b>положительных ответов верны (PPV)</div>
+   <div><b>${(npv*100).toFixed(2).replace(".",",")}%</b>отрицательных ответов верны (NPV)</div>
+   <div><b>${fmt(TP+FP)}</b>случаев уйдёт врачам на проверку</div>
+   <div><b>${(TP+FP)>0?(FP/(TP+FP)).toFixed(2).replace(".",","):"0"}</b>доля ложных среди срабатываний</div>`;
+}
+function renderCalc(){ ["#cSens","#cSpec","#cPrev","#cN"].forEach(s=>$(s).addEventListener("input",calc)); calc(); }
+
+/* ---------- РИСКИ ---------- */
+const RISK=[
+ ["Галлюцинации LLM","Утверждение, которого нет в источнике: диагноз, доза, дата","Врачи правят факты, а не стиль","Ответ только по полученным данным; ссылка на источник у каждого утверждения; автоматическая сверка чисел кодом"],
+ ["Устаревание знаний","Подсказка противоречит обновлённой клинической рекомендации","Рост отклонённых подсказок после обновления","Знания из базы клинических рекомендаций с версией и датой, а не из весов модели"],
+ ["Смещение данных","Точность падает на другом регионе, аппарате или возрастной группе","Расхождение метрик по подгруппам","Тестирование по подгруппам; устойчивость на разнородных данных; локальная валидация перед тиражированием"],
+ ["Дрейф в эксплуатации","Тихая деградация после смены оборудования или справочников","Смещение распределения входов","Мониторинг метрик и входных данных; процедура изменений; передача сведений регулятору"],
+ ["Автоматизационное доверие","Врач перестаёт проверять подсказку","Доля принятых подсказок близка к 100%","Показывать неуверенность; контрольные случаи; обучение пользователей"],
+ ["Утечка и неправомерное использование данных","Персональные данные за пределами законного основания","Запросы на выгрузку сырых данных","Обезличивание; контур заказчика; журнал доступа; отказ от внешних API для сырых данных"],
+ ["Инъекции через документы","Текст в медицинском документе меняет поведение агента","Аномальные действия агента","Документы как данные, а не инструкции; ограничение инструментов агента; проверка вывода"],
+ ["Юридическая сила решения","Санкция или отказ в оплате по выводу модели оспаривается","Рост споров","Модель отбирает и обосновывает, решает эксперт; прослеживаемость каждого вывода"],
+ ["Регуляторная неопределённость","Продукт внезапно признают медицинским изделием","Изменение назначения или формулировок","Регуляторная квалификация на ранних воротах; контроль формулировок интерфейса"],
+ ["Нагрузка ложных срабатываний","Врачи и эксперты перегружены проверкой","Растёт время реакции на срабатывание","Выбор порога по цене ошибки; расчёт PPV при реальной распространённости"]
+];
+function renderRisk(){ $("#riskBody").innerHTML=RISK.map((r,i)=>`<tr><td><b>${esc(r[0])}</b></td><td>${esc(r[1])}</td><td>${esc(r[2])}</td><td>${esc(r[3])}${RISKL[i]?`<br><span class="count">${goLnk(RISKL[i][0],RISKL[i][1])}</span>`:""}</td></tr>`).join(""); }
+
+/* ---------- РЫНОК ---------- */
+const MKT=[
+ ["Росздравнадзор зарегистрировал 57 медицинских изделий с ИИ; большинство отечественные, доступны во всех регионах (НОВАМЕД-2026, июнь)","Регистрация — рабочий путь, а не исключение. Пул зарегистрированных изделий — ориентир для конкурентного анализа","https://zainsk-inform.ru/news/obschestvo/roszdravnadzor-zaregistriroval-57-medicinskix-izdelii-s-iskusstvennym-intellektom"],
+ ["В России работают более 70 специализированных компаний — разработчиков ИИ для здравоохранения","Конкуренция по отдельным сценариям высокая; преимущество — сквозные решения и доступ к заказчику","https://webiomed.ru/blog/standarty-dlia-sozdaniia-sistem-ii/"],
+ ["Центр диагностики и телемедицины ДЗМ разработал 28 национальных стандартов по ИИ в здравоохранении, 6 вступили в силу в начале 2026 года","Москва задаёт методологию испытаний и оценки для всей страны","https://www.comnews.ru/digital-economy/content/243702/2026-02-06/2026-w06/1012/gost-dlya-ii-iskusstvennyy-intellekt-stal-medicinskim-instrumentom"],
+ ["ДЗМ разрабатывает 4 новых стандарта, два из них — для решений на основе больших генеративных моделей","Критерии оценки LLM-продуктов скоро станут нормативными; участвовать в обсуждении выгоднее, чем догонять","https://www.vademec.ru/news/2026/06/11/v-dzm-razrabatyvayut-gost-po-sozdaniyu-meditsinskikh-ii-na-osnove-bolshikh-generativnykh-modeley/"],
+ ["Сбер и правительство Московской области запустили СППВР для врачей и расшифровку анализов «Мнение ИИ» на базе ГигаЧат в приложении «Добродел Здоровье»; оба решения работают с ЭМК (март 2026)","Референсный B2G-кейс: сервис для врача и для пациента на одних данных в одном регионе","https://riamo.ru/news/zdravoohranenie/tsifrovye-tehnologii-pomogut-vsem-zhiteljam-podmoskovja-zabotitsja-o-zdorove/"],
+ ["СберМедИИ фокусируется на мультиагентной AI-системе, где каждый помощник специализируется на участке работы медиков, и на мониторинге здоровья (НОВАМЕД-2026)","Рынок движется от отдельных моделей к агентным системам; нужны стандарты взаимодействия агентов и разграничение полномочий","https://sbermed.ai/sbermedii-ai-healthcare-innovation"],
+ ["Медицинская модель на базе GigaChat в 2024 году сдала экзамен и прошла первичную аккредитацию по специальности «Лечебное дело»","Экзамен — аргумент для коммуникации, но не замена клинической валидации на реальном потоке","https://sbermed.ai/ai-pomoschnik-na-baze-gigachat"],
+ ["ИИ-помощник в «СберЗдоровье» собирает анамнез и предлагает три вероятных диагноза; к июлю 2025 — более 350 тыс. консультаций; в разработке проверка эпикризов на соответствие клиническим рекомендациям","Сценарии для пациента и контроль качества используют общий слой знаний — клинические рекомендации","https://platforms.su/project/2767"],
+ ["Пилот ФОМС: совпадение нейросети с экспертами около 90% на исторических данных и 87% на актуальных; около 5% расхождений — случаи, пропущенные экспертами","Порядок достижимых метрик для контроля качества и аргумент «модель находит то, что пропускает человек»","https://www.cnews.ru/articles/2019-07-16_iskusstvennyj_intellekt_proverit_kachestvo_besplatnoj_meditsinskoj"],
+ ["Описан опыт внедрения LLM-системы внутреннего контроля качества «Супервизия истории болезни» в реабилитационной клинике","Внутренний контроль в клинике — вход в сценарий без санкционной нагрузки","https://cyberleninka.ru/article/n/sistema-vnutrennego-kontrolya-kachestva-meditsinskoy-pomoschi-s-ispolzovaniem-iskusstvennogo-intellekta"]
+];
+function renderMkt(){ $("#mktBody").innerHTML=MKT.map(r=>`<tr><td>${esc(r[0])}</td><td>${esc(r[1])}</td><td><a href="${esc(r[2])}" target="_blank" rel="noopener">${esc(new URL(r[2]).hostname.replace("www.",""))}</a></td></tr>`).join(""); }
+
+
+/* ---------- ССЫЛКИ ПО ФАЙЛУ ---------- */
+const A=(href,txt)=>`<a href="${href}">${esc(txt)}</a>`;
+const goLnk=(id,txt)=>`<button class="lnk2" data-go="${id}">${esc(txt)}</button>`;
+/* сквозной пример: стадия + разбор */
+const PRIMERL=[
+ [["metriki","Фактическая точность и метрики LLM"],["risk","Риск: галлюцинации"]],
+ [["scen","Сценарии маршрутизации"],["risk","Риск: пропуск неотложного состояния"]],
+ [["reestr","ГОСТ Р 71671-2024 (СППВР)"],["risk","Риск: автоматизационное доверие"]],
+ [["reestr","ГОСТ Р 72313-2025 (извлечение данных)"],["metriki","Полнота и точность по полям"]],
+ [["zak","Заказчик: ФОМС и СМО"],["scen","Отбор случаев на экспертизу"]],
+ [["cikl","Ворота: врачебная валидация"],["risk","Риск: юридическая сила решения"]],
+ [["reestr","Передача сведений в АИС Росздравнадзора"],["risk","Риск: дрейф модели"]]
+];
+/* заказчики: куда идти за контекстом */
+const ZAKL=[["reestr","Реестр: акты Правительства"],["reestr","ПП РФ № 386, деньги регионам"],["scen","Сценарии контроля качества"],["put","Стадия «Оплата и контроль качества»"],["scen","Сценарии для ДМС"],["cikl","Ворота: пилот в клинике"],["scen","Сценарии B2B"],["put","Стадия «Лечение и лекарства»"],["scen","Сценарии B2C"]];
+/* метрики: связанный раздел */
+const METL={"Модельный":["cikl","Ворота: PoC и валидация"],"Модельный (LLM)":["risk","Реестр рисков LLM"],"Продуктовый":["cikl","Ворота: пилот в клинике"],"Клинико-экономический":["cikl","Ворота: масштабирование"]};
+/* ворота: опора → реестр */
+const GATEL=[["reestr","Документы этих ворот"],["reestr","Стандарты на наборы данных"],["metriki","Согласие с экспертами"],["reestr","Правила регистрации и классы риска"],["put","Стадия внедрения в пути случая"],["reestr","Эксплуатация и система качества"],["risk","Риск: дрейф в эксплуатации"],["zak","Кто финансирует тиражирование"]];
+/* риски: куда идти за решением */
+const RISKL=[["metriki","Фактическая точность"],["reestr","Клинические рекомендации"],["metriki","Метрики по подгруппам"],["reestr","Мониторинг МИ с ИИ"],["cikl","Ворота: обучение пользователей"],["gloss","Обезличивание и данные"],["put","Стадия «Врачебное решение»"],["zak","Заказчик: ФОМС и СМО"],["reestr","Правила регистрации"],["metriki","Калькулятор цены ошибки"]];
+
+/* ---------- ГЛОССАРИЙ ---------- */
+const KB="#reestr";
+const GL=[
+ ["Субъекты и заказчики",[
+  ["ЕГИСЗ","Единая государственная информационная система в сфере здравоохранения","Государственная система, объединяющая федеральные подсистемы (реестры медорганизаций, медработников, электронных медицинских документов) и региональные сегменты. Через неё идёт обмен медицинскими данными между организациями и уровнями управления. Для ИИ-продукта это основной источник данных и одновременно обязательная точка интеграции: то, что не попало в ЕГИСЗ, для государства не существует.","Положение о ЕГИСЗ, ПП РФ № 140 от 09.02.2022","http://publication.pravo.gov.ru/Document/View/0001202202110036"],
+  ["МО","Медицинская организация","Юридическое лицо, оказывающее медицинскую помощь на основании лицензии: поликлиника, больница, диспансер, частная клиника. Несёт ответственность за качество помощи, поэтому именно она, а не разработчик, отвечает перед пациентом за решение, принятое с подсказкой ИИ.","323-ФЗ «Об основах охраны здоровья граждан», ст. 2","https://www.consultant.ru/document/cons_doc_LAW_121895/"],
+  ["ФОМС, ТФОМС","Федеральный и территориальные фонды обязательного медицинского страхования","Фонды, аккумулирующие страховые взносы и оплачивающие медицинскую помощь по программе госгарантий. Задают правила контроля объёмов, сроков, качества и условий помощи, то есть определяют, за что клиника получит деньги и за что их лишится. Главный заказчик сценариев автоматического контроля качества.","Программа государственных гарантий бесплатного оказания медицинской помощи",KB],
+  ["СМО","Страховая медицинская организация","Страховщик в системе ОМС: выдаёт полисы, оплачивает счета медорганизаций и проводит экспертизы качества по поручению фонда. Именно её эксперты принимают решение о дефекте помощи, поэтому ИИ здесь может отбирать и обосновывать, но не решать.","Правила обязательного медицинского страхования",KB],
+  ["ДМС","Добровольное медицинское страхование","Платное страхование сверх программы госгарантий: страховая компания по договору оплачивает клиникам помощь застрахованным. Цикл сделки короче, чем в госсекторе, а решение о покупке принимает сама компания, поэтому ДМС часто оказывается самым быстрым каналом для ИИ-сервисов.","Правила страхования и договор ДМС",KB],
+  ["Росздравнадзор","Федеральная служба по надзору в сфере здравоохранения","Регулятор обращения медицинских изделий: регистрирует их, ведёт государственный реестр, контролирует безопасность и собирает сведения о работе изделий с ИИ после выхода на рынок. Для ИИ-продукта — та инстанция, которая решает, можно ли его вообще применять в медицине.","Регламент регистрации медизделий, приказ Росздравнадзора № 750 от 19.08.2026","https://gxpnews.net/2026/09/roszdravnadzor-obnovil-reglament-registraczii-medizdelij/"],
+  ["Иная информационная система","Информационная система в сфере здравоохранения, не являющаяся государственной","Негосударственная система (продукт вендора, облачный сервис), которую подключают к ЕГИСЗ. Требует регистрации и соблюдения правил информационного взаимодействия: без этого статуса SaaS-сервис не может законно обмениваться данными с государственными системами.","Правила взаимодействия информационных систем, ПП РФ № 447 от 12.04.2018","http://government.ru/docs/32336/"]]],
+ ["Данные и системы",[
+  ["ЭМК","Электронная медицинская карта","Совокупность электронных документов о пациенте: обращения, диагнозы, назначения, результаты исследований. Главный источник данных для прогнозной аналитики, СППВР и суммаризации. Значительная часть содержимого — свободный текст, поэтому качество извлечения из него определяет качество почти любого ИИ-сценария.","ГОСТ Р 72313-2025 (извлечение данных из неструктурированных записей)","https://protect.gost.ru/v.aspx?control=8&id=257748"],
+  ["ЭМД","Электронный медицинский документ","Юридически значимый документ, подписанный электронной подписью медработника и зарегистрированный в федеральном реестре. В отличие от записи в карте, это то, что имеет доказательственную силу в споре и в экспертизе. Вывод модели становится частью ЭМД только после подтверждения врачом.","Положение о ЕГИСЗ, ПП РФ № 140","http://publication.pravo.gov.ru/Document/View/0001202202110036"],
+  ["МИС","Медицинская информационная система","Система автоматизации медорганизации: расписание, приёмы, назначения, ведение карт, выставление счетов. Для ИИ-продукта это основной канал доставки до врача: то, что не встроено в МИС, врач использовать не будет, потому что это отдельное окно и двойной ввод.","Требования к государственным ИС в сфере здравоохранения, ПП РФ № 140","http://publication.pravo.gov.ru/Document/View/0001202202110036"],
+  ["ЛИС","Лабораторная информационная система","Система лаборатории: приём заказов, ход исследования, выдача результатов с референсными интервалами. Источник данных для расшифровки анализов и внутрилабораторного контроля качества.","Реестр документов базы знаний",KB],
+  ["РИС, PACS","Радиологическая информационная система и система архивации и передачи изображений","РИС ведёт направления и протоколы исследований, PACS хранит сами изображения. Для ИИ в лучевой диагностике это единственная точка входа: модель получает исследование из PACS и возвращает результат в РИС.","ГОСТ Р 71674-2024 (обезличивание DICOM-наборов)","https://protect.gost.ru/v.aspx?control=8&id=252327"],
+  ["DICOM","Digital Imaging and Communications in Medicine — цифровые изображения и обмен ими в медицине","Международный стандарт формата и передачи медицинских изображений. Файл содержит не только картинку, но и служебные поля с данными пациента и параметрами аппарата, поэтому обезличивание DICOM — отдельная задача со своим стандартом.","ГОСТ Р 71674-2024 (обезличивание DICOM-наборов)","https://protect.gost.ru/v.aspx?control=8&id=252327"],
+  ["НСИ","Нормативно-справочная информация","Единые справочники и классификаторы: диагнозы, услуги, лекарства, лаборатории. Без приведения к НСИ извлечённые моделью данные не встраиваются ни в ЭМК, ни в аналитику региона: текст останется текстом, а не данными.","Приказ Минздрава № 906н от 27.08.2020",KB],
+  ["Обезличивание","Обезличивание персональных данных","Преобразование данных, после которого без дополнительной информации нельзя определить, к какому пациенту они относятся. Основной законный способ готовить наборы для обучения моделей; порядок и методы установлены отдельным приказом.","Приказ Минздрава № 341н от 14.06.2018","http://publication.pravo.gov.ru/Document/View/0001201808090005"],
+  ["Набор данных","Набор данных для обучения и тестирования системы ИИ","Размеченные данные, разделённые на обучающую, валидационную и тестовую части. Требования к структуре, представительности и разметке заданы стандартом; от них зависит, можно ли вообще считать полученные метрики доказательством.","ГОСТ Р 59921.5-2022 (наборы данных)",KB]]],
+ ["Классы решений",[
+  ["СППВР","Система поддержки принятия врачебных решений","Программа, предлагающая врачу вариант действия: диагноз, обследование, назначение. Ключевое свойство — решение остаётся за врачом, а система обязана показать основание. В России это типичный класс программных медицинских изделий, со своей рамкой стандартов.","ГОСТ Р 71671-2024 (СППВР с ИИ. Основные положения)","https://protect.gost.ru/v.aspx?control=8&id=251696"],
+  ["Прогнозная аналитика","Системы прогнозной аналитики на данных ЭМК","Модели, оценивающие вероятность будущего события: осложнения, госпитализации, обострения. Работают с накопленными данными, а не с текущим исследованием, поэтому главный риск — смещение при переносе в другой регион или на другую популяцию.","ГОСТ Р 71672-2024 и ГОСТ Р 72356-2025",KB],
+  ["Медицинский AI-ассистент","Диалоговый сервис на большой языковой модели","Продукт, отвечающий на вопросы врача или пациента, готовящий сводки и черновики документов. Отличается от СППВР свободной формой ответа, и именно поэтому требует отдельного контроля фактической точности: правдоподобный текст может содержать несуществующий факт.","Проекты стандартов по большим генеративным моделям (ДЗМ)","https://www.vademec.ru/news/2026/06/11/v-dzm-razrabatyvayut-gost-po-sozdaniyu-meditsinskikh-ii-na-osnove-bolshikh-generativnykh-modeley/"],
+  ["LLM","Large Language Model — большая языковая модель","Модель, предсказывающая продолжение текста по контексту. В медицине применяется для извлечения данных, суммаризации и диалога. Не является источником фактов: всё, что должно быть верным, подаётся ей на вход из проверенного источника.","Проекты стандартов по большим генеративным моделям (ДЗМ)","https://www.vademec.ru/news/2026/06/11/v-dzm-razrabatyvayut-gost-po-sozdaniyu-meditsinskikh-ii-na-osnove-bolshikh-generativnykh-modeley/"],
+  ["RAG","Retrieval-Augmented Generation — генерация с опорой на найденные данные","Схема, при которой модель сначала получает релевантные документы или записи из источника истины, а затем формулирует ответ только по ним. Основной приём против галлюцинаций: проверяемость обеспечивается ссылкой на исходный документ у каждого утверждения.","Реестр документов базы знаний",KB],
+  ["Мультиагентная система","Система из нескольких специализированных агентов","Архитектура, где каждый агент отвечает за свой участок работы (сбор данных, проверка назначений, оформление), а взаимодействие идёт по общим правилам. Требует явного разграничения полномочий: какой агент что вправе сделать и где обязан остановиться.","Обзор направления СберМедИИ (НОВАМЕД-2026)","https://sbermed.ai/sbermedii-ai-healthcare-innovation"],
+  ["МИ с ИИ","Медицинское изделие с искусственным интеллектом","Программа или программно-аппаратный комплекс с ИИ, назначение которого — диагностика, профилактика, лечение или мониторинг. Статус определяет назначение, заявленное производителем, а не технология. Влечёт регистрацию, класс риска, испытания и пострегистрационный мониторинг.","Правила государственной регистрации медизделий, ПП РФ № 1684","https://www.vniiimt.ru/blog/pravila-gosudarstvennoy-registratsii-meditsinskikh-izdeliy-versiya-2024-2025/"]]],
+ ["Контроль и качество",[
+  ["ФЛК","Форматно-логический контроль","Первая, автоматическая проверка реестра счетов: правильность полей, кодов, дат, соответствие форматам. Не оценивает медицинскую суть, только корректность данных; счёт с ошибкой возвращается до содержательной проверки.","Правила обязательного медицинского страхования",KB],
+  ["МЭК","Медико-экономический контроль","Сплошная проверка всех счетов на соответствие формальным условиям оплаты: действует ли полис, есть ли лицензия, входит ли услуга в территориальную программу, не превышены ли объёмы. Проводится без обращения к медицинской документации.","Правила обязательного медицинского страхования",KB],
+  ["МЭЭ","Медико-экономическая экспертиза","Выборочная проверка того, соответствует ли фактически оказанная помощь тому, что предъявлено к оплате: сроки, объёмы, условия. Уже требует обращения к медицинским документам, но не оценивает правильность лечения.","Правила обязательного медицинского страхования",KB],
+  ["ЭКМП","Экспертиза качества медицинской помощи","Оценка своевременности, правильности выбора методов и достигнутого результата, которую проводит врач-эксперт по медицинской документации. Самый содержательный и самый дорогой вид контроля, поэтому именно здесь у ИИ наибольшая ценность: отобрать случаи и подготовить обоснование.","Правила обязательного медицинского страхования",KB],
+  ["Клинические рекомендации","Клинические рекомендации по заболеванию","Документ, описывающий диагностику, лечение и реабилитацию при конкретном заболевании, с критериями оценки качества помощи. Служит эталоном и для врача, и для эксперта, поэтому для ИИ-продукта это источник истины, который должен подставляться с указанием версии и даты.","323-ФЗ, ст. 37","https://www.consultant.ru/document/cons_doc_LAW_121895/"],
+  ["Врачебная валидация","Независимая оценка результатов модели врачами-экспертами","Процедура, в которой несколько врачей независимо оценивают те же случаи, что и модель, после чего измеряется согласие между ними и с моделью. Без неё метрики на отложенной выборке остаются техническим показателем и не считаются клиническим доказательством.","ПНСТ 872-2023 (методы клинических испытаний СППВР)",KB],
+  ["Клиническая оценка","Клиническая оценка системы ИИ в клинической медицине","Подтверждение клинической эффективности и безопасности изделия по совокупности данных: испытания, литература, опыт применения. Обязательная часть регистрационного досье; объём зависит от класса риска.","ГОСТ Р 59921.1-2022 (клиническая оценка)",KB]]],
+ ["Метрики",[
+  ["Чувствительность","Sensitivity, доля истинно положительных результатов","Доля больных, которых модель правильно отметила как больных. Растёт за счёт роста ложных тревог, поэтому одна никогда не характеризует качество: её всегда читают вместе со специфичностью.","Метрики в разделе базы знаний","#metriki"],
+  ["Специфичность","Specificity, доля истинно отрицательных результатов","Доля здоровых, которых модель правильно отсеяла. При скрининге больших потоков именно она определяет, сколько лишней работы получат врачи.","Метрики в разделе базы знаний","#metriki"],
+  ["PPV","Positive Predictive Value — прогностическая ценность положительного результата","Вероятность того, что положительный ответ модели верен. В отличие от чувствительности, сильно зависит от распространённости заболевания: при редкой патологии даже хорошая модель даёт большинство ложных срабатываний. Проверяется калькулятором цены ошибки.","Калькулятор цены ошибки","#metriki"],
+  ["NPV","Negative Predictive Value — прогностическая ценность отрицательного результата","Вероятность того, что отрицательный ответ верен. При редкой патологии близка к единице почти всегда, поэтому сама по себе мало что доказывает.","Калькулятор цены ошибки","#metriki"],
+  ["AUC-ROC","Area Under the Receiver Operating Characteristic Curve — площадь под характеристической кривой","Показатель того, насколько хорошо модель ранжирует больных выше здоровых при всех возможных порогах. Удобен для сравнения моделей, но ничего не говорит о конкретном рабочем пороге и о калибровке вероятностей.","Метрики в разделе базы знаний","#metriki"],
+  ["Калибровка","Калибровка вероятностей модели","Соответствие предсказанной вероятности реальной частоте события: если модель говорит «риск 20%», событие должно случаться примерно в каждом пятом таком случае. Для прогнозной аналитики важнее, чем AUC-ROC, потому что врач принимает решение по величине риска.","ГОСТ Р 71672-2024 (прогнозная аналитика)",KB],
+  ["Каппа Коэна","Cohen's kappa — коэффициент согласия с поправкой на случайность","Мера совпадения двух оценщиков сверх того, что дало бы простое угадывание. Применяется при врачебной валидации, когда нужно сравнить модель с врачами и врачей между собой.","ПНСТ 872-2023 (методы клинических испытаний СППВР)",KB],
+  ["Фактическая точность","Faithfulness — верность источнику","Доля утверждений в ответе языковой модели, подтверждаемых поданными ей данными. Основная метрика для LLM-продуктов вместо метрик текстового совпадения: она ловит именно то, что опасно в медицине — правдоподобное, но не подтверждённое утверждение.","ГОСТ Р 72313-2025 (наборы данных и метрики извлечения)","https://protect.gost.ru/v.aspx?control=8&id=257748"],
+  ["Дрейф","Data drift и concept drift — смещение данных и связей","Изменение входных данных или зависимостей после внедрения: сменили аппарат, обновили справочники, изменилась практика. Модель при этом деградирует тихо, без сообщений об ошибке, поэтому мониторинг обязателен и нормативно закреплён.","ГОСТ Р 59921.4-2021 (контроль эксплуатационных параметров)","https://rst.gov.ru:8443/file-service/file/load/1682520962975"]]],
+ ["Регуляторика",[
+  ["Класс риска","Класс потенциального риска применения медицинского изделия","Категория изделия по возможному вреду для пациента (для ПО — классы 1, 2а, 2б, 3). Определяет объём испытаний, состав досье и срок процедуры. Класс определяется назначением: одна и та же модель в разных формулировках попадает в разные классы.","Приказ Минздрава № 686н от 07.07.2020","http://publication.pravo.gov.ru/Document/View/0001202008100015"],
+  ["РУ","Регистрационное удостоверение","Документ, разрешающий обращение медицинского изделия в России; в цифровой реестровой модели равнозначен записи в государственном реестре. Без него применение изделия по медицинскому назначению незаконно.","Регламент регистрации, приказ Росздравнадзора № 750","https://gxpnews.net/2026/09/roszdravnadzor-obnovil-reglament-registraczii-medizdelij/"],
+  ["ЭПР","Экспериментальный правовой режим","Специальное регулирование на ограниченной территории и на срок, позволяющее проверять технологии вне общих правил. В Москве такой режим разрешает разработчикам обрабатывать обезличенные данные без согласия граждан — на нём построены московские ИИ-сервисы.","123-ФЗ от 24.04.2020",KB],
+  ["Пострегистрационный мониторинг","Мониторинг безопасности изделия после выхода на рынок","Наблюдение за работой изделия в эксплуатации и передача сведений регулятору. Для изделий с ИИ установлена автоматическая передача данных о работе с указанием типа решения, поэтому функция мониторинга закладывается в продукт с первого релиза.","Порядок передачи данных о МИ с ИИ в АИС Росздравнадзора","https://www.vademec.ru/news/2026/05/13/roszdravnadzor-izmenil-poryadok-avtomaticheskoy-peredachi-dannykh-o-medizdeliyakh-s-ii-v-ais/"],
+  ["Модификация ИИ-ПО","Изменение программного обеспечения с ИИ после регистрации","Обновление модели у уже зарегистрированного изделия. Для ИИ предусмотрена упрощённая процедура: без неё каждое переобучение означало бы новую регистрацию, что делает непрерывно обучающиеся системы неприменимыми.","Правила государственной регистрации медизделий, ПП РФ № 1684","https://www.vniiimt.ru/blog/pravila-gosudarstvennoy-registratsii-meditsinskikh-izdeliy-versiya-2024-2025/"],
+  ["ИДС","Информированное добровольное согласие","Согласие пациента на медицинское вмешательство, данное после разъяснения целей, методов и рисков. Основание любого вмешательства; отдельно от него оформляется согласие на обработку персональных данных.","323-ФЗ, ст. 20","https://www.consultant.ru/document/cons_doc_LAW_121895/"],
+  ["ЕСИА","Единая система идентификации и аутентификации","Государственная система, подтверждающая личность человека в цифровых сервисах. В медицинских ИИ-сценариях используется для идентификации пациента и для подтверждения полномочий при выдаче цифровых согласий.","Реестр документов базы знаний",KB]]]
+];
+function renderGl(){
+  const f=()=>{const q=$("#glQ").value.toLowerCase(); let n=0,total=0;
+    $("#glBody").innerHTML=GL.map(([g,items])=>{total+=items.length;
+      const it=items.filter(x=>!q||x.join(" ").toLowerCase().includes(q)); n+=it.length;
+      return it.length?`<div class="grp">${esc(g)}</div><dl>`+it.map(([t,full,d,sn,su])=>
+        `<dt>${esc(t)}</dt><dd><div style="color:var(--ink);font-weight:500">${esc(full)}</div><div>${esc(d)}</div><div class="count" style="margin-top:3px">Источник: <a href="${esc(su)}"${/^https?:/.test(su)?' target="_blank" rel="noopener"':""}>${esc(sn)}</a></div></dd>`).join("")+"</dl>":""}).join("")||"<p>Термин не найден. Попробуйте другое написание или сокращение.</p>";
+    $("#glCount").textContent=n+" из "+total;};
+  $("#glQ").addEventListener("input",f); f();
+}
+
+/* ---------- РОЛЬ ---------- */
+const ROL=[
+ ["Продуктовая стратегия и дорожная карта AI-решений","Портфель сценариев с приоритетами и дорожная карта",["put","scen","rynok"]],
+ ["Портфель проектов на ML, LLM и медицинских данных","Карта сценариев по стадиям и статусам",["scen","put"]],
+ ["Работа с крупным B2G-заказчиком: потребности, сценарии, требования, метрики, критерии приёмки","Протокол discovery, согласованные критерии приёмки",["zak","metriki","cikl"]],
+ ["Координация AI-, продуктовых и технологических команд","Единый словарь и общая модель",["gloss","put","primer"]],
+ ["Постановка задач исследовательским и DS-командам","ТЗ с продуктовой ценностью и метриками",["metriki","reestr","cikl"]],
+ ["MVP, продуктовые и модельные метрики, врачебная валидация, пилоты","Протокол валидации, план пилота",["cikl","metriki","risk"]],
+ ["Доведение от PoC до промышленного внедрения и масштабирования","Пройденные ворота с артефактами",["cikl","reestr"]],
+ ["Управление зависимостями бизнеса, врачей, DS, разработки, инфраструктуры и заказчика","Карта зависимостей по воротам",["cikl","zak"]],
+ ["Приоритизация, снятие блокеров, управление рисками","Реестр рисков с ранними признаками",["risk","metriki"]]
+];
+
+/* ---------- НАВИГАЦИЯ ---------- */
+const panes=$$("section.pane");
+function go(id,push){
+  const target=panes.find(p=>p.id===id)||panes[0];
+  panes.forEach(p=>p.classList.toggle("on",p===target));
+  $$("nav.side button").forEach(b=>b.setAttribute("aria-current",b.dataset.go===target.id?"true":"false"));
+  $("#mob").value=target.id;
+  if(push!==false){try{history.replaceState(null,"","#"+target.id)}catch(e){}}
+  window.scrollTo({top:$(".layout").offsetTop-10,behavior:"auto"});
+}
+function renderNav(){
+  let html="",last=""; const order=["ukaz","primer","gloss","put","scen","zak","reestr","cikl","rol","metriki","risk","rynok"];
+  const sorted=order.map(id=>panes.find(p=>p.id===id)).filter(Boolean);
+  sorted.forEach(p=>{ if(p.dataset.grp!==last){html+=`<li class="grp">${esc(p.dataset.grp)}</li>`;last=p.dataset.grp;}
+    html+=`<li><button data-go="${p.id}">${esc(p.dataset.title)}</button></li>`;});
+  $("#sidenav").innerHTML=html;
+  $("#mob").innerHTML=sorted.map(p=>`<option value="${p.id}">${esc(p.dataset.grp)}: ${esc(p.dataset.title)}</option>`).join("");
+  $("#mob").addEventListener("change",e=>go(e.target.value));
+  document.addEventListener("click",e=>{const b=e.target.closest("[data-go]");if(b){e.preventDefault();go(b.dataset.go)}});
+}
+function renderTree(){
+  const T=[
+   ["Вход в материал",[["ukaz","Указатель","дерево, порядок чтения, происхождение позиций · вы здесь"],["primer","Сквозной пример","один случай от анализа до экспертизы, 7 шагов"],["gloss","Глоссарий","46 терминов с раскрытыми сокращениями и источниками"]]],
+   ["Модель отрасли",[["put","Путь медицинского случая","9 стадий: ИИ, данные, заказчики, документы, метрики, риск"],["scen","Каталог ИИ-сценариев","19 сценариев с фильтрами по стадии, технологии и сегменту"]]],
+   ["Заказчики и деньги",[["zak","Заказчики и деньги","9 типов заказчиков, три роли в сделке, вопросы для первой встречи"]]],
+   ["Регуляторика",[["reestr","Реестр документов и стандартов","38 позиций: законы, акты, ГОСТы, международные аналоги"],[null,"Регистрация ПО как медицинского изделия","планируется отдельной страницей"]]],
+   ["Продуктовый цикл",[["cikl","От PoC до промышленности","8 ворот с критериями, артефактами и опорой"],["rol","Карта роли","9 задач роли и поддерживающие разделы"],[null,"Протокол врачебной валидации","планируется"],[null,"Шаблон ТЗ для AI-команды","планируется"]]],
+   ["Качество и риск",[["metriki","Метрики и оценка качества","14 метрик трёх уровней и калькулятор цены ошибки"],["risk","Цена ошибки и ограничения","10 рисков с ранними признаками"]]],
+   ["Рынок",[["rynok","Рынок и игроки","10 фактов на сентябрь 2026 с источниками"],[null,"Флагманские кейсы по сценариям","планируется"]]]
+  ];
+  let total=0;
+  const inner=T.map(([b,items])=>{const built=items.filter(i=>i[0]).length; total+=built;
+    return `<li><span class="branch">${esc(b)}</span><span class="cnt">${built}</span><ul>`+items.map(([id,t,n])=> id?`<li><button class="lnk" data-go="${id}">${esc(t)}</button> <span class="note">${esc(n)}</span></li>`:`<li><span class="plan">${esc(t)}</span> <span class="note">· ${esc(n)}</span></li>`).join("")+"</ul></li>"}).join("");
+  $("#tree").innerHTML=`<ul><li><span class="branch">База знаний по ИИ в медицине</span><span class="cnt">${total} разделов</span><ul>${inner}<li><a href="05-trek-osvoeniya.html">Трек освоения</a> <span class="note">вход с нуля: 9 + 6 шагов, быстрый старт</span></li><li><a href="06-uroven-uchastiya.html">Уровень участия пациента</a> <span class="note">черновик модели: шкала, расчёт уровня, влияние на процессы, риски</span></li><li><a href="01-zarubezhnyy-segment.html">Зарубежный сегмент</a> <span class="note">парная база: США, ЕС, Великобритания, Китай, Залив, ЕАЭС</span></li><li><a href="02-paralleli-i-modeli.html">Параллели с платежами и интерактивные модели</a> <span class="note">мост к пулу агентной коммерции: режимы, конфликты, издержки</span></li><li><a href="03-koncentraciya-i-ii-medicina.html">Концентрация и дыхание × ИИ-медицина</a> <span class="note">инструменты: формулировки, скрининг, мандат, сессия с датчиком, журнал</span></li><li><a href="05-trek-osvoeniya.html">Трек освоения</a> <span class="note">вход для тех, кто начинает с нуля: два трека, 9 + 6 шагов с проверкой</span></li><li><a href="04-processnaya-model.html">Процессная модель карты инструментов</a> <span class="note">9 процессов, изменяемые параметры, динамика по неделям, 4 сценария</span></li></ul></li></ul>`;
+}
+function renderRol(){
+  const t=id=>{const p=panes.find(x=>x.id===id);return `<button class="lnk" data-go="${id}" style="background:none;border:0;padding:0;color:var(--accent);font:inherit;cursor:pointer;text-decoration:underline">${esc(p.dataset.title)}</button>`};
+  $("#rolBody").innerHTML=ROL.map(r=>`<tr><td><b>${esc(r[0])}</b></td><td>${esc(r[1])}</td><td>${r[2].map(t).join(", ")}</td></tr>`).join("");
+}
+
+$("#printBtn").addEventListener("click",()=>window.print());
+
+renderNav(); renderTree(); renderPath(); renderScen(); renderZak(); renderReg(); renderGates(); renderPrimer(); renderMet(); renderCalc(); renderRisk(); renderMkt(); renderGl(); renderRol();
+const h=(location.hash||"").slice(1); go(h||"ukaz",false);
+})();
+</script>
+</body>
+</html>

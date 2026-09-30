@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Процессная модель карты инструментов</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Serif:wght@500;600&family=IBM+Plex+Sans+Condensed:wght@500&family=IBM+Plex+Mono&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#F7FAF9; --panel:#FFFFFF; --ink:#16302C; --ink2:#4A615C; --line:#CFDDD9;
+  --tint:#E4F0EC; --accent:#0B6E60; --accent2:#084F45; --warn:#9A5B00; --warntint:#FBF0DE;
+  --danger:#A3322A; --dangertint:#FBE7E4; --info:#2F5D8A; --infotint:#E6EEF7;
+  --serif:"IBM Plex Serif", Georgia, "Times New Roman", serif;
+  --sans:"IBM Plex Sans", "Segoe UI", Roboto, Arial, sans-serif;
+  --cond:"IBM Plex Sans Condensed", "Arial Narrow", Arial, sans-serif;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#0F1B19; --panel:#152623; --ink:#E3EFEC; --ink2:#A4BAB5; --line:#2C4540;
+    --tint:#1B332F; --accent:#4FC2AE; --accent2:#7ED9C8; --warn:#E3A64A; --warntint:#33280F;
+    --danger:#EE8A80; --dangertint:#3A1D1A; --info:#8DB6E0; --infotint:#172A3D;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#0F1B19; --panel:#152623; --ink:#E3EFEC; --ink2:#A4BAB5; --line:#2C4540;
+  --tint:#1B332F; --accent:#4FC2AE; --accent2:#7ED9C8; --warn:#E3A64A; --warntint:#33280F;
+  --danger:#EE8A80; --dangertint:#3A1D1A; --info:#8DB6E0; --infotint:#172A3D;
+}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*::before,*::after{box-sizing:inherit}
+body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.6 var(--sans);-webkit-text-size-adjust:100%}
+a{color:var(--accent)}
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.wrap{max-width:1180px;margin:0 auto;padding:0 20px}
+header.top{border-bottom:1px solid var(--line);background:var(--panel)}
+.top .wrap{display:flex;flex-wrap:wrap;gap:8px 18px;align-items:center;padding-top:12px;padding-bottom:12px}
+.brand{font-family:var(--cond);font-size:14px;color:var(--ink2)}
+.toplinks{display:flex;flex-wrap:wrap;gap:6px;margin-left:auto}
+.toplinks a.home{text-decoration:none;white-space:nowrap}
+.toplinks button,.toplinks a.home,.btn{font:500 14px var(--sans);background:transparent;color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:5px 10px;cursor:pointer}
+.toplinks button:hover,.btn:hover{border-color:var(--accent);color:var(--accent)}
+.hero{padding:40px 0 18px}
+.hero h1{font:600 clamp(28px,4.4vw,44px)/1.12 var(--serif);margin:0 0 14px;max-width:22ch;letter-spacing:-.01em}
+.hero p.lead{font-size:18px;max-width:70ch;color:var(--ink2);margin:0 0 10px}
+.task{border-left:3px solid var(--accent);background:var(--tint);padding:12px 16px;margin:18px 0 6px;max-width:80ch;border-radius:0 6px 6px 0}
+.task b{font-weight:600}
+.meta{font-family:var(--cond);font-size:14px;color:var(--ink2);margin-top:10px}
+.layout{display:grid;grid-template-columns:250px 1fr;gap:28px;padding:18px 0 60px}
+nav.side{position:sticky;top:env(safe-area-inset-top,0px);align-self:start;max-height:100vh;overflow:auto;padding-top:8px}
+nav.side ol{list-style:none;margin:0;padding:0}
+nav.side li{margin:0}
+nav.side .grp{font-family:var(--cond);font-size:13px;color:var(--ink2);margin:14px 0 4px}
+nav.side button{display:block;width:100%;text-align:left;background:none;border:0;border-left:2px solid transparent;padding:5px 10px;font:15px/1.35 var(--sans);color:var(--ink);cursor:pointer}
+nav.side button:hover{color:var(--accent)}
+nav.side button[aria-current="true"]{border-left-color:var(--accent);color:var(--accent);font-weight:600;background:var(--tint)}
+.mobnav{display:none;margin:10px 0}
+.mobnav select{width:100%;font:16px var(--sans);padding:8px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--ink)}
+section.pane{display:none}
+section.pane.on{display:block}
+h2{font:600 28px/1.2 var(--serif);margin:4px 0 8px}
+h3{font:600 19px/1.3 var(--serif);margin:26px 0 8px}
+.pane > p.intro{color:var(--ink2);max-width:75ch;margin:0 0 18px}
+p,li{max-width:78ch}
+.tree{font:15px/1.55 var(--sans);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:16px 18px;overflow-x:auto}
+.tree ul{list-style:none;margin:0;padding-left:20px;border-left:1px solid var(--line)}
+.tree > ul{border-left:0;padding-left:0}
+.tree li{position:relative;padding:3px 0 3px 12px;max-width:none}
+.tree li::before{content:"";position:absolute;left:-20px;top:15px;width:26px;border-top:1px solid var(--line)}
+.tree > ul > li::before{display:none}
+.tree .branch{font-weight:600}
+.tree .cnt{font-family:var(--cond);color:var(--ink2);font-size:13px;margin-left:6px}
+.tree button.lnk{background:none;border:0;padding:0;color:var(--accent);font:inherit;cursor:pointer;text-decoration:underline;text-underline-offset:2px}
+.tree .note{color:var(--ink2)}
+.tree .plan{color:var(--ink2);font-style:italic}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px;margin:10px 0}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:14px 16px}
+.card h4{margin:0 0 6px;font:600 16px/1.3 var(--sans)}
+.card p{margin:0;color:var(--ink2);font-size:15px}
+.card .foot{margin-top:8px;font-family:var(--cond);font-size:13px;color:var(--ink2)}
+.scroll{overflow-x:auto;border:1px solid var(--line);border-radius:8px;background:var(--panel);margin:10px 0}
+table{border-collapse:collapse;width:100%;font-size:14.5px;line-height:1.45}
+th,td{text-align:left;vertical-align:top;padding:9px 12px;border-bottom:1px solid var(--line)}
+th{font:500 13.5px var(--cond);color:var(--ink2);background:var(--tint);position:sticky;top:0}
+tr:last-child td{border-bottom:0}
+td.num{white-space:nowrap}
+.tag{display:inline-block;font:500 12.5px var(--cond);padding:1px 7px;border-radius:10px;border:1px solid var(--line);white-space:nowrap;margin:1px 2px 1px 0}
+.t-doc{background:var(--tint);color:var(--accent2);border-color:transparent}
+.t-obs{background:var(--infotint);color:var(--info);border-color:transparent}
+.t-inf{background:var(--warntint);color:var(--warn);border-color:transparent}
+.t-proj{background:var(--dangertint);color:var(--danger);border-color:transparent}
+.filters{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:8px 0}
+.filters input,.filters select{font:15px var(--sans);padding:6px 9px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--ink);min-width:0}
+.filters input[type=search]{flex:1 1 220px}
+.chip{font:500 14px var(--sans);border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:16px;padding:4px 11px;cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--panel)}
+.count{font-family:var(--cond);font-size:13.5px;color:var(--ink2)}
+/* путь случая — главная интерактивная полоса */
+.path{display:grid;grid-template-columns:repeat(9,minmax(96px,1fr));gap:0;margin:16px 0 4px;overflow-x:auto;padding-bottom:4px}
+.stage{position:relative;background:none;border:0;cursor:pointer;padding:34px 6px 8px;text-align:center;color:var(--ink);font:500 14px/1.25 var(--sans)}
+.stage::before{content:"";position:absolute;left:0;right:0;top:15px;border-top:2px solid var(--line)}
+.stage .dot{position:absolute;left:50%;top:6px;width:20px;height:20px;margin-left:-10px;border-radius:50%;background:var(--panel);border:2px solid var(--line);font:600 11px/16px var(--cond);color:var(--ink2)}
+.stage:hover .dot{border-color:var(--accent)}
+.stage[aria-pressed="true"] .dot{background:var(--accent);border-color:var(--accent);color:var(--panel)}
+.stage[aria-pressed="true"]{color:var(--accent)}
+.stage[aria-pressed="true"]::before{border-top-color:var(--accent)}
+.detail{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:16px 18px;margin-top:8px}
+.detail h3{margin-top:0}
+.dgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px 22px}
+.dgrid h5{margin:0 0 4px;font:500 13.5px var(--cond);color:var(--ink2)}
+.dgrid ul{margin:0;padding-left:18px}
+.dgrid li{font-size:15px;margin:2px 0}
+.steps{counter-reset:s;list-style:none;padding:0;margin:10px 0}
+.steps > li{counter-increment:s;position:relative;padding:12px 14px 12px 52px;border:1px solid var(--line);border-radius:8px;background:var(--panel);margin-bottom:8px;max-width:none}
+.steps > li::before{content:counter(s);position:absolute;left:14px;top:12px;width:26px;height:26px;border-radius:50%;background:var(--tint);color:var(--accent2);font:600 14px/26px var(--cond);text-align:center}
+.steps h4{margin:0 0 4px;font:600 16px var(--sans)}
+.steps .row{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:4px 18px;font-size:14.5px;color:var(--ink2);margin-top:6px}
+.steps .row b{color:var(--ink);font-weight:500}
+.calc{display:grid;grid-template-columns:minmax(240px,320px) 1fr;gap:18px;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:16px 18px;margin:12px 0}
+.calc label{display:block;font-size:14.5px;margin:10px 0 2px}
+.calc input[type=range]{width:100%;accent-color:var(--accent)}
+.calc output{font-family:var(--cond);font-weight:500}
+.cm{display:grid;grid-template-columns:auto 1fr 1fr;gap:4px;font-size:14.5px;align-self:start}
+.cm div{padding:9px 10px;border-radius:6px;background:var(--tint)}
+.cm .h{background:none;font:500 13.5px var(--cond);color:var(--ink2);padding:4px 6px}
+.cm .bad{background:var(--dangertint);color:var(--danger)}
+.cm .big{font:600 20px var(--cond);display:block}
+.res{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:10px 26px;border-top:1px solid var(--line);padding-top:12px;font-size:15px}
+.res b{font:600 22px var(--cond);display:block;color:var(--accent)}
+.callout{border-left:3px solid var(--warn);background:var(--warntint);padding:10px 14px;border-radius:0 6px 6px 0;margin:12px 0;max-width:80ch}
+.callout.ok{border-left-color:var(--accent);background:var(--tint)}
+.gl dt{font-weight:600;margin-top:12px}
+.gl dd{margin:2px 0 0;color:var(--ink2);max-width:78ch}
+.gl .grp{font:600 17px var(--serif);margin:22px 0 4px;color:var(--accent2)}
+footer.foot{border-top:1px solid var(--line);padding:18px 0 30px;color:var(--ink2);font-size:14px}
+@media (max-width:860px){
+  .layout{grid-template-columns:1fr}
+  nav.side{display:none}
+  .mobnav{display:block}
+  .calc{grid-template-columns:1fr}
+  .path{grid-template-columns:repeat(9,112px)}
+}
+@media print{
+  header.top,nav.side,.mobnav,.filters,.toplinks{display:none!important}
+  section.pane{display:block!important;page-break-before:always}
+  .layout{display:block}
+  body{background:#fff;color:#000}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+<style>
+.two{display:grid;grid-template-columns:minmax(260px,330px) 1fr;gap:16px}
+.out{border:1px solid var(--line);border-radius:8px;padding:12px 14px;background:var(--panel)}
+.ctrl label{display:block;font-size:14px;margin:9px 0 2px}
+.ctrl input[type=range]{width:100%;accent-color:var(--accent)}
+.ctrl select{width:100%;font:15px var(--sans);padding:6px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--ink)}
+.ctrl .grp{font:500 13px var(--cond);color:var(--ink2);margin:16px 0 2px;border-top:1px solid var(--line);padding-top:10px}
+.btnrow{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0;align-items:center}
+.btn.pri{background:var(--accent);color:var(--panel);border-color:var(--accent)}
+svg.map{width:100%;height:auto;display:block;background:var(--panel);border:1px solid var(--line);border-radius:8px}
+svg.map text{font-family:var(--sans);fill:var(--ink)}
+svg.map .lbl{font:500 12px var(--cond);fill:var(--ink2)}
+svg.map .num{font:600 15px "IBM Plex Sans Condensed",var(--cond);fill:var(--accent)}
+svg.map .nd{fill:var(--panel);stroke:var(--line);stroke-width:1.5;cursor:pointer}
+svg.map .nd.sel{stroke:var(--accent);stroke-width:2.5}
+svg.map .nd.hot{fill:var(--warntint)}
+svg.map .nd.block{fill:var(--dangertint)}
+svg.map .fl{stroke:var(--line);stroke-width:2;fill:none;marker-end:url(#ah)}
+svg.map .fl.on{stroke:var(--accent)}
+svg.map .fl.back{stroke-dasharray:5 4;stroke:var(--info)}
+canvas{width:100%;height:230px;border:1px solid var(--line);border-radius:8px;background:var(--panel);display:block}
+.kpis{display:flex;flex-wrap:wrap;gap:10px 22px;margin:8px 0}
+.kpis div{font-size:13.5px;color:var(--ink2)}
+.kpis b{display:block;font:600 21px "IBM Plex Sans Condensed",var(--cond);color:var(--ink)}
+.kpis .bad b{color:var(--danger)} .kpis .good b{color:var(--accent)}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.seg button{border:0;background:var(--panel);color:var(--ink);padding:6px 11px;font:500 13.5px var(--sans);cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--accent);color:var(--panel)}
+.pcard h4{margin:0 0 2px;font:600 18px var(--serif)}
+.pcard .sub{font-family:var(--cond);font-size:13.5px;color:var(--ink2);margin-bottom:8px}
+.evt{font-size:13.5px;max-height:150px;overflow:auto;border-top:1px solid var(--line);margin-top:8px;padding-top:6px}
+.evt b{font-family:var(--cond);color:var(--ink2);font-weight:500}
+.launch{border:1px solid var(--accent);background:var(--tint);border-radius:8px;padding:12px 14px;margin:12px 0}
+.launch h4{margin:0 0 4px;font:600 17px var(--serif)}
+.launch p{margin:0 0 8px;font-size:14.5px;color:var(--ink2)}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;z-index:50;padding:12px}
+.modal.on{display:flex;flex-direction:column}
+.modal .bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;background:var(--panel);border:1px solid var(--line);border-radius:8px 8px 0 0;padding:8px 10px}
+.modal .bar b{font:600 15px var(--serif);margin-right:auto}
+.modal iframe{flex:1;width:100%;border:1px solid var(--line);border-top:0;border-radius:0 0 8px 8px;background:#080808;min-height:0}
+svg.map .nd.cb{stroke:var(--accent);stroke-dasharray:4 3}
+@media (max-width:860px){.two{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap">
+  <span class="brand">База знаний · ИИ в медицине · процессная модель</span>
+  <div class="toplinks">
+    <a class="btn home" href="index.html" title="К начальному меню комплекта">← Комплект</a>
+    <button data-go="model">Модель</button>
+    <button data-go="proc">Процессы</button>
+    <button data-go="scen">Сценарии</button>
+    <button id="openCB" title="Открыть виджет модели концентрации и дыхания">Модель концентрации</button>
+    <button id="printBtn">Печать</button>
+  </div>
+</div></header>
+
+<div class="wrap"><div class="hero">
+  <h1>Процессная модель карты инструментов</h1>
+  <p class="lead">Девять инструментов страницы «Концентрация и дыхание × ИИ-медицина» связаны в один конвейер: от проверки формулировок до накопленных доказательств. Модель прогоняет поток людей через процессы по неделям и показывает, где он сужается, где копится очередь и когда наберётся материал для гипотез и пилота.</p>
+  <div class="task"><b>Что это.</b> Модель потока, а не прогноз и не клинический расчёт. Параметры по умолчанию — допущения порядка величины; реальные доли даст первый прогон на себе и нескольких добровольцах. Ценность модели в том, что она показывает, какой параметр решает исход.</div>
+  <div class="meta">Редакция 3 · 29.09.2026 · добавлен внутренний цикл П5 (накопление и расход) · 3 раздела · 9 процессов · вызов виджета из узла П5 · 26 недель горизонта · связано с <a href="03-koncentraciya-i-ii-medicina.html">инструментами</a></div>
+</div></div>
+
+<div class="wrap">
+  <div class="mobnav"><label for="mob" class="count">Раздел</label><select id="mob"></select></div>
+  <div class="layout">
+    <nav class="side" aria-label="Разделы"><ol id="sidenav"></ol></nav>
+    <main id="main">
+
+<section class="pane" id="model" data-title="Интерактивная модель" data-grp="Модель">
+  <h2>Интерактивная модель конвейера</h2>
+  <p class="intro">Меняйте параметры слева, запускайте ход времени кнопкой «Пуск». Числа на узлах — люди или сессии за текущую неделю, кроме узлов-накопителей. Клик по узлу открывает его карточку внизу.</p>
+  <div class="two">
+    <div class="ctrl" id="ctrl"></div>
+    <div>
+      <div class="btnrow">
+        <button class="btn pri" id="play">Пуск</button><button class="btn" id="step">Неделя</button><button class="btn" id="reset">Сброс</button>
+        <span class="count" id="wk"></span>
+        <div class="seg" id="spd"><button data-v="600" aria-pressed="true">×1</button><button data-v="220" aria-pressed="false">×3</button></div>
+      </div>
+      <svg class="map" id="map" viewBox="0 0 960 330" role="img" aria-label="Схема конвейера процессов"></svg>
+      <div class="kpis" id="kpi"></div>
+      <div class="launch" id="accBox" style="border-color:var(--warn);background:var(--warntint)">
+        <h4>Внутренний цикл П5: накопление и расход</h4>
+        <p>Задержка после выдоха — не результат сама по себе, а условие накопления. Скорость набора задаёт интенсивность концентрации; после порога доступна граница сред; на этапе воздействия накопленное расходуется. Модель повторяет ту же логику, что встроена в виджет.</p>
+        <div class="two" style="gap:14px">
+          <div class="ctrl">
+            <label for="aInt">Интенсивность концентрации: <output id="aIntV"></output></label>
+            <input type="range" id="aInt" min="10" max="100" step="5" value="70">
+            <label for="aHold">Длительность задержки: <output id="aHoldV"></output> с</label>
+            <input type="range" id="aHold" min="3" max="60" step="1" value="30">
+          </div>
+          <div class="out" id="accOut" aria-live="polite"></div>
+        </div>
+      </div>
+      <div class="launch" id="launchBox"></div>
+      <canvas id="cv" width="860" height="230" aria-label="Динамика по неделям"></canvas>
+      <div class="legend count" id="lg"></div>
+      <div class="evt" id="evt"></div>
+    </div>
+  </div>
+  <div class="out pcard" id="pcard" aria-live="polite" style="margin-top:14px"></div>
+</section>
+
+<section class="pane" id="proc" data-title="Описание процессов" data-grp="Модель">
+  <h2>Описание процессов</h2>
+  <p class="intro">Каждый процесс описан одинаково: вход, что происходит, выход, изменяемые параметры и динамика — что меняется во времени и что ограничивает пропускную способность.</p>
+  <ol class="steps" id="plist"></ol>
+</section>
+
+<section class="pane" id="scen" data-title="Сценарии" data-grp="Модель">
+  <h2>Готовые сценарии</h2>
+  <p class="intro">Четыре набора параметров. Нажатие загружает набор в модель и перезапускает прогон. Итоги считаются на 26-й неделе.</p>
+  <div class="btnrow" id="scBtns"></div>
+  <div class="scroll"><table><thead><tr><th>Сценарий</th><th>Суть набора</th><th>Практикующих на 26-й неделе</th><th>Сессий всего</th><th>Готовы к пилоту</th><th>Узкое место</th></tr></thead><tbody id="scBody"></tbody></table></div>
+  <div class="callout" id="scNote"></div>
+</section>
+
+    </main>
+  </div>
+</div>
+
+<div class="modal" id="cbModal" role="dialog" aria-modal="true" aria-label="Модель концентрации и дыхания">
+  <div class="bar"><b>Концентрация и дыхание — рабочая модель</b>
+    <span class="count" id="cbCtx"></span>
+    <a class="btn" id="cbTab" href="https://claude.ai/artifact/Y9kawb2q2zaKaatGhEk6Qd" target="_blank" rel="noopener">Открыть в новой вкладке</a>
+    <button class="btn" id="cbClose">Закрыть</button></div>
+  <iframe id="cbFrame" title="Модель концентрации и дыхания" allow="autoplay" src="about:blank"></iframe>
+</div>
+<footer class="foot"><div class="wrap">
+  <p>Процессная модель карты инструментов · редакция 1 от 28.09.2026 · <a href="03-koncentraciya-i-ii-medicina.html">инструменты</a> · <a href="02-paralleli-i-modeli.html">параллели и модели</a> · <a href="00-ukazatel-bz-ii-medicina.html">указатель</a></p>
+  <p>Модель не является медицинским изделием и не предназначена для диагностики или лечения.</p>
+</div></footer>
+
+<script>
+(function(){
+"use strict";
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>Array.from(r.querySelectorAll(s));
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const li=a=>"<ul>"+a.map(x=>"<li>"+esc(x)+"</li>").join("")+"</ul>";
+const fmt=n=>Math.round(n).toLocaleString("ru-RU");
+
+/* ---------- ПАРАМЕТРЫ ---------- */
+const P=[
+ {g:"Вход",id:"in",l:"Новых людей в неделю",min:1,max:200,st:1,v:25,u:""},
+ {g:"П1 Формулировки",id:"claims",l:"Доля материалов с медицинскими заявлениями",min:0,max:100,st:5,v:40,u:"%"},
+ {g:"П1 Формулировки",id:"fix",l:"Доля заявлений, переписанных в общее благополучие",min:0,max:100,st:5,v:90,u:"%"},
+ {g:"П2 Скрининг",id:"doc",l:"Доля, отправленная к врачу",min:0,max:40,st:1,v:8,u:"%"},
+ {g:"П2 Скрининг",id:"light",l:"Доля с облегчённым допуском",min:0,max:60,st:1,v:22,u:"%"},
+ {g:"П3 Канал",id:"conv",l:"Начинают практику после регистрации",min:5,max:100,st:5,v:55,u:"%"},
+ {g:"П5 Сессии",id:"freq",l:"Сессий в неделю на человека",min:1,max:21,st:1,v:7,u:""},
+ {g:"П5 Сессии",id:"churn",l:"Отток практикующих в неделю",min:0,max:30,st:1,v:9,u:"%"},
+ {g:"П6 Стоп-правила",id:"stop",l:"Доля сессий со срабатыванием стоп-правила",min:0,max:60,st:1,v:15,u:"%"},
+ {g:"П6 Стоп-правила",id:"adj",l:"Пересмотр мандата после частых стопов",min:0,max:100,st:10,v:70,u:"%"},
+ {g:"П8 Пилот",id:"need",l:"Нужно завершивших курс для пилота",min:10,max:120,st:1,v:43,u:""},
+ {g:"П8 Пилот",id:"weeks",l:"Длительность курса",min:2,max:12,st:1,v:4,u:" нед."}
+];
+const get=id=>+$("#p_"+id).value;
+
+/* ---------- ПРОЦЕССЫ ---------- */
+const PR=[
+ {id:"P1",n:"Проверка формулировок",x:20,y:30,in:"Текст описания практики, материалы канала",act:"Разбор текста правилами: поиск лечебных, диагностических и гарантийных заявлений, оценка статуса в четырёх юрисдикциях, подстановка формулировок общего благополучия",out:"Материал со статусом «общее благополучие» либо материал, требующий правки",par:["Доля материалов с медицинскими заявлениями","Доля заявлений, переписанных в общее благополучие"],dyn:"Разовый процесс на материал, но повторяется при каждой новой редакции описания и при выходе в новый канал. Непереписанные заявления не пропускаются дальше: поток на них останавливается, а не идёт с риском."},
+ {id:"P2",n:"Скрининг",x:210,y:30,in:"Человек и его ответы на 11 вопросов анкеты",act:"Консервативное правило: первая группа ответов закрывает практику до врача, вторая оставляет дыхание без задержки после выдоха",out:"Допуск: полный, облегчённый или к врачу",par:["Доля, отправленная к врачу","Доля с облегчённым допуском"],dyn:"Разово перед первой сессией, повторно при изменении состояния или раз в полгода. Чем строже скрининг, тем уже вход, но тем меньше остановок и нежелательных явлений дальше."},
+ {id:"P3",n:"Канал и регистрация",x:400,y:30,in:"Допущенный человек и выбранный канал: приложение, работодатель, ДМС, клиника",act:"Выбор канала определяет, кто платит, что нужно для входа и какой статус у продукта",out:"Зарегистрированный участник с профилем",par:["Начинают практику после регистрации"],dyn:"Главная потеря потока. Конверсия зависит от канала: в приложении она низкая, в клинике и в программе работодателя выше, потому что практику назначает или рекомендует человек, которому доверяют."},
+ {id:"P4",n:"Мандат сессии",x:590,y:30,in:"Цель, область, режим, результат скрининга",act:"Сборка проверяемых границ: предел задержки, пороги насыщения кислородом и пульса, лимит сессий в день",out:"Мандат в формате JSON, действующий для всех сессий",par:["зависит от допуска и от пересмотра после стопов"],dyn:"Живой объект: пересматривается при частых срабатываниях стоп-правила, при смене цели и при изменении допуска. Облегчённый допуск и направление к врачу обнуляют задержку."},
+ {id:"P5",n:"Сессии с датчиком",x:780,y:30,in:"Мандат, источник сигнала: датчик или симуляция",act:"Цикл дыхания и задержка после выдоха как условие накопления: набор идёт со скоростью, заданной интенсивностью концентрации, после порога доступна граница сред, на этапе Б2 накопленное расходуется на воздействие. Отметки А→Б и Б1→Б2 ставит человек, сигнал контролируется непрерывно",out:"Запись сессии: длительность, отметки, накопленный уровень и расход, показатели, причина завершения. Исполняется в виджете «Концентрация и дыхание» — вызывается прямо из схемы",par:["Сессий в неделю на человека","Отток практикующих в неделю"],dyn:"Внутри сессии свой цикл: набор → порог → расход, и он обнуляется вне задержки. Поэтому результат даёт не длительность сама по себе, а произведение интенсивности на время; длинная задержка без воздействия копит, а с воздействием — тратит. На уровне конвейера частота сессий определяет скорость накопления данных, отток — сколько людей доходит до конца курса, а пропускную способность ограничивает лимит сессий в день из мандата."},
+ {id:"P6",n:"Стоп-правила",x:780,y:185,in:"Сигнал датчика и ограничения мандата",act:"Прерывание задержки при выходе показателей за пороги или при достижении предела мандата, запись причины",out:"Завершённая сессия с причиной и сигнал на пересмотр мандата",par:["Доля сессий со срабатыванием стоп-правила","Пересмотр мандата после частых стопов"],dyn:"Обратная связь внутри контура. Если срабатываний больше трети, мандат смягчается, и доля стопов на следующих неделях падает. Без пересмотра люди уходят: частые прерывания увеличивают отток."},
+ {id:"P7",n:"Журнал и гипотезы",x:590,y:185,in:"Записи сессий",act:"Накопление журнала, правила поиска закономерностей: длина задержки и напряжение, момент перехода А→Б, динамика вариабельности ритма",out:"Гипотезы, помеченные как гипотезы, и предложения по мандату",par:["порог: не менее пяти сессий у человека"],dyn:"Второй контур обратной связи, после сессии. Качество гипотез растёт с числом сессий; до пятой сессии у человека выводов нет. Гипотезы возвращаются в мандат и меняют следующие сессии."},
+ {id:"P8",n:"Пилот и доказательства",x:400,y:185,in:"Участники, завершившие курс, и их измерения до и после",act:"Парное сравнение показателя до и после курса, журнал нежелательных явлений",out:"Доказательства эффекта или их отсутствие",par:["Нужно завершивших курс для пилота","Длительность курса"],dyn:"Накопительный процесс с порогом. До набора нужного числа завершивших выводов нет; после набора появляется основание менять формулировки и заходить в каналы, где требуются доказательства."},
+ {id:"P9",n:"Расширение заявлений и каналов",x:210,y:185,in:"Полученные доказательства",act:"Пересмотр описания практики и выход в каналы, требующие доказательной базы",out:"Новые формулировки на вход процесса П1 и новые каналы для П3",par:["—"],dyn:"Замыкает конвейер. Пока доказательств нет, этот процесс не запускается, и расширять заявления нельзя. После набора данных цикл повторяется с более высокой конверсией входа."}
+];
+const FLOW=[["P1","P2"],["P2","P3"],["P3","P4"],["P4","P5"],["P5","P6"],["P6","P7"],["P7","P8"],["P8","P9"]];
+const BACK=[["P6","P4","пересмотр мандата"],["P7","P5","гипотезы меняют сессии"],["P9","P1","новые формулировки"]];
+
+/* ---------- СОСТОЯНИЕ ---------- */
+let S,timer=null,speed=600,sel="P5";
+function reset(){
+  S={w:0,active:0,inCourse:[],done:0,sessions:0,stops:0,blocked:0,toDoc:0,light:0,hist:[],evt:[],stopRate:get("stop")/100,evidence:false,flow:{}};
+  render(); log("Модель сброшена. Неделя 0.");
+}
+function log(t){S.evt.unshift(`<b>нед. ${S.w}</b> · ${esc(t)}`);S.evt=S.evt.slice(0,40);$("#evt").innerHTML=S.evt.join("<br>");}
+function stepWeek(){
+  if(S.w>=26){stop();log("Горизонт 26 недель пройден.");return false;}
+  S.w++;
+  const inN=get("in"), claims=get("claims")/100, fix=get("fix")/100;
+  const passed=inN*(1-claims)+inN*claims*fix;     // П1
+  S.blocked+=inN-passed;
+  const doc=passed*get("doc")/100, light=passed*get("light")/100; // П2
+  S.toDoc+=doc; S.light+=light;
+  const admitted=passed-doc;
+  const started=admitted*get("conv")/100;          // П3, П4 мандат каждому
+  S.active=S.active*(1-get("churn")/100)+started;  // П5
+  const sess=S.active*get("freq");
+  S.sessions+=sess;
+  const stops=sess*S.stopRate;                     // П6
+  S.stops+=stops;
+  if(S.stopRate>0.33&&get("adj")>0){const d=S.stopRate*0.35*get("adj")/100;S.stopRate=Math.max(0.05,S.stopRate-d);log(`П6: срабатываний больше трети — мандаты смягчены, доля стопов ${(S.stopRate*100).toFixed(0)}%.`);}
+  S.inCourse.push(started);                        // П8
+  const wk=get("weeks");
+  if(S.inCourse.length>wk){const cohort=S.inCourse.shift();const surv=cohort*Math.pow(1-get("churn")/100,wk);S.done+=surv;}
+  const flowNow={P1:passed,P2:admitted,P3:started,P4:started,P5:sess,P6:stops,P7:S.sessions,P8:S.done,P9:S.evidence?1:0};
+  S.flow=flowNow;
+  if(!S.evidence&&S.done>=get("need")){S.evidence=true;log(`П8: набрано ${fmt(S.done)} завершивших курс — порог пилота пройден, П9 разблокирован.`);}
+  if(S.w===1&&claims>0)log(`П1: ${(inN*claims*(1-fix)).toFixed(1).replace(".",",")} чел./нед. не доходит из-за непереписанных заявлений.`);
+  S.hist.push({w:S.w,act:S.active,ses:sess,done:S.done,stop:S.stopRate});
+  render(); return true;
+}
+function play(){stop();timer=setInterval(()=>{if(!stepWeek())stop();},speed);$("#play").textContent="Пауза";}
+function stop(){if(timer){clearInterval(timer);timer=null;}$("#play").textContent="Пуск";}
+
+/* ---------- ОТРИСОВКА ---------- */
+function nodeState(id){
+  if(id==="P9"&&!S.evidence)return"block";
+  if(id==="P6"&&S.stopRate>0.33)return"hot";
+  if(id==="P3"&&get("conv")<30)return"hot";
+  if(id==="P5"&&get("churn")>15)return"hot";
+  return"";
+}
+function nodeVal(id){
+  const f=S.flow; if(!f||!S.w)return"—";
+  if(id==="P7")return fmt(S.sessions);
+  if(id==="P8")return fmt(S.done);
+  if(id==="P9")return S.evidence?"открыт":"закрыт";
+  return fmt(f[id]||0);
+}
+const UNIT={P1:"чел./нед.",P2:"чел./нед.",P3:"чел./нед.",P4:"мандатов/нед.",P5:"сессий/нед.",P6:"стопов/нед.",P7:"сессий всего",P8:"завершили курс",P9:"расширение"};
+function drawMap(){
+  const W=170,H=92;
+  const nd=PR.map(p=>{const s=nodeState(p.id)+(p.id==="P5"?" cb":"");
+    return `<g><rect class="nd ${s} ${sel===p.id?"sel":""}" data-p="${p.id}" x="${p.x}" y="${p.y}" width="${W}" height="${H}" rx="10"></rect>
+    <text class="lbl" x="${p.x+12}" y="${p.y+20}">${p.id}</text>
+    <text x="${p.x+12}" y="${p.y+42}" style="font:600 13px var(--serif)">${esc(p.n.length>22?p.n.slice(0,21)+"…":p.n)}</text>
+    <text class="num" x="${p.x+12}" y="${p.y+68}">${nodeVal(p.id)}</text>
+    <text class="lbl" x="${p.x+12}" y="${p.y+85}">${UNIT[p.id]}</text>${p.id==="P5"?`<text class="lbl" data-open="1" x="${p.x+W-12}" y="${p.y+20}" text-anchor="end" style="fill:var(--accent);cursor:pointer">▶ запустить</text>`:""}</g>`}).join("");
+  const pos={};PR.forEach(p=>pos[p.id]={x:p.x,y:p.y,w:W,h:H});
+  const arr=FLOW.map(([a,b])=>{const A=pos[a],B=pos[b];let d;
+    if(A.y===B.y&&B.x>A.x)d=`M${A.x+W} ${A.y+H/2} L${B.x-6} ${B.y+H/2}`;
+    else if(A.y===B.y&&B.x<A.x)d=`M${A.x} ${A.y+H/2} L${B.x+W+6} ${B.y+H/2}`;
+    else d=`M${A.x+W/2} ${A.y+H} L${B.x+W/2} ${B.y-6}`;
+    return `<path class="fl ${S.w?"on":""}" d="${d}"></path>`}).join("");
+  const back=BACK.map(([a,b,t])=>{const A=pos[a],B=pos[b];
+    const dy=A.y===B.y?54:34; const d=`M${A.x+W/2} ${A.y} C${A.x+W/2} ${A.y-dy} ${B.x+W/2} ${B.y+H+dy} ${B.x+W/2} ${B.y+H+6}`;
+    return `<path class="fl back" d="${d}"></path><text class="lbl" x="${(A.x+B.x)/2+W/2}" y="${Math.max(14,Math.min(A.y,B.y+H)-16)}" text-anchor="middle">${esc(t)}</text>`}).join("");
+  $("#map").innerHTML=`<defs><marker id="ah" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="var(--line)"></path></marker></defs>
+   <text class="lbl" x="20" y="18">поток вперёд ▸</text><text class="lbl" x="940" y="320" text-anchor="end">штриховые стрелки — обратные связи</text>${arr}${back}${nd}`;
+}
+function drawChart(){
+  const c=$("#cv"),x=c.getContext&&c.getContext("2d");if(!x)return;const W=c.width,H=c.height;x.clearRect(0,0,W,H);
+  const cs=getComputedStyle(document.documentElement),acc=cs.getPropertyValue("--accent").trim()||"#0B6E60",inf=cs.getPropertyValue("--info").trim()||"#2F5D8A",wr=cs.getPropertyValue("--warn").trim()||"#9A5B00",ink=cs.getPropertyValue("--ink2").trim()||"#666";
+  x.strokeStyle=ink;x.globalAlpha=.3;x.beginPath();x.moveTo(34,H-18);x.lineTo(W-8,H-18);x.stroke();x.globalAlpha=1;
+  x.fillStyle=ink;x.font="12px sans-serif";for(let w=0;w<=26;w+=4){const px=34+w/26*(W-46);x.fillText(String(w),px-4,H-4);}
+  if(!S.hist.length)return;
+  const mA=Math.max(10,...S.hist.map(h=>h.act)), mS=Math.max(10,...S.hist.map(h=>h.ses)), mD=Math.max(get("need"),...S.hist.map(h=>h.done));
+  const X=w=>34+w/26*(W-46);
+  const line=(f,mx,col)=>{x.strokeStyle=col;x.lineWidth=2;x.beginPath();S.hist.forEach((h,i)=>{const y=H-18-f(h)/mx*(H-34);i?x.lineTo(X(h.w),y):x.moveTo(X(h.w),y)});x.stroke();};
+  line(h=>h.act,mA,acc); line(h=>h.ses,mS,inf); line(h=>h.done,mD,wr);
+  const y=H-18-get("need")/mD*(H-34);x.setLineDash([4,4]);x.strokeStyle=wr;x.globalAlpha=.6;x.beginPath();x.moveTo(34,y);x.lineTo(W-8,y);x.stroke();x.setLineDash([]);x.globalAlpha=1;
+  $("#lg").innerHTML=`<span style="color:${acc}">▬ активные практикующие</span> &nbsp; <span style="color:${inf}">▬ сессий за неделю</span> &nbsp; <span style="color:${wr}">▬ завершили курс, штриховая — порог пилота</span> &nbsp; ось X — недели`;
+}
+function bottleneck(){
+  const c=[]; if(get("conv")<40)c.push(["П3 Канал","конверсия в начало практики"]);
+  if(get("churn")>12)c.push(["П5 Сессии","отток практикующих"]);
+  if(S.stopRate>0.3)c.push(["П6 Стоп-правила","частые прерывания"]);
+  if(get("doc")+get("light")>45)c.push(["П2 Скрининг","узкий допуск"]);
+  if(get("claims")*(100-get("fix"))/100>15)c.push(["П1 Формулировки","непереписанные заявления"]);
+  if(!c.length)c.push(S.evidence?["нет","конвейер сбалансирован"]:["П8 Пилот","накопление завершивших курс"]);
+  return c;
+}
+function render(){
+  $("#wk").textContent=`неделя ${S.w} из 26`;
+  drawMap(); drawChart(); drawCard(); if($("#launchBox"))renderLaunch();
+  const eta=(()=>{const h=S.hist.find(x=>x.done>=get("need"));if(h)return h.w+" нед.";
+    const last=S.hist[S.hist.length-1];if(!last||S.w<4)return"—";const rate=last.done/S.w;return rate>0?(get("need")/rate>60?"более 60 нед.":Math.ceil(get("need")/rate)+" нед."):"—";})();
+  const bn=bottleneck();
+  $("#kpi").innerHTML=`<div class="good"><b>${fmt(S.active)}</b>активных практикующих</div>
+   <div><b>${fmt(S.sessions)}</b>сессий накоплено</div>
+   <div><b>${fmt(S.done)} / ${get("need")}</b>завершили курс</div>
+   <div><b>${eta}</b>порог пилота</div>
+   <div class="${S.stopRate>0.3?"bad":""}"><b>${(S.stopRate*100).toFixed(0)}%</b>доля стопов сейчас</div>
+   <div class="bad"><b>${fmt(S.blocked)}</b>не дошло из-за формулировок</div>
+   <div><b>${fmt(S.toDoc)}</b>направлено к врачу</div>
+   <div><b>${bn[0][0]}</b>узкое место: ${bn[0][1]}</div>`;
+}
+function drawCard(){
+  const p=PR.find(x=>x.id===sel);
+  $("#pcard").innerHTML=`<h4>${p.id} · ${esc(p.n)}</h4><div class="sub">поток сейчас: ${nodeVal(p.id)} ${UNIT[p.id]}${nodeState(p.id)==="hot"?" · перегрев":nodeState(p.id)==="block"?" · закрыт":""}</div>
+   <div class="dgrid"><div><h5>Вход</h5><p style="margin:0">${esc(p.in)}</p></div><div><h5>Что происходит</h5><p style="margin:0">${esc(p.act)}</p></div><div><h5>Выход</h5><p style="margin:0">${esc(p.out)}</p></div><div><h5>Параметры</h5>${li(p.par)}</div></div>
+   <div class="callout" style="margin-bottom:0"><b>Динамика.</b> ${esc(p.dyn)}</div>${p.id==="P5"?`<div class="btnrow"><button class="btn pri" id="cardOpen">Открыть модель концентрации и дыхания</button></div>`:""}`;
+  if(sel==="P5"&&$("#cardOpen"))$("#cardOpen").addEventListener("click",()=>openCB("карточки П5"));
+}
+
+/* ---------- СЦЕНАРИИ ---------- */
+const SC=[
+ {n:"Личная практика",d:"Малый поток, высокая конверсия, мягкие лимиты",v:{in:5,claims:10,fix:100,doc:5,light:20,conv:90,freq:10,churn:4,stop:12,adj:100,need:20,weeks:4}},
+ {n:"Приложение",d:"Большой поток, низкая конверсия и высокий отток",v:{in:120,claims:50,fix:85,doc:8,light:22,conv:20,freq:4,churn:22,stop:18,adj:60,need:43,weeks:4}},
+ {n:"Программа работодателя",d:"Средний поток, рекомендация внутри компании держит людей",v:{in:40,claims:30,fix:95,doc:8,light:22,conv:60,freq:5,churn:8,stop:15,adj:80,need:43,weeks:8}},
+ {n:"Клиника",d:"Малый поток, строгий скрининг, высокая дисциплина, длинный курс",v:{in:12,claims:20,fix:100,doc:18,light:30,conv:85,freq:7,churn:5,stop:22,adj:90,need:43,weeks:8}}
+];
+function applySC(i,run){Object.entries(SC[i].v).forEach(([k,v])=>{const el=$("#p_"+k);if(el){el.value=v;el.dispatchEvent(new Event("input"))}});reset();if(run)play();}
+function simSC(v){
+  const g=k=>v[k]; let active=0,sessions=0,done=0,inC=[],sr=g("stop")/100;
+  for(let w=1;w<=26;w++){
+    const passed=g("in")*(1-g("claims")/100)+g("in")*(g("claims")/100)*(g("fix")/100);
+    const admitted=passed-passed*g("doc")/100;
+    const started=admitted*g("conv")/100;
+    active=active*(1-g("churn")/100)+started; const s=active*g("freq"); sessions+=s;
+    if(sr>0.33&&g("adj")>0)sr=Math.max(0.05,sr-sr*0.35*g("adj")/100);
+    inC.push(started); if(inC.length>g("weeks")){const c=inC.shift();done+=c*Math.pow(1-g("churn")/100,g("weeks"));}
+  }
+  return {active,sessions,done};
+}
+function renderSC(){
+  $("#scBtns").innerHTML=SC.map((s,i)=>`<button class="btn" data-sc="${i}">${esc(s.n)}</button>`).join("");
+  $("#scBtns").addEventListener("click",e=>{const b=e.target.closest("[data-sc]");if(b){applySC(+b.dataset.sc,true);go("model");}});
+  $("#scBody").innerHTML=SC.map(s=>{const r=simSC(s.v);
+    const bn=s.v.conv<40?"П3 конверсия канала":s.v.churn>12?"П5 отток":s.v.doc+s.v.light>45?"П2 узкий допуск":"П8 накопление";
+    return `<tr><td><b>${esc(s.n)}</b></td><td>${esc(s.d)}</td><td>${fmt(r.active)}</td><td>${fmt(r.sessions)}</td><td>${fmt(r.done)} из ${s.v.need}${r.done>=s.v.need?" ✓":""}</td><td>${bn}</td></tr>`}).join("");
+  const best=SC.map((s,i)=>[i,simSC(s.v)]).sort((a,b)=>b[1].done-a[1].done)[0];
+  $("#scNote").innerHTML=`Больше всего завершивших курс за 26 недель даёт сценарий «${esc(SC[best[0]].n)}». Сравните столбцы: сценарий с самым большим входным потоком не обязательно даёт больше всего завершивших курс — низкая конверсия канала и высокий отток съедают поток. Для доказательной базы удержание весит больше, чем размер входа. <span class="tag t-inf">вывод</span>`;
+}
+
+
+/* ---------- ВЫЗОВ МОДЕЛИ КОНЦЕНТРАЦИИ И ДЫХАНИЯ ---------- */
+const CB_URL="https://claude.ai/artifact/Y9kawb2q2zaKaatGhEk6Qd";
+const CB_LOCAL="concentration-breathing-model.html";
+let cbLocal=null;                 // null = ещё не проверяли
+async function probeLocal(){
+  if(cbLocal!==null)return cbLocal;
+  if(location.protocol==="file:"){cbLocal=true;return true;}   // локальная папка: файл рядом
+  try{const r=await fetch(CB_LOCAL,{method:"GET",cache:"no-store"});
+      cbLocal=r.ok&&/text\/html/.test(r.headers.get("content-type")||"html");}
+  catch(e){cbLocal=false;}
+  return cbLocal;
+}
+function cbHref(){ return cbLocal?CB_LOCAL:CB_URL; }
+function openTab(href){ const a=document.createElement("a");a.href=href;a.target="_blank";a.rel="noopener";document.body.appendChild(a);a.click();a.remove(); }
+async function openCB(from,forceTab){
+  const loc=await probeLocal();
+  const href=cbHref();
+  if(!loc||forceTab){ openTab(href); return; }               // внешняя версия — только новая вкладка
+  const f=$("#cbFrame"); f.src=href; $("#cbTab").href=href;
+  $("#cbCtx").textContent=(from?"вызов из "+from:"")+(st_mandate()?" · "+st_mandate():"");
+  $("#cbModal").classList.add("on"); stop();
+}
+function closeCB(){ $("#cbModal").classList.remove("on"); $("#cbFrame").src="about:blank"; }
+function st_mandate(){
+  try{const m=JSON.parse(localStorage.getItem("cb_mandate")||"null");
+    if(!m)return ""; const h=m.constraints.stateless.max_hold_after_exhale_s;
+    return `мандат: ${m.intent.target}, задержка до ${h} с, допуск ${({full:"полный",light:"облегчённый",doctor:"к врачу"})[m.admission]||m.admission}`;
+  }catch(e){return ""}
+}
+async function renderLaunch(){
+  const box=$("#launchBox"); if(!box)return;
+  const m=st_mandate(), sess=S.flow&&S.flow.P5?fmt(S.flow.P5):"0";
+  const loc=await probeLocal(), href=cbHref();
+  box.innerHTML=`<h4>П5 · Сессии: запуск реальной практики</h4>
+   <p>Модель считает поток сессий (${sess} в текущую неделю). Сама сессия проходит в виджете «Концентрация и дыхание»: фазы дыхания, органы, задержка, журнал причин.${m?" Текущий "+esc(m)+".":" Мандат ещё не задан — задайте его в разделе инструментов, чтобы знать пределы задержки."}</p>
+   <div class="btnrow">
+     <a class="btn pri" href="${href}" target="_blank" rel="noopener">Открыть модель в новой вкладке</a>
+     ${loc?`<button class="btn" id="lcHere">Открыть здесь, в окне</button>`:""}
+     <a class="btn" href="03-koncentraciya-i-ii-medicina.html#mandat">Задать мандат</a>
+     <a class="btn" href="03-koncentraciya-i-ii-medicina.html#skrin">Скрининг перед сессией</a>
+   </div>
+   <p style="margin:6px 0 0;font-size:13.5px">Источник: ${loc?"файл <code>"+CB_LOCAL+"</code> рядом с этой страницей":"опубликованная версия виджета (файл рядом не найден)"}. Звук и Bluetooth работают только при открытии в отдельной вкладке.</p>
+   <p style="margin:6px 0 0;font-size:13.5px">Стоп-правила мандата в виджете не действуют автоматически: держите пределы задержки перед глазами и прекращайте практику при головокружении, боли в груди или дурноте.</p>`;
+  if($("#lcHere"))$("#lcHere").addEventListener("click",()=>openCB("П5 Сессии"));
+}
+
+/* ---------- ВНУТРЕННИЙ ЦИКЛ П5: НАКОПЛЕНИЕ И РАСХОД ---------- */
+const ACCM={threshold:0.42,
+  simulate(inten,hold){
+    let lvl=0,t=0,tThr=null,dt=0.25,spend=0;
+    // фаза набора до порога
+    while(t<hold){ lvl=Math.min(1,lvl+dt*(0.030+(inten/100)*0.085)); t+=dt;
+      if(tThr===null&&lvl>=this.threshold){tThr=t;break;} }
+    if(tThr===null) return {reach:false,tThr:null,peak:lvl,work:0,rest:hold-t};
+    // остаток задержки — воздействие, расход
+    let work=0;
+    while(t<hold&&lvl>0.02){ const d=dt*(0.030+(inten/100)*0.085)*0.35 - dt*(0.055+(inten/100)*0.045);
+      lvl=Math.max(0,Math.min(1,lvl+d)); t+=dt; work+=dt; }
+    return {reach:true,tThr,peak:lvl,work,exhausted:lvl<=0.02};
+  }};
+function calcACC(){
+  const inten=+$("#aInt").value, hold=+$("#aHold").value;
+  $("#aIntV").textContent=inten; $("#aHoldV").textContent=hold;
+  const r=ACCM.simulate(inten,hold);
+  let html;
+  if(!r.reach){
+    html=`<p class="verdict v-stop">Порог не достигнут</p><p style="margin:0">За ${hold} с при этой интенсивности накоплено ${(r.peak/ACCM.threshold*100).toFixed(0)}% от порога. Граница сред недоступна: ощущение уточняется, но качественного перехода нет. Увеличьте интенсивность или длительность.</p>`;
+  } else {
+    const cls=r.work>=3?"v-ok":"v-hold";
+    html=`<p class="verdict ${cls}">Порог пройден на ${r.tThr.toFixed(1)}-й секунде</p>
+     <div class="kpis"><div><b>${r.tThr.toFixed(1)} с</b>набор до порога</div><div><b>${r.work.toFixed(1)} с</b>воздействие до исчерпания</div><div><b>${(hold-r.tThr-r.work).toFixed(1)} с</b>остаток задержки без запаса</div></div>
+     <p style="margin:0">${r.work<3?"Запас исчерпывается почти сразу: воздействовать практически нечем. ":""}${hold-r.tThr-r.work>2?"Часть задержки проходит впустую — запас уже израсходован, продолжение ничего не добавляет.":"Задержка израсходована почти полностью."}</p>`;
+  }
+  $("#accOut").innerHTML=html+`<p class="count" style="margin-top:6px">Модель хода процесса, а не физиологии: пороги и скорости подобраны для проверки логики. Природа накапливаемого здесь не определяется.</p>`;
+}
+
+/* ---------- НАВИГАЦИЯ ---------- */
+const panes=$$("section.pane");
+function go(id,push){const t=panes.find(p=>p.id===id)||panes[0];panes.forEach(p=>p.classList.toggle("on",p===t));$$("nav.side button").forEach(b=>b.setAttribute("aria-current",b.dataset.go===t.id?"true":"false"));$("#mob").value=t.id;if(push!==false){try{history.replaceState(null,"","#"+t.id)}catch(e){}}window.scrollTo({top:$(".layout").offsetTop-10,behavior:"auto"});if(t.id==="model")render();}
+function renderNav(){let h="",last="";panes.forEach(p=>{if(p.dataset.grp!==last){h+=`<li class="grp">${esc(p.dataset.grp)}</li>`;last=p.dataset.grp;}h+=`<li><button data-go="${p.id}">${esc(p.dataset.title)}</button></li>`;});$("#sidenav").innerHTML=h;$("#mob").innerHTML=panes.map(p=>`<option value="${p.id}">${esc(p.dataset.title)}</option>`).join("");$("#mob").addEventListener("change",e=>go(e.target.value));document.addEventListener("click",e=>{const b=e.target.closest("[data-go]");if(b){e.preventDefault();go(b.dataset.go)}});}
+
+/* сборка */
+let g="";$("#ctrl").innerHTML=P.map(p=>{let h="";if(p.g!==g){h=`<div class="grp">${esc(p.g)}</div>`;g=p.g;}
+ return h+`<label for="p_${p.id}">${esc(p.l)}: <output id="o_${p.id}"></output>${esc(p.u)}</label><input type="range" id="p_${p.id}" min="${p.min}" max="${p.max}" step="${p.st}" value="${p.v}">`}).join("");
+P.forEach(p=>{const el=$("#p_"+p.id);const up=()=>{$("#o_"+p.id).textContent=el.value;if(p.id==="stop")S.stopRate=+el.value/100;render();};el.addEventListener("input",up);$("#o_"+p.id).textContent=el.value;});
+$("#plist").innerHTML=PR.map(p=>`<li><h4>${p.id} · ${esc(p.n)}</h4><div class="row"><div><b>Вход:</b> ${esc(p.in)}</div><div><b>Выход:</b> ${esc(p.out)}</div></div><div style="margin-top:6px">${esc(p.act)}</div><div class="row"><div><b>Параметры:</b> ${p.par.map(esc).join("; ")}</div></div><div style="margin-top:6px;color:var(--ink2)"><b style="color:var(--ink);font-weight:500">Динамика.</b> ${esc(p.dyn)}</div></li>`).join("");
+$("#map").addEventListener("click",e=>{if(e.target.getAttribute&&e.target.getAttribute("data-open")){openCB("схемы, узел П5");return;}const r=e.target.closest("[data-p]");if(r){sel=r.dataset.p;render();}});
+$("#play").addEventListener("click",()=>{timer?stop():play()});
+$("#step").addEventListener("click",()=>{stop();stepWeek();});
+$("#reset").addEventListener("click",()=>{stop();reset();});
+$("#spd").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;speed=+b.dataset.v;$$("#spd button").forEach(x=>x.setAttribute("aria-pressed",x===b?"true":"false"));if(timer)play();});
+$("#printBtn").addEventListener("click",()=>window.print());
+$("#openCB").addEventListener("click",()=>openCB("верхнего меню"));
+$("#cbClose").addEventListener("click",closeCB);
+$("#cbModal").addEventListener("click",e=>{if(e.target.id==="cbModal")closeCB()});
+document.addEventListener("keydown",e=>{if(e.key==="Escape")closeCB()});
+["#aInt","#aHold"].forEach(x=>$(x).addEventListener("input",calcACC));
+renderNav(); reset(); renderLaunch(); calcACC(); renderSC();
+go((location.hash||"").slice(1)||"model",false);
+})();
+</script>
+</body>
+</html>

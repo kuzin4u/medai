@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>База знаний: ИИ в медицине — комплект</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Serif:wght@500;600&family=IBM+Plex+Sans+Condensed:wght@500&family=IBM+Plex+Mono&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#F7FAF9;--panel:#FFFFFF;--ink:#16302C;--ink2:#4A615C;--line:#CFDDD9;--tint:#E4F0EC;--accent:#0B6E60;--accent2:#084F45;--warn:#9A5B00;--warntint:#FBF0DE;
+  --serif:"IBM Plex Serif",Georgia,serif;--sans:"IBM Plex Sans","Segoe UI",Roboto,Arial,sans-serif;--cond:"IBM Plex Sans Condensed",Arial,sans-serif;
+  box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--paper:#0F1B19;--panel:#152623;--ink:#E3EFEC;--ink2:#A4BAB5;--line:#2C4540;--tint:#1B332F;--accent:#4FC2AE;--accent2:#7ED9C8;--warn:#E3A64A;--warntint:#33280F;}}
+:root[data-theme="dark"]{--paper:#0F1B19;--panel:#152623;--ink:#E3EFEC;--ink2:#A4BAB5;--line:#2C4540;--tint:#1B332F;--accent:#4FC2AE;--accent2:#7ED9C8;--warn:#E3A64A;--warntint:#33280F;}
+*,*::before,*::after{box-sizing:inherit}
+body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.6 var(--sans)}
+a{color:var(--accent)}
+.wrap{max-width:1080px;margin:0 auto;padding:0 20px}
+.hero{padding:44px 0 10px}
+h1{font:600 clamp(28px,4.4vw,42px)/1.12 var(--serif);margin:0 0 14px;max-width:24ch}
+.lead{font-size:18px;color:var(--ink2);max-width:72ch;margin:0 0 14px}
+.meta{font-family:var(--cond);font-size:14px;color:var(--ink2)}
+h2{font:600 26px/1.2 var(--serif);margin:34px 0 10px}
+h3{font:600 18px/1.3 var(--serif);margin:22px 0 6px}
+p,li{max-width:78ch}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px;margin:14px 0}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px 18px}
+.card h4{margin:0 0 2px;font:600 18px var(--serif)}
+.card h4 a{text-decoration:none}
+.card .f{font-family:"IBM Plex Mono",monospace;font-size:12.5px;color:var(--ink2);margin-bottom:8px;word-break:break-all}
+.card p{margin:0 0 8px;font-size:15px;color:var(--ink2)}
+.card ul{margin:0;padding-left:18px;font-size:14.5px}
+.card li{margin:2px 0}
+.scroll{overflow-x:auto;border:1px solid var(--line);border-radius:8px;background:var(--panel);margin:12px 0}
+table{border-collapse:collapse;width:100%;font-size:14.5px}
+th,td{text-align:left;vertical-align:top;padding:9px 12px;border-bottom:1px solid var(--line)}
+th{font:500 13.5px var(--cond);color:var(--ink2);background:var(--tint)}
+tr:last-child td{border-bottom:0}
+code{font-family:"IBM Plex Mono",monospace;font-size:13.5px;background:var(--tint);padding:1px 5px;border-radius:4px}
+pre{font:13px/1.5 "IBM Plex Mono",monospace;background:var(--tint);border:1px solid var(--line);border-radius:8px;padding:12px;overflow-x:auto}
+.note{border-left:3px solid var(--warn);background:var(--warntint);padding:10px 14px;border-radius:0 6px 6px 0;margin:14px 0;max-width:80ch}
+.note.ok{border-left-color:var(--accent);background:var(--tint)}
+
+/* ── СОДЕРЖАНИЕ, ДОКУМЕНТЫ, ТЕРМИНЫ ─────────────────────── */
+.nav-search{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:14px 0}
+.nav-search input{flex:1 1 260px;font:15px var(--sans);padding:9px 12px;border:1px solid var(--line);
+  border-radius:9px;background:var(--panel);color:var(--ink)}
+.nav-search .cnt{font-family:var(--cond);font-size:13.5px;color:var(--ink2)}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:9px;overflow:hidden}
+.seg button{border:0;background:var(--panel);color:var(--ink);padding:8px 13px;font:500 14px var(--sans);cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--accent);color:var(--panel)}
+.toc{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:12px;margin:12px 0}
+.toc section{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:13px 15px}
+.toc h4{margin:0 0 7px;font:600 16px var(--serif)}
+.toc h4 a{text-decoration:none}
+.toc ul{margin:0;padding-left:17px}
+.toc li{margin:3px 0;font-size:14.5px}
+.nav-list{border:1px solid var(--line);border-radius:10px;background:var(--panel);overflow:hidden;margin:12px 0}
+.nav-list a{display:flex;gap:10px;align-items:baseline;padding:9px 13px;border-bottom:1px solid var(--line);
+  text-decoration:none;color:var(--ink)}
+.nav-list a:last-child{border-bottom:0}
+.nav-list a:hover{background:var(--tint)}
+.nav-list b{font-weight:600;min-width:118px}
+.nav-list span{color:var(--ink2);font-size:14px;flex:1 1 auto}
+.nav-list i{font-style:normal;font-family:var(--cond);font-size:12.5px;color:var(--ink2);white-space:nowrap}
+.nav-empty{padding:14px;color:var(--ink2)}
+
+footer{border-top:1px solid var(--line);margin-top:40px;padding:18px 0 40px;color:var(--ink2);font-size:14px}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="hero">
+  <h1>База знаний: ИИ в медицине — рабочий комплект</h1>
+  <p class="lead">Восемь файлов: семь страниц базы знаний и виджет модели концентрации и дыхания. Начинать лучше с трека освоения, а справочные страницы открывать под конкретный вопрос. Всё работает без интернета и без сервера — достаточно открыть файл в браузере. Ссылки между страницами относительные, поэтому папку можно целиком положить на сайт.</p>
+  <div class="meta">Редакция от 30.09.2026 · добавлено содержание с поиском по разделам, документам и терминам · собрано по образцу пула материалов по агентной коммерции</div>
+</div>
+
+<h2>Состав комплекта</h2>
+<div class="cards">
+  <div class="card" style="border-color:var(--accent)">
+    <h4><a href="05-trek-osvoeniya.html">Трек освоения</a></h4>
+    <div class="f">05-trek-osvoeniya.html</div>
+    <p>Второй вход в базу для тех, кто начинает с нуля: быстрый старт на 20 минут и два трека — девять шагов по российскому рынку и шесть по зарубежным. В каждом шаге — зачем это нужно сейчас, одна идея, действие с видимым результатом и проверка себя.</p>
+    <ul><li>Отдельный прогресс у каждого трека</li><li>Российский трек около полутора часов, зарубежный около часа</li><li>Дальше справочник открывается под задачу</li></ul>
+  </div>
+  <div class="card">
+    <h4><a href="00-ukazatel-bz-ii-medicina.html">Российский сегмент</a></h4>
+    <div class="f">00-ukazatel-bz-ii-medicina.html</div>
+    <p>Главный указатель базы. Дерево материалов, путь медицинского случая из 9 стадий, каталог сценариев, заказчики, реестр из 38 документов, ворота от PoC до промышленного внедрения, метрики и риски.</p>
+    <ul><li>Путь случая: ИИ, данные, заказчики, метрики по каждой стадии</li><li>Калькулятор цены ошибки</li><li>Карта роли руководителя AI-продукта</li></ul>
+  </div>
+  <div class="card">
+    <h4><a href="01-zarubezhnyy-segment.html">Зарубежный сегмент</a></h4>
+    <div class="f">01-zarubezhnyy-segment.html</div>
+    <p>США, ЕС, Великобритания, Китай, страны Персидского залива и ЕАЭС. Как регулируется медицинский ИИ, кто платит, что уже работает в клиниках.</p>
+    <ul><li>Квалификатор: станет ли сценарий медизделием</li><li>Реестр из 37 документов с фильтрами</li><li>Уроки для российской команды</li></ul>
+  </div>
+  <div class="card">
+    <h4><a href="02-paralleli-i-modeli.html">Параллели с платежами и модели</a></h4>
+    <div class="f">02-paralleli-i-modeli.html</div>
+    <p>Мост к пулу агентной коммерции: 27 соответствий между платёжными и медицинскими понятиями со ссылками на документы, и четыре интерактивные модели.</p>
+    <ul><li>Две оси случая: клиническая и транзакционная</li><li>Модель режимов: когда ИИ действует без врача</li><li>12 конфликтов и модель издержек контроля</li></ul>
+  </div>
+  <div class="card">
+    <h4><a href="03-koncentraciya-i-ii-medicina.html">Концентрация и дыхание × ИИ-медицина</a></h4>
+    <div class="f">03-koncentraciya-i-ii-medicina.html</div>
+    <p>Девять рабочих инструментов по двум направлениям: встроить модель в ИИ-медицину и дополнить её средствами ИИ-медицины.</p>
+    <ul><li>Проверка формулировок и скрининг противопоказаний</li><li>Мандат сессии, сессия с датчиком, журнал и гипотезы</li><li>Промпт вопросника и код для встраивания</li></ul>
+  </div>
+  <div class="card">
+    <h4><a href="04-processnaya-model.html">Процессная модель карты инструментов</a></h4>
+    <div class="f">04-processnaya-model.html</div>
+    <p>Девять инструментов как конвейер: схема с обратными связями, 12 изменяемых параметров, ход времени по 26 неделям, 4 готовых сценария.</p>
+    <ul><li>Показывает узкое место конвейера</li><li>Считает, когда наберётся материал для пилота</li><li>Внутренний цикл П5: набор, порог, расход — с расчётом</li><li>Из узла П5 запускается виджет модели</li></ul>
+  </div>
+  <div class="card">
+    <h4><a href="06-uroven-uchastiya.html">Уровень участия пациента</a></h4>
+    <div class="f">06-uroven-uchastiya.html</div>
+    <p>Черновик для обсуждения: шкала из пяти уровней участия человека в диагностике и лечении, расчёт уровня по четырём измеримым признакам и вес участия на каждой стадии пути случая.</p>
+    <ul><li>Безопасность имеет право вето в расчёте</li><li>Показывает, что уровень не меняет никогда</li><li>Разбор четырёх возражений с остаточными рисками</li></ul>
+  </div>
+  <div class="card">
+    <h4><a href="05-trek-osvoeniya.html">Трек освоения</a></h4>
+    <div class="f">05-trek-osvoeniya.html</div>
+    <p>Второй вход в базу — для освоения с нуля. Два трека: девять шагов по российскому рынку и шесть по зарубежным, плюс быстрый старт на 20 минут.</p>
+    <ul><li>Каждый шаг: зачем сейчас, одна идея, действие с видимым результатом, проверка</li><li>Прогресс сохраняется в браузере</li><li>После трека — 12 рабочих ситуаций со ссылками в справочник</li></ul>
+  </div>
+  <div class="card">
+    <h4><a href="concentration-breathing-model.html">Виджет «Концентрация и дыхание»</a></h4>
+    <div class="f">concentration-breathing-model.html</div>
+    <p>Рабочая модель: анатомическая схема, органы, фазы дыхания, звук, журнал причин, аналитика. Добавлено аккумулирование: набор в задержке, порог границы сред, расход при воздействии. Вызывается из процессной модели.</p>
+    <ul><li>Полоса накопления на схеме и в сессии, белая риска — порог</li><li>Хранит настройки в браузере (organTargets, latencyLog_v1)</li><li>Со звуком: открывать напрямую, не во встроенном окне</li></ul>
+  </div>
+</div>
+
+
+<h2 id="soderzhanie">Содержание, документы и термины</h2>
+<p>Поиск идёт по разделам всех страниц, по документам обоих реестров и по терминам глоссариев. Нажатие открывает нужную страницу на нужном разделе.</p>
+<div class="nav-search">
+  <input type="search" id="nq" placeholder="Например: реестр, PPV, 152-ФЗ, мандат, WISeR" aria-label="Поиск по пулу">
+  <div class="seg" id="nmode">
+    <button data-v="all" aria-pressed="true">Всё</button>
+    <button data-v="sec" aria-pressed="false">Разделы</button>
+    <button data-v="doc" aria-pressed="false">Документы</button>
+    <button data-v="term" aria-pressed="false">Термины</button>
+  </div>
+  <span class="cnt" id="ncnt"></span>
+</div>
+<div id="ntoc" class="toc"></div>
+<div id="nres" class="nav-list" style="display:none"></div>
+
+<h2>Как пользоваться</h2>
+<h3>Локально</h3>
+<p>Распакуйте папку и откройте <code>index.html</code> двойным щелчком. Всё работает офлайн; шрифты подгружаются из сети, без неё подставятся системные. Данные, которые вы вводите (журнал сессий, мандат, настройки виджета), хранятся только в вашем браузере и никуда не отправляются.</p>
+<h3>На сайте</h3>
+<p>Положите папку целиком, например в <code>lucklyrics.ru/medai/</code>. Ссылки между страницами относительные и заработают сразу. Если рядом окажется пул агентной коммерции в <code>lucklyrics.ru/agentic/</code>, заработают и ссылки на его документы со страницы параллелей.</p>
+<div class="scroll"><table><thead><tr><th>Что нужно</th><th>Куда идти</th></tr></thead><tbody>
+<tr><td>Освоить тему с нуля</td><td>Трек освоения → быстрый старт → российский трек → зарубежный трек</td></tr>
+<tr><td><b>Впервые в теме</b></td><td><b>Трек освоения → быстрый старт, затем шаги по порядку</b></td></tr>
+<tr><td>Найти нужный раздел, закон или термин</td><td><a href="#soderzhanie">Содержание</a> → поиск по всему пулу</td></tr>
+<tr><td>Разобраться в отрасли и подготовиться к разговору с заказчиком</td><td>Российский сегмент → путь случая → заказчики и деньги</td></tr>
+<tr><td>Понять, станет ли продукт медизделием</td><td>Зарубежный сегмент → квалификатор сценария</td></tr>
+<tr><td>Связать опыт платёжных систем с медициной</td><td>Параллели → две оси случая → уроки рамки EMVCo</td></tr>
+<tr><td>Проверить формулировки практики перед публикацией</td><td>Концентрация и дыхание → проверка формулировок</td></tr>
+<tr><td>Задать пределы сессии и провести практику</td><td>Инструменты → скрининг → мандат → процессная модель → запуск виджета</td></tr>
+<tr><td>Спланировать пилот и понять, когда наберётся материал</td><td>Инструменты → протокол пилота; процессная модель → сценарии</td></tr>
+</tbody></table></div>
+
+<h2>Технические замечания</h2>
+<ul>
+<li><b>Bluetooth-пульсометр</b> в разделе «Сессия с датчиком» работает в Chrome или Edge и только при открытии страницы напрямую по https или с локального файла. Во встроенном окне браузер его блокирует.</li>
+<li><b>Звук виджета</b> корректно работает при открытии файла напрямую, а не в модальном окне процессной модели.</li>
+<li><b>Данные в браузере.</b> Журнал сессий и мандат хранятся под ключами <code>cb_journal</code> и <code>cb_mandate</code>, настройки виджета — под <code>organTargets</code> и <code>latencyLog_v1</code>. При смене браузера или очистке данных сайта они теряются.</li>
+<li><b>Печать.</b> На каждой странице есть кнопка печати: она выводит все разделы подряд, включая скрытые вкладки.</li>
+</ul>
+
+<div class="note">Границы применения. Материалы комплекта — рабочая база для команды, а не нормативный документ и не юридическое заключение. Позиции, помеченные как вывод, — наша постановка; числа в моделях — допущения порядка величины. Инструменты не являются медицинским изделием и не предназначены для диагностики или лечения. Практика с задержкой дыхания — нагрузка на организм: при боли в груди, обмороке или сильном головокружении её нужно прекратить и обратиться за медицинской помощью.</div>
+
+<div class="note ok">Что обновлять. Реестры документов устаревают быстрее остального: следите за проектами стандартов по большим генеративным моделям, реформой MDR в ЕС, итоговым докладом британской комиссии по регулированию ИИ в здравоохранении и закрытием обсуждения черновика рамки EMVCo.</div>
+
+<footer>
+  <p>База знаний по применению ИИ в медицине · комплект из 9 файлов · 28.09.2026</p>
+</footer>
+</div>
+
+<script>
+(function(){
+  const NAV = {"sec": {"00-ukazatel-bz-ii-medicina.html": [["ukaz", "Указатель"], ["put", "Путь случая"], ["primer", "Сквозной пример"], ["scen", "Каталог ИИ-сценариев"], ["zak", "Заказчики и деньги"], ["reestr", "Реестр документов"], ["cikl", "От PoC до промышленности"], ["metriki", "Метрики и оценка качества"], ["risk", "Цена ошибки и ограничения"], ["rynok", "Рынок и игроки"], ["gloss", "Глоссарий"], ["rol", "Карта роли"]], "01-zarubezhnyy-segment.html": [["ukaz", "Указатель"], ["jur", "Карта юрисдикций"], ["qual", "Квалификатор сценария"], ["put", "Путь случая за рубежом"], ["dengi", "Заказчики и деньги"], ["reestr", "Реестр документов"], ["kach", "Оценка качества"], ["rynok", "Рынок и игроки"], ["perenos", "Уроки для России"], ["drugie", "Обзор трёх регионов"], ["china", "Китай"], ["gulf", "Персидский залив"], ["eaeu", "ЕАЭС"], ["gloss", "Глоссарий"]], "02-paralleli-i-modeli.html": [["ukaz", "Как читать"], ["par", "Параллели"], ["osi", "Две оси случая"], ["rezh", "Режимы и эскалация"], ["konf", "Модель конфликтов"], ["izd", "Издержки контроля"], ["uroki", "Уроки рамки EMVCo"]], "03-koncentraciya-i-ii-medicina.html": [["karta", "Карта инструментов"], ["formul", "Проверка формулировок"], ["skrin", "Скрининг противопоказаний"], ["kanaly", "Каналы и позиционирование"], ["pilot", "Протокол пилота"], ["mandat", "Мандат сессии"], ["sessia", "Сессия с датчиком"], ["zhurnal", "Журнал и гипотезы"], ["prompt", "Промпт вопросника"], ["vstroit", "Встраивание в виджет"]], "04-processnaya-model.html": [["model", "Интерактивная модель"], ["proc", "Описание процессов"], ["scen", "Сценарии"]], "05-trek-osvoeniya.html": [["start", "Быстрый старт"], ["track", "Шаги"], ["zrelo", "После трека"]], "06-uroven-uchastiya.html": [["shkala", "Шкала уровней"], ["kalk", "Расчёт уровня"], ["proc", "Влияние на процессы"], ["riski", "Риски и границы"], ["dannye", "Профиль и данные"]]}, "terms": {"ЕГИСЗ": {"f": "00-ukazatel-bz-ii-medicina.html", "a": "gloss", "d": "Единая государственная информационная система в сфере здравоохранения"}, "МО": {"f": "00-ukazatel-bz-ii-medicina.html", "a": "gloss", "d": "Медицинская организация"}, "ФОМС, ТФОМС": {"f": "00-ukazatel-bz-ii-medicina.html", "a": "gloss", "d": "Федеральный и территориальные фонды обязательного медицинского страхования"}, "СМО": {"f": "00-ukazatel-bz-ii-medicina.html", "a": "gloss", "d": "Страховая медицинская организация"}, "ДМС": {"f": "00-ukazatel-bz-ii-medicina.html", "a": "gloss", "d": "Добровольное медицинское страхование"}, "Росздравнадзор": {"f": "00-ukazatel-bz-ii-medicina.html", "a": "gloss", "d": "Федеральная служба по надзору в сфере здравоохранения"}, "Иная информационная система": {"f": "00-ukazatel-bz-ii-medicina.html", "a": "gloss", "d": "Информационная система в сфере здравоохранения, не являющаяся государственной"}, "ЭМК": {"f": "00-ukazatel-bz-ii-medicina.html", "a": "gloss", "d": "Электронная медицинская карта"}, "ЭМД": {"f": "00-ukazatel-bz-ii-medicina.html", "a": "gloss", "d": "Электронный медицинский документ"}, "МИС": {"f": "00-ukazatel-bz-ii-medicina.html", "a": "gloss", "d": "Медицинская информационная система"}, "ЛИС": {"f": "00-ukazatel-bz-ii-medicina.html", "a": "gloss", "d": "Лабораторная информационная система"}, "РИС, PACS": {"f": "00-ukazatel-bz-ii-medicina.html", "a": "gloss", "d": "Радиологическая информационная система и система архивации и передачи изображений"}, "DICOM": {"f": "00-ukazatel-bz-ii-medicina.html", "a": "gloss", "d": "Digital Imaging and Communications in Medicine — цифровые изображения и обмен ими в медицине"}, "НСИ": {"f": "00-ukazatel-bz-ii-medicina.html", "a": "gloss", "d": "Нормативно-справочная информация"}, "Обезличивание": {"f": "00-ukazatel-bz-ii-medicina.html", "a": "gloss", "d": "Обезличивание персональных данных"}, "Набор данных": {"f": "00-ukazatel-bz-ii-medicina.html", "a": "gloss", "d": "Набор данных для обучения и тестирования системы ИИ"}, "СППВР": {"f": "00-ukazatel-bz-ii-medicina.html", "a": "gloss", "d": "Система поддержки принятия врачебных решений"}, "Прогнозная аналитика": {"f": "00-ukazatel-bz-ii-medicina.html", "a": "gloss", "d": "Системы прогнозной аналитики на данных ЭМК"}, "Медицинский AI-ассистент": {"f": "00-ukazatel-bz-ii-medicina.html", "a": "gloss", "d": "Диалоговый сервис на большой языковой модели"}, "LLM": {"f": "00-ukazatel-bz-ii-medicina.html", "a": "gloss", "d": "Large Language Model — большая языковая модель"}, "RAG": {"f": "00-ukazatel-bz-ii-medicina.html", "a": "gloss", "d": "Retrieval-Augmented Generation — генерация с опорой на найденные данные"}, "Мультиагентная система": {"f": "00-ukazatel-bz-ii-medicina.html", "a": "gloss", "d": "Система из нескольких специализированных агентов"}, "МИ с ИИ": {"f": "00-ukazatel-bz-ii-medicina.html", "a": "gloss", "d": "Медицинское изделие с искусственным интеллектом"}, "ФЛК": {"f": "00-ukazatel-bz-ii-medicina.html", "a": "gloss", "d": "Форматно-логический контроль"}, "МЭК": {"f": "00-ukazatel-bz-ii-medicina.html", "a": "gloss", "d": "Медико-экономический контроль"}, "МЭЭ": {"f": "00-ukazatel-bz-ii-medicina.html", "a": "gloss", "d": "Медико-экономическая экспертиза"}, "ЭКМП": {"f": "00-ukazatel-bz-ii-medicina.html", "a": "gloss", "d": "Экспертиза качества медицинской помощи"}, "Клинические рекомендации": {"f": "00-ukazatel-bz-ii-medicina.html", "a": "gloss", "d": "Клинические рекомендации по заболеванию"}, "Врачебная валидация": {"f": "00-ukazatel-bz-ii-medicina.html", "a": "gloss", "d": "Независимая оценка результатов модели врачами-экспертами"}, "Клиническая оценка": {"f": "00-ukazatel-bz-ii-medicina.html", "a": "gloss", "d": "Клиническая оценка системы ИИ в клинической медицине"}, "Чувствительность": {"f": "00-ukazatel-bz-ii-medicina.html", "a": "gloss", "d": "Sensitivity, доля истинно положительных результатов"}, "Специфичность": {"f": "00-ukazatel-bz-ii-medicina.html", "a": "gloss", "d": "Specificity, доля истинно отрицательных результатов"}, "PPV": {"f": "00-ukazatel-bz-ii-medicina.html", "a": "gloss", "d": "Positive Predictive Value — прогностическая ценность положительного результата"}, "NPV": {"f": "00-ukazatel-bz-ii-medicina.html", "a": "gloss", "d": "Negative Predictive Value — прогностическая ценность отрицательного результата"}, "AUC-ROC": {"f": "00-ukazatel-bz-ii-medicina.html", "a": "gloss", "d": "Area Under the Receiver Operating Characteristic Curve — площадь под характеристической кривой"}, "Калибровка": {"f": "00-ukazatel-bz-ii-medicina.html", "a": "gloss", "d": "Калибровка вероятностей модели"}, "Каппа Коэна": {"f": "00-ukazatel-bz-ii-medicina.html", "a": "gloss", "d": "Cohen's kappa — коэффициент согласия с поправкой на случайность"}, "Фактическая точность": {"f": "00-ukazatel-bz-ii-medicina.html", "a": "gloss", "d": "Faithfulness — верность источнику"}, "Дрейф": {"f": "00-ukazatel-bz-ii-medicina.html", "a": "gloss", "d": "Data drift и concept drift — смещение данных и связей"}, "Класс риска": {"f": "00-ukazatel-bz-ii-medicina.html", "a": "gloss", "d": "Класс потенциального риска применения медицинского изделия"}, "РУ": {"f": "00-ukazatel-bz-ii-medicina.html", "a": "gloss", "d": "Регистрационное удостоверение"}, "ЭПР": {"f": "00-ukazatel-bz-ii-medicina.html", "a": "gloss", "d": "Экспериментальный правовой режим"}, "Пострегистрационный мониторинг": {"f": "00-ukazatel-bz-ii-medicina.html", "a": "gloss", "d": "Мониторинг безопасности изделия после выхода на рынок"}, "Модификация ИИ-ПО": {"f": "00-ukazatel-bz-ii-medicina.html", "a": "gloss", "d": "Изменение программного обеспечения с ИИ после регистрации"}, "ИДС": {"f": "00-ukazatel-bz-ii-medicina.html", "a": "gloss", "d": "Информированное добровольное согласие"}, "ЕСИА": {"f": "00-ukazatel-bz-ii-medicina.html", "a": "gloss", "d": "Единая система идентификации и аутентификации"}, "FDA": {"f": "01-zarubezhnyy-segment.html", "a": "gloss", "d": "Food and Drug Administration — Управление по санитарному надзору за качеством пищевых продуктов и медикаментов США"}, "CDRH": {"f": "01-zarubezhnyy-segment.html", "a": "gloss", "d": "Center for Devices and Radiological Health — Центр приборов и радиологического здоровья"}, "CMS": {"f": "01-zarubezhnyy-segment.html", "a": "gloss", "d": "Centers for Medicare & Medicaid Services — Центры услуг Medicare и Medicaid"}, "CMMI": {"f": "01-zarubezhnyy-segment.html", "a": "gloss", "d": "Center for Medicare and Medicaid Innovation — Инновационный центр CMS"}, "NMPA": {"f": "01-zarubezhnyy-segment.html", "a": "gloss", "d": "National Medical Products Administration — Государственное управление по контролю лекарственных средств КНР"}, "SFDA": {"f": "01-zarubezhnyy-segment.html", "a": "gloss", "d": "Saudi Food and Drug Authority — Управление по продовольствию и лекарствам Саудовской Аравии"}, "Notified Body": {"f": "01-zarubezhnyy-segment.html", "a": "gloss", "d": "Нотифицированный орган"}, "WISeR": {"f": "01-zarubezhnyy-segment.html", "a": "gloss", "d": "Wasteful and Inappropriate Service Reduction — сокращение излишних и необоснованных услуг"}, "AI Airlock": {"f": "01-zarubezhnyy-segment.html", "a": "gloss", "d": "Регуляторная песочница MHRA для ИИ как медицинского изделия"}, "510(k)": {"f": "01-zarubezhnyy-segment.html", "a": "gloss", "d": "Premarket Notification — предрыночное уведомление по разделу 510(k) закона"}, "De Novo": {"f": "01-zarubezhnyy-segment.html", "a": "gloss", "d": "De Novo Classification Request — запрос о классификации нового типа изделия"}, "PMA": {"f": "01-zarubezhnyy-segment.html", "a": "gloss", "d": "Premarket Approval — предрыночное одобрение"}, "Breakthrough Device": {"f": "01-zarubezhnyy-segment.html", "a": "gloss", "d": "Breakthrough Devices Program — программа прорывных изделий"}, "PCCP": {"f": "01-zarubezhnyy-segment.html", "a": "gloss", "d": "Predetermined Change Control Plan — заранее согласованный план управления изменениями"}, "CE marking": {"f": "01-zarubezhnyy-segment.html", "a": "gloss", "d": "Маркировка соответствия ЕС"}, "UKCA": {"f": "01-zarubezhnyy-segment.html", "a": "gloss", "d": "UK Conformity Assessed — британская маркировка соответствия"}, "SaMD": {"f": "01-zarubezhnyy-segment.html", "a": "gloss", "d": "Software as a Medical Device — программное обеспечение как медицинское изделие"}, "IMDRF": {"f": "01-zarubezhnyy-segment.html", "a": "gloss", "d": "International Medical Device Regulators Forum — Международный форум регуляторов медицинских изделий"}, "AIaMD": {"f": "01-zarubezhnyy-segment.html", "a": "gloss", "d": "Artificial Intelligence as a Medical Device — искусственный интеллект как медицинское изделие"}, "CDS, Non-Device CDS": {"f": "01-zarubezhnyy-segment.html", "a": "gloss", "d": "Clinical Decision Support — поддержка клинических решений; вариант, выведенный из определения изделия"}, "AVT, ambient scribe": {"f": "01-zarubezhnyy-segment.html", "a": "gloss", "d": "Ambient Voice Technology — технология фоновой записи речи"}, "General wellness": {"f": "01-zarubezhnyy-segment.html", "a": "gloss", "d": "Продукты общего благополучия"}, "Predictive DSI": {"f": "01-zarubezhnyy-segment.html", "a": "gloss", "d": "Predictive Decision Support Intervention — предиктивное вмешательство поддержки решений"}, "EHR": {"f": "01-zarubezhnyy-segment.html", "a": "gloss", "d": "Electronic Health Record — электронная медицинская запись"}, "PHI": {"f": "01-zarubezhnyy-segment.html", "a": "gloss", "d": "Protected Health Information — защищённая медицинская информация"}, "HIPAA": {"f": "01-zarubezhnyy-segment.html", "a": "gloss", "d": "Health Insurance Portability and Accountability Act — закон о переносимости и подотчётности медицинского страхования"}, "BAA": {"f": "01-zarubezhnyy-segment.html", "a": "gloss", "d": "Business Associate Agreement — договор с деловым партнёром"}, "IDN": {"f": "01-zarubezhnyy-segment.html", "a": "gloss", "d": "Integrated Delivery Network — интегрированная сеть оказания медицинской помощи"}, "Prior authorization": {"f": "01-zarubezhnyy-segment.html", "a": "gloss", "d": "Предварительная авторизация"}, "CPT": {"f": "01-zarubezhnyy-segment.html", "a": "gloss", "d": "Current Procedural Terminology — текущая процедурная терминология"}, "NTAP": {"f": "01-zarubezhnyy-segment.html", "a": "gloss", "d": "New Technology Add-on Payment — надбавка за новую технологию"}, "Medicare Advantage": {"f": "01-zarubezhnyy-segment.html", "a": "gloss", "d": "Частные планы в рамках Medicare"}, "EHDS": {"f": "01-zarubezhnyy-segment.html", "a": "gloss", "d": "European Health Data Space — Европейское пространство данных здравоохранения"}, "Malaffi, Nabidh": {"f": "01-zarubezhnyy-segment.html", "a": "gloss", "d": "Обмены медицинскими данными Абу-Даби и Дубая"}, "AI Act": {"f": "01-zarubezhnyy-segment.html", "a": "gloss", "d": "Regulation (EU) 2024/1689 — Регламент ЕС об искусственном интеллекте"}, "High-risk AI": {"f": "01-zarubezhnyy-segment.html", "a": "gloss", "d": "ИИ высокого риска"}, "Annex I, Annex III": {"f": "01-zarubezhnyy-segment.html", "a": "gloss", "d": "Приложения I и III регламента об ИИ"}, "Digital Omnibus": {"f": "01-zarubezhnyy-segment.html", "a": "gloss", "d": "Пакет поправок ЕС 2026 года"}, "GDPR": {"f": "01-zarubezhnyy-segment.html", "a": "gloss", "d": "General Data Protection Regulation — Общий регламент по защите данных"}, "GPAI": {"f": "01-zarubezhnyy-segment.html", "a": "gloss", "d": "General-Purpose AI — модели ИИ общего назначения"}, "GMLP": {"f": "01-zarubezhnyy-segment.html", "a": "gloss", "d": "Good Machine Learning Practice — надлежащая практика машинного обучения"}, "PIPL": {"f": "01-zarubezhnyy-segment.html", "a": "gloss", "d": "Personal Information Protection Law — Закон КНР о защите персональной информации"}, "ЕЭК": {"f": "01-zarubezhnyy-segment.html", "a": "gloss", "d": "Евразийская экономическая комиссия"}, "TRIPOD+AI": {"f": "01-zarubezhnyy-segment.html", "a": "gloss", "d": "Transparent Reporting of a multivariable prediction model for Individual Prognosis Or Diagnosis, версия для ИИ"}, "CONSORT-AI, SPIRIT-AI": {"f": "01-zarubezhnyy-segment.html", "a": "gloss", "d": "Расширения стандартов отчётности о клинических испытаниях для вмешательств с ИИ"}, "DECIDE-AI": {"f": "01-zarubezhnyy-segment.html", "a": "gloss", "d": "Стандарт отчётности о ранней клинической оценке систем поддержки решений"}, "HealthBench": {"f": "01-zarubezhnyy-segment.html", "a": "gloss", "d": "Открытый бенчмарк оценки языковых моделей в медицинских сценариях"}, "CHAI": {"f": "01-zarubezhnyy-segment.html", "a": "gloss", "d": "Coalition for Health AI — Коалиция по ИИ в здравоохранении"}}, "docs": {"323-ФЗ «Об основах охраны здоровья граждан»": "00-ukazatel-bz-ii-medicina.html", "152-ФЗ «О персональных данных»": "00-ukazatel-bz-ii-medicina.html", "123-ФЗ от 24.04.2020 (экспериментальный режим ИИ в Москве)": "00-ukazatel-bz-ii-medicina.html", "243-ФЗ «О поддержке развития технологий ИИ в Российской Федерации» (2026)": "00-ukazatel-bz-ii-medicina.html", "Законопроект Минцифры о государственном регулировании ИИ": "00-ukazatel-bz-ii-medicina.html", "Указ Президента № 490 (ред. Указа № 124 от 15.02.2024), Национальная стратегия развития ИИ": "00-ukazatel-bz-ii-medicina.html", "Поручения Президента Пр-22 от 03.01.2026 и Пр-714 от 03.04.2026": "00-ukazatel-bz-ii-medicina.html", "ПП РФ № 1684 «Об утверждении Правил государственной регистрации медицинских изделий»": "00-ukazatel-bz-ii-medicina.html", "ПП РФ № 447 от 12.04.2018 (взаимодействие ИС в сфере здравоохранения)": "00-ukazatel-bz-ii-medicina.html", "ПП РФ № 140 от 09.02.2022 «О ЕГИСЗ»": "00-ukazatel-bz-ii-medicina.html", "ПП РФ № 386 от 10.04.2026 (трансферты на информатизацию здравоохранения)": "00-ukazatel-bz-ii-medicina.html", "Распоряжение Правительства № 959-р от 17.04.2024 (цифровая трансформация здравоохранения)": "00-ukazatel-bz-ii-medicina.html", "Программа госгарантий на 2026–2028 годы": "00-ukazatel-bz-ii-medicina.html", "Приказ Минздрава № 686н от 07.07.2020 (классификация медизделий по риску)": "00-ukazatel-bz-ii-medicina.html", "Приказ Минздрава № 341н от 14.06.2018 (обезличивание)": "00-ukazatel-bz-ii-medicina.html", "Приказ Минздрава № 906н от 27.08.2020 (НСИ)": "00-ukazatel-bz-ii-medicina.html", "Регламент регистрации медицинских изделий (приказ Росздравнадзора № 750 от 19.08.2026)": "00-ukazatel-bz-ii-medicina.html", "Порядок автоматической передачи данных о МИ с ИИ в АИС Росздравнадзора (ред. май 2026)": "00-ukazatel-bz-ii-medicina.html", "ГОСТ Р 72484-2025 «СИИ в здравоохранении. Термины и определения. Классификация»": "00-ukazatel-bz-ii-medicina.html", "ГОСТ Р 59921.0-2022 и серия 59921 «СИИ в клинической медицине»": "00-ukazatel-bz-ii-medicina.html", "ГОСТ Р 59921.5-2022 (наборы данных для обучения и тестирования)": "00-ukazatel-bz-ii-medicina.html", "ГОСТ Р 59921.3-2021 и 59921.4-2021 (изменения и контроль параметров)": "00-ukazatel-bz-ii-medicina.html", "ГОСТ Р 71671-2024 (СППВР с ИИ. Основные положения)": "00-ukazatel-bz-ii-medicina.html", "ГОСТ Р 72357-2025 (СППВР в лекарственной терапии: наборы данных и метрики)": "00-ukazatel-bz-ii-medicina.html", "ГОСТ Р 72313-2025 (СППВР для извлечения данных из неструктурированных записей)": "00-ukazatel-bz-ii-medicina.html", "ГОСТ Р 71672-2024 и ГОСТ Р 72356-2025 (прогнозная аналитика по ЭМК)": "00-ukazatel-bz-ii-medicina.html", "ГОСТ Р 59921.7-2022, ГОСТ Р 71673-2024, ГОСТ Р 71738-2024 (анализ изображений)": "00-ukazatel-bz-ii-medicina.html", "ГОСТ Р 71674-2024 (обезличивание DICOM-наборов)": "00-ukazatel-bz-ii-medicina.html", "ГОСТ Р 71737-2024 (менеджмент риска для МИ с ИИ)": "00-ukazatel-bz-ii-medicina.html", "ПНСТ 961-2024 (этические аспекты)": "00-ukazatel-bz-ii-medicina.html", "ПНСТ 962-2024 (маршрутизация потоков пациентов)": "00-ukazatel-bz-ii-medicina.html", "ПНСТ 872-2023 (методы клинических испытаний СППВР)": "00-ukazatel-bz-ii-medicina.html", "ГОСТ Р 71752-2024 (ТЗ на систему ИИ)": "00-ukazatel-bz-ii-medicina.html", "ГОСТ Р МЭК 62304-2022, ГОСТ ISO 13485-2017, ГОСТ ISO 14971-2021": "00-ukazatel-bz-ii-medicina.html", "ГОСТ Р ИСО/МЭК 42001-2024 (система менеджмента ИИ)": "00-ukazatel-bz-ii-medicina.html", "Проекты стандартов ДЗМ по большим генеративным моделям, включая суммаризацию ЭМД и методы испытаний с метриками": "00-ukazatel-bz-ii-medicina.html", "EU AI Act и MDR (Евросоюз)": "00-ukazatel-bz-ii-medicina.html", "FDA: программное обеспечение как медицинское изделие и заранее согласованные планы изменений (PCCP)": "00-ukazatel-bz-ii-medicina.html", "FD&C Act, раздел 520(o) (изменения по 21st Century Cures Act)": "01-zarubezhnyy-segment.html", "FDA: Clinical Decision Support Software, финальное руководство (06.01.2026)": "01-zarubezhnyy-segment.html", "FDA: General Wellness: Policy for Low Risk Devices (06.01.2026)": "01-zarubezhnyy-segment.html", "FDA: Predetermined Change Control Plan для ИИ-функций, финальное руководство (декабрь 2024)": "01-zarubezhnyy-segment.html", "FDA: список ИИ-изделий (AI-Enabled Medical Devices List)": "01-zarubezhnyy-segment.html", "Принципы GMLP, PCCP и прозрачности (FDA, Health Canada, MHRA; 2021–2024)": "01-zarubezhnyy-segment.html", "ONC HTI-1: требования к вмешательствам поддержки решений в сертифицированных EHR": "01-zarubezhnyy-segment.html", "HHS: правило по разделу 1557 о недискриминации при использовании инструментов поддержки решений": "01-zarubezhnyy-segment.html", "HIPAA и договор BAA": "01-zarubezhnyy-segment.html", "CMS: модель WISeR (2026–2031)": "01-zarubezhnyy-segment.html", "Joint Commission и CHAI: руководство по ответственному использованию ИИ в здравоохранении": "01-zarubezhnyy-segment.html", "Регламент ЕС 2024/1689 (AI Act)": "01-zarubezhnyy-segment.html", "Digital Omnibus по ИИ — Регламент ЕС 2026/1744": "01-zarubezhnyy-segment.html", "Регламенты ЕС 2017/745 (MDR) и 2017/746 (IVDR)": "01-zarubezhnyy-segment.html", "Предложение о пересмотре MDR/IVDR («MDR 2.0», декабрь 2025)": "01-zarubezhnyy-segment.html", "Регламент о Европейском пространстве данных здравоохранения (EHDS)": "01-zarubezhnyy-segment.html", "GDPR": "01-zarubezhnyy-segment.html", "UK MDR 2002 и проект реформы предрыночных требований (май 2026)": "01-zarubezhnyy-segment.html", "MHRA: руководство по технологиям ambient voice (29.07.2026)": "01-zarubezhnyy-segment.html", "MHRA AI Airlock": "01-zarubezhnyy-segment.html", "Национальная комиссия по регулированию ИИ в здравоохранении": "01-zarubezhnyy-segment.html", "NHS England: реестр поставщиков ambient-скрайбов и руководство по их внедрению": "01-zarubezhnyy-segment.html", "IEC 62304, ISO 14971, ISO 13485, IEC 82304-1": "01-zarubezhnyy-segment.html", "ISO/IEC 42001": "01-zarubezhnyy-segment.html", "TRIPOD+AI, CONSORT-AI, SPIRIT-AI, DECIDE-AI": "01-zarubezhnyy-segment.html", "ВОЗ: руководство по этике и управлению большими мультимодальными моделями в здравоохранении": "01-zarubezhnyy-segment.html", "NMPA: проект руководства по клинической оценке ИИ-изделий диагностики (17.06.2026)": "01-zarubezhnyy-segment.html", "Временные меры по управлению сервисами генеративного ИИ (CAC, 2023)": "01-zarubezhnyy-segment.html", "Закон КНР о защите персональной информации (PIPL)": "01-zarubezhnyy-segment.html", "DoH Абу-Даби: политика использования ИИ в здравоохранении (2018) и стандарт ответственного ИИ (2025)": "01-zarubezhnyy-segment.html", "SFDA: руководство по медизделиям на ИИ и машинном обучении (MDS-G010)": "01-zarubezhnyy-segment.html", "Решение Совета ЕЭК № 46 от 12.02.2016 (правила регистрации медизделий ЕАЭС)": "01-zarubezhnyy-segment.html", "Протокол от 29.12.2025 о продлении переходного периода": "01-zarubezhnyy-segment.html", "Закон Республики Казахстан «Об искусственном интеллекте» № 230-VIII": "01-zarubezhnyy-segment.html", "Порядок оказания медуслуг с применением ИИ (Минздрав Казахстана)": "01-zarubezhnyy-segment.html"}};
+  const $=id=>document.getElementById(id);
+  const esc=t=>String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  const TITLE={'00-ukazatel-bz-ii-medicina.html':'Российский сегмент',
+    '01-zarubezhnyy-segment.html':'Зарубежный сегмент',
+    '02-paralleli-i-modeli.html':'Параллели и модели',
+    '03-koncentraciya-i-ii-medicina.html':'Концентрация и дыхание × ИИ-медицина',
+    '04-processnaya-model.html':'Процессная модель',
+    '05-trek-osvoeniya.html':'Трек освоения',
+    '06-uroven-uchastiya.html':'Уровень участия пациента'};
+  let mode='all';
+
+  function toc(){
+    $('ntoc').innerHTML=Object.entries(NAV.sec).map(([f,list])=>
+      `<section><h4><a href="${f}">${esc(TITLE[f]||f)}</a></h4><ul>`+
+      list.map(([a,t])=>`<li><a href="${f}#${a}">${esc(t)}</a></li>`).join('')+'</ul></section>').join('');
+  }
+  function rows(q){
+    const out=[];
+    if(mode==='all'||mode==='sec')
+      Object.entries(NAV.sec).forEach(([f,l])=>l.forEach(([a,t])=>
+        out.push({k:'раздел',t:t,d:TITLE[f]||f,h:f+'#'+a})));
+    if(mode==='all'||mode==='doc')
+      Object.entries(NAV.docs).forEach(([n,f])=>
+        out.push({k:'документ',t:n,d:'реестр · '+(TITLE[f]||f),h:f+'#reestr'}));
+    if(mode==='all'||mode==='term')
+      Object.entries(NAV.terms).forEach(([n,o])=>
+        out.push({k:'термин',t:n,d:o.d,h:o.f+'#'+o.a}));
+    return q? out.filter(r=>(r.t+' '+r.d).toLowerCase().includes(q)) : out;
+  }
+  function render(){
+    const q=$('nq').value.trim().toLowerCase();
+    if(!q && mode==='all'){ $('ntoc').style.display=''; $('nres').style.display='none';
+      $('ncnt').textContent='разделов '+Object.values(NAV.sec).reduce((s,l)=>s+l.length,0)+
+        ' · документов '+Object.keys(NAV.docs).length+' · терминов '+Object.keys(NAV.terms).length;
+      return; }
+    $('ntoc').style.display='none'; $('nres').style.display='';
+    const r=rows(q).slice(0,200);
+    $('nres').innerHTML = r.length? r.map(x=>
+      `<a href="${x.h}"><b>${esc(x.t)}</b><span>${esc(x.d)}</span><i>${x.k}</i></a>`).join('')
+      : '<div class="nav-empty">Ничего не найдено. Попробуйте другое слово или сокращение.</div>';
+    $('ncnt').textContent=r.length+' совпадений';
+  }
+  $('nq').addEventListener('input',render);
+  $('nmode').addEventListener('click',e=>{const b=e.target.closest('button'); if(!b)return;
+    mode=b.dataset.v; [...$('nmode').children].forEach(x=>x.setAttribute('aria-pressed',x===b?'true':'false'));
+    render();});
+  toc(); render();
+})();
+</script>
+
+</body>
+</html>

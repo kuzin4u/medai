@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Медицина и платежи: параллели и интерактивные модели ИИ-медицины</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Serif:wght@500;600&family=IBM+Plex+Sans+Condensed:wght@500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#F7FAF9; --panel:#FFFFFF; --ink:#16302C; --ink2:#4A615C; --line:#CFDDD9;
+  --tint:#E4F0EC; --accent:#0B6E60; --accent2:#084F45; --warn:#9A5B00; --warntint:#FBF0DE;
+  --danger:#A3322A; --dangertint:#FBE7E4; --info:#2F5D8A; --infotint:#E6EEF7;
+  --serif:"IBM Plex Serif", Georgia, "Times New Roman", serif;
+  --sans:"IBM Plex Sans", "Segoe UI", Roboto, Arial, sans-serif;
+  --cond:"IBM Plex Sans Condensed", "Arial Narrow", Arial, sans-serif;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#0F1B19; --panel:#152623; --ink:#E3EFEC; --ink2:#A4BAB5; --line:#2C4540;
+    --tint:#1B332F; --accent:#4FC2AE; --accent2:#7ED9C8; --warn:#E3A64A; --warntint:#33280F;
+    --danger:#EE8A80; --dangertint:#3A1D1A; --info:#8DB6E0; --infotint:#172A3D;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#0F1B19; --panel:#152623; --ink:#E3EFEC; --ink2:#A4BAB5; --line:#2C4540;
+  --tint:#1B332F; --accent:#4FC2AE; --accent2:#7ED9C8; --warn:#E3A64A; --warntint:#33280F;
+  --danger:#EE8A80; --dangertint:#3A1D1A; --info:#8DB6E0; --infotint:#172A3D;
+}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*::before,*::after{box-sizing:inherit}
+body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.6 var(--sans);-webkit-text-size-adjust:100%}
+a{color:var(--accent)}
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.wrap{max-width:1180px;margin:0 auto;padding:0 20px}
+header.top{border-bottom:1px solid var(--line);background:var(--panel)}
+.top .wrap{display:flex;flex-wrap:wrap;gap:8px 18px;align-items:center;padding-top:12px;padding-bottom:12px}
+.brand{font-family:var(--cond);font-size:14px;color:var(--ink2)}
+.toplinks{display:flex;flex-wrap:wrap;gap:6px;margin-left:auto}
+.toplinks a.home{text-decoration:none;white-space:nowrap}
+.toplinks button,.toplinks a.home,.btn{font:500 14px var(--sans);background:transparent;color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:5px 10px;cursor:pointer}
+.toplinks button:hover,.btn:hover{border-color:var(--accent);color:var(--accent)}
+.hero{padding:40px 0 18px}
+.hero h1{font:600 clamp(28px,4.4vw,44px)/1.12 var(--serif);margin:0 0 14px;max-width:22ch;letter-spacing:-.01em}
+.hero p.lead{font-size:18px;max-width:70ch;color:var(--ink2);margin:0 0 10px}
+.task{border-left:3px solid var(--accent);background:var(--tint);padding:12px 16px;margin:18px 0 6px;max-width:80ch;border-radius:0 6px 6px 0}
+.task b{font-weight:600}
+.meta{font-family:var(--cond);font-size:14px;color:var(--ink2);margin-top:10px}
+.layout{display:grid;grid-template-columns:250px 1fr;gap:28px;padding:18px 0 60px}
+nav.side{position:sticky;top:env(safe-area-inset-top,0px);align-self:start;max-height:100vh;overflow:auto;padding-top:8px}
+nav.side ol{list-style:none;margin:0;padding:0}
+nav.side li{margin:0}
+nav.side .grp{font-family:var(--cond);font-size:13px;color:var(--ink2);margin:14px 0 4px}
+nav.side button{display:block;width:100%;text-align:left;background:none;border:0;border-left:2px solid transparent;padding:5px 10px;font:15px/1.35 var(--sans);color:var(--ink);cursor:pointer}
+nav.side button:hover{color:var(--accent)}
+nav.side button[aria-current="true"]{border-left-color:var(--accent);color:var(--accent);font-weight:600;background:var(--tint)}
+.mobnav{display:none;margin:10px 0}
+.mobnav select{width:100%;font:16px var(--sans);padding:8px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--ink)}
+section.pane{display:none}
+section.pane.on{display:block}
+h2{font:600 28px/1.2 var(--serif);margin:4px 0 8px}
+h3{font:600 19px/1.3 var(--serif);margin:26px 0 8px}
+.pane > p.intro{color:var(--ink2);max-width:75ch;margin:0 0 18px}
+p,li{max-width:78ch}
+.tree{font:15px/1.55 var(--sans);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:16px 18px;overflow-x:auto}
+.tree ul{list-style:none;margin:0;padding-left:20px;border-left:1px solid var(--line)}
+.tree > ul{border-left:0;padding-left:0}
+.tree li{position:relative;padding:3px 0 3px 12px;max-width:none}
+.tree li::before{content:"";position:absolute;left:-20px;top:15px;width:26px;border-top:1px solid var(--line)}
+.tree > ul > li::before{display:none}
+.tree .branch{font-weight:600}
+.tree .cnt{font-family:var(--cond);color:var(--ink2);font-size:13px;margin-left:6px}
+.tree button.lnk{background:none;border:0;padding:0;color:var(--accent);font:inherit;cursor:pointer;text-decoration:underline;text-underline-offset:2px}
+.tree .note{color:var(--ink2)}
+.tree .plan{color:var(--ink2);font-style:italic}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px;margin:10px 0}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:14px 16px}
+.card h4{margin:0 0 6px;font:600 16px/1.3 var(--sans)}
+.card p{margin:0;color:var(--ink2);font-size:15px}
+.card .foot{margin-top:8px;font-family:var(--cond);font-size:13px;color:var(--ink2)}
+.scroll{overflow-x:auto;border:1px solid var(--line);border-radius:8px;background:var(--panel);margin:10px 0}
+table{border-collapse:collapse;width:100%;font-size:14.5px;line-height:1.45}
+th,td{text-align:left;vertical-align:top;padding:9px 12px;border-bottom:1px solid var(--line)}
+th{font:500 13.5px var(--cond);color:var(--ink2);background:var(--tint);position:sticky;top:0}
+tr:last-child td{border-bottom:0}
+td.num{white-space:nowrap}
+.tag{display:inline-block;font:500 12.5px var(--cond);padding:1px 7px;border-radius:10px;border:1px solid var(--line);white-space:nowrap;margin:1px 2px 1px 0}
+.t-doc{background:var(--tint);color:var(--accent2);border-color:transparent}
+.t-obs{background:var(--infotint);color:var(--info);border-color:transparent}
+.t-inf{background:var(--warntint);color:var(--warn);border-color:transparent}
+.t-proj{background:var(--dangertint);color:var(--danger);border-color:transparent}
+.filters{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:8px 0}
+.filters input,.filters select{font:15px var(--sans);padding:6px 9px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--ink);min-width:0}
+.filters input[type=search]{flex:1 1 220px}
+.chip{font:500 14px var(--sans);border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:16px;padding:4px 11px;cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--panel)}
+.count{font-family:var(--cond);font-size:13.5px;color:var(--ink2)}
+/* путь случая — главная интерактивная полоса */
+.path{display:grid;grid-template-columns:repeat(9,minmax(96px,1fr));gap:0;margin:16px 0 4px;overflow-x:auto;padding-bottom:4px}
+.stage{position:relative;background:none;border:0;cursor:pointer;padding:34px 6px 8px;text-align:center;color:var(--ink);font:500 14px/1.25 var(--sans)}
+.stage::before{content:"";position:absolute;left:0;right:0;top:15px;border-top:2px solid var(--line)}
+.stage .dot{position:absolute;left:50%;top:6px;width:20px;height:20px;margin-left:-10px;border-radius:50%;background:var(--panel);border:2px solid var(--line);font:600 11px/16px var(--cond);color:var(--ink2)}
+.stage:hover .dot{border-color:var(--accent)}
+.stage[aria-pressed="true"] .dot{background:var(--accent);border-color:var(--accent);color:var(--panel)}
+.stage[aria-pressed="true"]{color:var(--accent)}
+.stage[aria-pressed="true"]::before{border-top-color:var(--accent)}
+.detail{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:16px 18px;margin-top:8px}
+.detail h3{margin-top:0}
+.dgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px 22px}
+.dgrid h5{margin:0 0 4px;font:500 13.5px var(--cond);color:var(--ink2)}
+.dgrid ul{margin:0;padding-left:18px}
+.dgrid li{font-size:15px;margin:2px 0}
+.steps{counter-reset:s;list-style:none;padding:0;margin:10px 0}
+.steps > li{counter-increment:s;position:relative;padding:12px 14px 12px 52px;border:1px solid var(--line);border-radius:8px;background:var(--panel);margin-bottom:8px;max-width:none}
+.steps > li::before{content:counter(s);position:absolute;left:14px;top:12px;width:26px;height:26px;border-radius:50%;background:var(--tint);color:var(--accent2);font:600 14px/26px var(--cond);text-align:center}
+.steps h4{margin:0 0 4px;font:600 16px var(--sans)}
+.steps .row{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:4px 18px;font-size:14.5px;color:var(--ink2);margin-top:6px}
+.steps .row b{color:var(--ink);font-weight:500}
+.calc{display:grid;grid-template-columns:minmax(240px,320px) 1fr;gap:18px;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:16px 18px;margin:12px 0}
+.calc label{display:block;font-size:14.5px;margin:10px 0 2px}
+.calc input[type=range]{width:100%;accent-color:var(--accent)}
+.calc output{font-family:var(--cond);font-weight:500}
+.cm{display:grid;grid-template-columns:auto 1fr 1fr;gap:4px;font-size:14.5px;align-self:start}
+.cm div{padding:9px 10px;border-radius:6px;background:var(--tint)}
+.cm .h{background:none;font:500 13.5px var(--cond);color:var(--ink2);padding:4px 6px}
+.cm .bad{background:var(--dangertint);color:var(--danger)}
+.cm .big{font:600 20px var(--cond);display:block}
+.res{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:10px 26px;border-top:1px solid var(--line);padding-top:12px;font-size:15px}
+.res b{font:600 22px var(--cond);display:block;color:var(--accent)}
+.callout{border-left:3px solid var(--warn);background:var(--warntint);padding:10px 14px;border-radius:0 6px 6px 0;margin:12px 0;max-width:80ch}
+.callout.ok{border-left-color:var(--accent);background:var(--tint)}
+.gl dt{font-weight:600;margin-top:12px}
+.gl dd{margin:2px 0 0;color:var(--ink2);max-width:78ch}
+.gl .grp{font:600 17px var(--serif);margin:22px 0 4px;color:var(--accent2)}
+footer.foot{border-top:1px solid var(--line);padding:18px 0 30px;color:var(--ink2);font-size:14px}
+@media (max-width:860px){
+  .layout{grid-template-columns:1fr}
+  nav.side{display:none}
+  .mobnav{display:block}
+  .calc{grid-template-columns:1fr}
+  .path{grid-template-columns:repeat(9,112px)}
+}
+@media print{
+  header.top,nav.side,.mobnav,.filters,.toplinks{display:none!important}
+  section.pane{display:block!important;page-break-before:always}
+  .layout{display:block}
+  body{background:#fff;color:#000}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+<style>
+.path8{grid-template-columns:repeat(8,minmax(104px,1fr))}
+.lane{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.lane > div{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:12px 14px}
+.lane h5{margin:0 0 4px;font:500 13.5px var(--cond);color:var(--ink2)}
+.lane .big{font:600 18px var(--serif);margin-bottom:4px}
+.str{display:inline-block;font:500 12.5px var(--cond);padding:1px 8px;border-radius:10px;white-space:nowrap}
+.s-dir{background:var(--tint);color:var(--accent2)}
+.s-part{background:var(--warntint);color:var(--warn)}
+.s-an{background:var(--infotint);color:var(--info)}
+.trk{display:grid;grid-template-columns:repeat(8,minmax(92px,1fr));gap:6px;margin:12px 0;overflow-x:auto}
+.box{border:1px solid var(--line);border-radius:8px;padding:8px;background:var(--panel);font-size:13.5px;min-height:74px}
+.box b{display:block;font:500 12.5px var(--cond);color:var(--ink2)}
+.box.ok{background:var(--tint);border-color:var(--accent)}
+.box.hold{background:var(--warntint);border-color:var(--warn)}
+.box.ret{background:var(--infotint);border-color:var(--info)}
+.box.stop{background:var(--dangertint);border-color:var(--danger)}
+.box.unres{background:#EFE6F7;border-color:#7A4FA0}
+:root[data-theme="dark"] .box.unres{background:#2A2036}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .box.unres{background:#2A2036}}
+.box.cur{outline:2px solid var(--ink);outline-offset:1px}
+.box.flash::after{content:" ⚡"}
+.legend{display:flex;flex-wrap:wrap;gap:8px;font-size:13.5px;margin:6px 0}
+.legend span{display:inline-flex;align-items:center;gap:5px}
+.legend i{width:12px;height:12px;border-radius:3px;display:inline-block;border:1px solid var(--line)}
+.two{display:grid;grid-template-columns:minmax(230px,300px) 1fr;gap:16px}
+.clist button{display:block;width:100%;text-align:left;border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:6px;padding:7px 9px;margin-bottom:5px;font:14px/1.35 var(--sans);cursor:pointer}
+.clist button[aria-pressed="true"]{border-color:var(--accent);background:var(--tint)}
+.clist .st{font:500 12.5px var(--cond);color:var(--ink2);margin:10px 0 4px}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.seg button{border:0;background:var(--panel);color:var(--ink);padding:6px 12px;font:500 14px var(--sans);cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--accent);color:var(--panel)}
+.out{border:1px solid var(--line);border-radius:8px;padding:12px 14px;background:var(--panel)}
+.verdict{font:600 20px var(--serif);margin:0 0 6px}
+.v-ok{color:var(--accent)} .v-hold{color:var(--warn)} .v-stop{color:var(--danger)}
+.ctrl label{display:block;font-size:14.5px;margin:10px 0 3px}
+.ctrl select,.ctrl input[type=range]{width:100%}
+.ctrl select{font:15px var(--sans);padding:6px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--ink)}
+.ctrl input[type=range]{accent-color:var(--accent)}
+.kpis{display:flex;flex-wrap:wrap;gap:10px 26px;margin:10px 0}
+.kpis div{font-size:14.5px;color:var(--ink2)}
+.kpis b{display:block;font:600 22px var(--cond);color:var(--ink)}
+.kpis .neg b{color:var(--danger)} .kpis .pos b{color:var(--accent)}
+td.docs{min-width:250px;font-size:13.5px}
+.dl{margin-bottom:6px}.dh{font:500 12.5px var(--cond);color:var(--ink2)}
+.param{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:4px 18px}
+@media (max-width:860px){.two,.lane{grid-template-columns:1fr}.trk{grid-template-columns:repeat(8,110px)}.path8{grid-template-columns:repeat(8,112px)}}
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap">
+  <span class="brand">База знаний · ИИ в медицине · параллели с платежами и модели</span>
+  <div class="toplinks">
+    <a class="btn home" href="index.html" title="К начальному меню комплекта">← Комплект</a>
+    <button data-go="par">Параллели</button>
+    <button data-go="osi">Две оси</button>
+    <button data-go="rezh">Режимы</button>
+    <button data-go="konf">Конфликты</button>
+    <button data-go="izd">Издержки</button>
+    <button id="printBtn" title="Печать всех разделов">Печать</button>
+  </div>
+</div></header>
+
+<div class="wrap">
+  <div class="hero">
+    <h1>Медицина и агентные платежи: параллели и интерактивные модели</h1>
+    <p class="lead">Медицинская помощь устроена как платёжная система с третьим плательщиком: услугу получает пациент, оказывает клиника, оплачивает фонд или страховая, а между ними — правила, проверка и спор. Страница переносит модели пула по агентной коммерции и понятия черновика рамки EMVCo на ИИ в медицине.</p>
+    <div class="task"><b>Главный вывод.</b> Цепочка рамки EMVCo «намерение → мандат и ограничения → привязка → исполнение» почти дословно ложится на медицину: «цель обращения и согласие → направление и лимиты → связь назначения с услугой → медицинский документ и счёт». Поэтому решения, которые пул предлагает для агентных платежей — кто держит состояние, что доказывает исполнение, как действует отзыв, — применимы к ИИ в медицине без изобретения заново. <span class="tag t-inf">вывод</span></div>
+    <div class="meta">Редакция 1 · 28.09.2026 · 7 разделов · опора: пул агентной коммерции (38 файлов) и черновик рамки EMVCo v1.0 от 01.09.2026 в нашем пересказе</div>
+  </div>
+</div>
+
+<div class="wrap">
+  <div class="mobnav"><label for="mob" class="count">Раздел</label><select id="mob"></select></div>
+  <div class="layout">
+    <nav class="side" aria-label="Разделы"><ol id="sidenav"></ol></nav>
+    <main id="main">
+
+<section class="pane" id="ukaz" data-title="Как читать" data-grp="Вход">
+  <h2>Как читать эту страницу</h2>
+  <p class="intro">Два пула — по агентной коммерции и по ИИ в медицине — построены одним методом. Эта страница — мост между ними: сначала таблица соответствий, затем пять интерактивных моделей, собранных для медицины по образцу моделей пула агентной коммерции.</p>
+  <div class="scroll"><table><thead><tr><th>Модель в медицине</th><th>Прообраз в пуле агентной коммерции</th><th>Что показывает</th></tr></thead><tbody>
+   <tr><td><button class="lnk tl" data-go="par">Параллели</button></td><td><a href="../agentic/18-svyazka.html">Сквозная связка</a>, <a href="../agentic/34-ramka-po-polochkam.html">рамка по полочкам</a></td><td>27 соответствий между платёжными и медицинскими понятиями с оценкой силы соответствия</td></tr>
+   <tr><td><button class="lnk tl" data-go="osi">Две оси случая</button></td><td><a href="../agentic/01-ierarhiya-tranzakcii.html">Иерархия транзакции</a></td><td>8 стадий сделки и их медицинские аналоги: функции ИИ, роли, документы, слабые места</td></tr>
+   <tr><td><button class="lnk tl" data-go="rezh">Режимы и эскалация</button></td><td>Два режима рамки EMVCo: немедленный и автономный</td><td>Когда ИИ может действовать без врача, а когда случай удерживается для человека</td></tr>
+   <tr><td><button class="lnk tl" data-go="konf">Модель конфликтов</button></td><td><a href="../agentic/35-model-konfliktov.html">Модель конфликтов</a></td><td>12 сбоев медицинского случая с ИИ: где остановится, на ком риск — с контролями и без</td></tr>
+   <tr><td><button class="lnk tl" data-go="izd">Издержки контроля</button></td><td><a href="../agentic/37-izderzhki-skhem.html">Издержки схем</a></td><td>Потери без контроля против цены строгой схемы, в рублях в месяц</td></tr>
+   <tr><td><button class="lnk tl" data-go="uroki">Уроки рамки EMVCo</button></td><td><a href="../agentic/36-spornye-mesta-ramki.html">Спорные места рамки</a></td><td>7 замечаний к рамке и что каждое означает для медицинского продукта</td></tr>
+  </tbody></table></div>
+  <h3>Происхождение и границы</h3>
+  <ol>
+    <li>Платёжная сторона соответствий опирается на пул и черновик рамки EMVCo в нашем пересказе. Текст самой рамки не воспроизводится: условия издателя разрешают его использование только внутри организации.</li>
+    <li>Медицинская сторона опирается на российскую и зарубежную базы знаний.</li>
+    <li>Сами соответствия, модели конфликтов, режимов и издержек — <span class="tag t-inf">вывод</span>: наша постановка, а не норма. Числа по умолчанию в модели издержек — допущения порядка величины.</li>
+    <li>Ссылки ведут в соседние пулы: <a href="00-ukazatel-bz-ii-medicina.html">российский сегмент</a>, <a href="01-zarubezhnyy-segment.html">зарубежный сегмент</a>, <a href="../agentic/00-ukazatel-pula.html">пул агентной коммерции</a>. Работают, когда пулы лежат рядом на сайте.</li>
+  </ol>
+</section>
+
+<section class="pane" id="par" data-title="Параллели" data-grp="Соответствия">
+  <h2>Параллели: платежи и медицина</h2>
+  <p class="intro">Каждая строка — понятие агентных платежей, его место в рамке EMVCo и медицинский аналог. Сила соответствия: <span class="str s-dir">прямое</span> — та же функция и та же логика; <span class="str s-part">частичное</span> — функция та же, механизм другой; <span class="str s-an">аналогия</span> — полезно для рассуждения, но не для переноса норм. В колонке «Документы» для каждой строки — пункт рамки EMVCo, документы пула агентной коммерции (коды D — действующие стандарты и протоколы из реестра пула, коды A — наши проекты норм) и медицинские акты и стандарты.</p>
+  <div class="filters">
+    <input type="search" id="pQ" placeholder="Поиск по параллелям" aria-label="Поиск по параллелям">
+    <select id="pG" aria-label="Группа"><option value="">Все группы</option></select>
+    <select id="pS" aria-label="Сила"><option value="">Любая сила</option><option value="dir">прямое</option><option value="part">частичное</option><option value="an">аналогия</option></select>
+    <span class="count" id="pCount"></span>
+  </div>
+  <div class="scroll"><table><thead><tr><th>Платежи и агентная коммерция</th><th>В рамке EMVCo</th><th>Медицина</th><th>Сила</th><th>Что переносится</th><th>Документы</th></tr></thead><tbody id="pBody"></tbody></table></div>
+  <div class="callout">Где соответствие ломается. У платежа есть сумма, которую можно вернуть. У медицинского вмешательства возврата нет: вред необратим. Поэтому всё, что в платежах разрешается спором после факта, в медицине нужно переносить на стадию до исполнения — в подтверждение врачом и согласование. <span class="tag t-inf">вывод</span></div>
+</section>
+
+<section class="pane" id="osi" data-title="Две оси случая" data-grp="Модели">
+  <h2>Две оси медицинского случая</h2>
+  <p class="intro">В российской базе медицинский случай разложен по клинической оси — девять стадий от профилактики до контроля качества. Пул агентной коммерции даёт вторую ось — транзакционную: как услуга допускается, согласуется, исполняется и оплачивается. Ниже восемь стадий сделки из пула и их медицинские двойники. Выберите стадию.</p>
+  <div class="path path8" id="path" role="group" aria-label="Стадии"></div>
+  <div class="detail" id="osDetail" aria-live="polite"></div>
+  <div class="callout">Что видно на двух осях. В платежах слабее всего регламентированы края сделки: допуск агента, подтверждение и всё после расчёта. В медицине наоборот: допуск (регистрация изделия) и после (экспертиза качества) регламентированы плотно, а слабое место — середина, момент, когда подсказка ИИ превращается в решение врача. <span class="tag t-inf">вывод</span></div>
+</section>
+
+<section class="pane" id="rezh" data-title="Режимы и эскалация" data-grp="Модели">
+  <h2>Модель режимов: когда ИИ действует без врача</h2>
+  <p class="intro">Рамка EMVCo различает немедленный режим, где человек присутствует и одобряет, и автономный, где агент действует в заранее заданных границах; автономный может перейти в немедленный. В медицине это главный продуктовый выбор: где ИИ работает при враче, где сам, и когда обязан остановиться и позвать человека. Настройте случай. <span class="tag t-inf">вывод</span></p>
+  <div class="two">
+    <div class="ctrl">
+      <label for="mSc">Сценарий</label><select id="mSc"></select>
+      <label>Режим</label>
+      <div class="seg" id="mMode"><button data-v="imm" aria-pressed="true">Врач рядом</button><button data-v="aut" aria-pressed="false">Автономно</button></div>
+      <label for="mConf">Уверенность модели: <output id="oConf"></output></label>
+      <input type="range" id="mConf" min="50" max="99" value="90">
+      <label for="mState">Нужное состояние доступно (лимит полиса, история, последняя версия клинической рекомендации)</label>
+      <select id="mState"><option value="1">Да</option><option value="0">Нет</option></select>
+      <label for="mSrc">У каждого утверждения есть ссылка на источник</label>
+      <select id="mSrc"><option value="1">Да</option><option value="0">Нет</option></select>
+      <label for="mRev">Согласие пациента действует</label>
+      <select id="mRev"><option value="1">Да</option><option value="0">Отозвано</option></select>
+    </div>
+    <div class="out" aria-live="polite" id="mOut"></div>
+  </div>
+  <h3>Правила модели</h3>
+  <div class="scroll"><table><thead><tr><th>Правило</th><th>Аналог в платежах</th><th>Медицинская опора</th></tr></thead><tbody id="mRules"></tbody></table></div>
+</section>
+
+<section class="pane" id="konf" data-title="Модель конфликтов" data-grp="Модели">
+  <h2>Модель конфликтов: медицинский случай при сбоях</h2>
+  <p class="intro">Двенадцать сбоев случая с участием ИИ, разложенных по восьми транзакционным стадиям. Выберите конфликт и режим: с контролями или без них. Случай пройдёт по стадиям, и будет видно, где он остановится, удержится для врача, уйдёт в возврат или в спор и на ком окажется риск. <span class="tag t-inf">вывод</span></p>
+  <div class="two">
+    <div class="clist" id="cList"></div>
+    <div>
+      <div class="filters">
+        <div class="seg" id="cMode"><button data-v="with" aria-pressed="true">С контролями</button><button data-v="without" aria-pressed="false">Без контролей</button></div>
+        <button class="btn" id="cPlay">Пуск</button><button class="btn" id="cStep">Шаг</button><button class="btn" id="cReset">Сброс</button>
+      </div>
+      <div class="trk" id="cTrk"></div>
+      <div class="legend"><span><i style="background:var(--tint)"></i>прошла</span><span><i style="background:var(--warntint)"></i>удержание для врача</span><span><i style="background:var(--infotint)"></i>возврат</span><span><i style="background:var(--dangertint)"></i>остановлена или вред</span><span><i style="background:#EFE6F7"></i>не решено</span><span>⚡ место конфликта</span></div>
+      <div class="out" id="cOut" aria-live="polite"></div>
+    </div>
+  </div>
+  <h3>Сравнение: что дают контроли</h3>
+  <div class="scroll"><table><thead><tr><th>Код</th><th>Конфликт</th><th>С контролями</th><th>Без контролей</th><th>Чем решено</th></tr></thead><tbody id="cTable"></tbody></table></div>
+</section>
+
+<section class="pane" id="izd" data-title="Издержки контроля" data-grp="Модели">
+  <h2>Издержки: потери без контроля против цены строгости</h2>
+  <p class="intro">Строгая схема стоит денег: врач тратит время на проверку, случаи удерживаются, записи формируются. Мягкая схема стоит вреда, санкций и споров. Модель показывает, при каких параметрах строгость окупается. Это модель, а не прогноз: реальные доли ошибок и споров даст только пилот. <span class="tag t-inf">вывод</span></p>
+  <div class="filters"><span class="count">Масштаб:</span>
+    <div class="seg" id="kScale"><button data-v="10000" aria-pressed="false">Пилот, 10 тыс.</button><button data-v="200000" aria-pressed="true">Регион, 200 тыс.</button><button data-v="2000000" aria-pressed="false">Страна, 2 млн</button></div>
+  </div>
+  <div class="param ctrl" id="kParams"></div>
+  <div class="kpis" id="kOut"></div>
+  <div class="scroll"><table><thead><tr><th>Механизм</th><th>Потери без контроля, ₽/мес</th><th>Цена строгой схемы, ₽/мес</th><th>Чистый эффект строгости</th></tr></thead><tbody id="kTable"></tbody></table></div>
+  <div class="callout" id="kNote"></div>
+</section>
+
+<section class="pane" id="uroki" data-title="Уроки рамки EMVCo" data-grp="Перенос">
+  <h2>Уроки рамки EMVCo для ИИ в медицине</h2>
+  <p class="intro">Семь замечаний пула к черновику рамки и их медицинские двойники. В каждом — одна и та же развилка: мягкое решение, которое рамка допускает, и строгое, которое мы предлагаем. Под медицинским двойником — ссылки на разделы, где он разобран.</p>
+  <div class="scroll"><table><thead><tr><th>Замечание к рамке</th><th>Медицинский двойник</th><th>Мягкое решение и его цена</th><th>Строгое решение</th></tr></thead><tbody id="uBody"></tbody></table></div>
+  <h3>Три общих принципа, которые переносятся целиком</h3>
+  <ol>
+    <li><b>Рамка описывает смысл, но не принимает решение.</b> EMVCo прямо выносит решение об авторизации за пределы рамки. В медицине то же: ИИ описывает и обосновывает, решение принимает врач или эксперт.</li>
+    <li><b>Законы выше отраслевых стандартов.</b> Рамка сама признаёт приоритет законодательства. Для медицины это означает, что продукт проектируется от 323-ФЗ, 152-ФЗ и правил регистрации, а отраслевые рамки только уточняют.</li>
+    <li><b>Проверяемость нужна против галлюцинаций агента.</b> Рамка обосновывает проверяемость в том числе ошибками самого агента. В медицине это аргумент за ссылку на источник у каждого утверждения и за запись об исполнении, которую можно проверить без модели.</li>
+  </ol>
+</section>
+
+    </main>
+  </div>
+</div>
+
+<footer class="foot"><div class="wrap">
+  <p>Параллели медицины и агентных платежей · редакция 1 от 28.09.2026 · <a href="index.html">комплект</a> · <a href="00-ukazatel-bz-ii-medicina.html">российский сегмент</a> · <a href="01-zarubezhnyy-segment.html">зарубежный сегмент</a> · <a href="../agentic/00-ukazatel-pula.html">пул агентной коммерции</a></p>
+  <p>Пересмотр: после закрытия обсуждения черновика рамки EMVCo 30.09.2026 и ответа издателя на замечания.</p>
+</div></footer>
+
+<script>
+(function(){
+"use strict";
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>Array.from(r.querySelectorAll(s));
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const li=a=>"<ul>"+a.map(x=>"<li>"+esc(x)+"</li>").join("")+"</ul>";
+const fmt=n=>Math.round(n).toLocaleString("ru-RU");
+const STR={dir:'<span class="str s-dir">прямое</span>',part:'<span class="str s-part">частичное</span>',an:'<span class="str s-an">аналогия</span>'};
+
+/* ПАРАЛЛЕЛИ */
+const PAR=[
+ ["Участники","Потребитель","Формирует исходное намерение и делегирует агенту","Пациент","Даёт согласие на вмешательство и обработку данных, выбирает источник оплаты","dir","Пациент — единственный источник полномочий; всё, что делает ИИ от его имени, должно выводиться из его согласия"],
+ ["Участники","ИИ-агент покупателя","Система, действующая от имени потребителя; может выдавать неточные и непреднамеренные результаты","ИИ-ассистент пациента, ассистент врача, агент плательщика","—","dir","Признание, что агент ошибается, — отправная точка проектирования, а не исключение"],
+ ["Участники","Продавец и эквайрер","Роль не меняется; могут различать человека и агента","Медицинская организация и врач","Оказывают услугу, формируют документы и счёт","part","Клиника должна знать, что обращение пришло от агента, и иметь право принять или не принять его"],
+ ["Участники","Эмитент, поставщик учётных данных","Выпускает учётные данные, аутентифицирует","Страховщик: СМО в ОМС, страховая компания в ДМС","Выдаёт полис, согласует объём, оплачивает","dir","Полис — это «карта» пациента; цифровой полис — аналог токена"],
+ ["Участники","Платёжная система","Инфраструктура и правила; может вести записи намерения","ФОМС, правила ОМС, программа госгарантий","Правила оплаты, тарифы, контроль","part","Правила оплаты задают границы, в которых ИИ может автоматизировать проверку"],
+ ["Участники","Поставщик сервиса намерения","Регистрирует и хранит намерение; не порождает его и не решает об авторизации","ЕГИСЗ, региональный сегмент, электронная медкарта, журнал согласий","Хранит документы и согласия, даёт к ним доступ","dir","Точка координации, которая не принимает решений: именно такой должна быть платформа медицинских данных для ИИ"],
+ ["Объекты","Намерение","Корень конструкции: из него выводятся мандаты, ограничения, привязки и исполнение","Цель обращения и информированное добровольное согласие","—","dir","Любое действие ИИ должно ссылаться на цель обращения и согласие; без них действие вне полномочий"],
+ ["Объекты","Платёжный мандат","Задаёт условия платежа, но не исполняет его: получатель, сумма или диапазон, срок","Направление, назначение, гарантийное письмо ДМС","Задают объём, клинику, срок и сумму","dir","Гарантийное письмо ДМС — почти дословный платёжный мандат"],
+ ["Объекты","Ограничения без состояния","Проверяются в каждой операции","Показания и противопоказания, объём услуги в одном случае","—","dir","Проверяются на каждой подсказке и назначении"],
+ ["Объекты","Ограничения с состоянием","Бюджеты, повторяемость, частота — требуют учёта во времени","Лимит полиса ДМС, кратность процедур, объёмы ОМС медорганизации","—","dir","Кто держит состояние — главный вопрос и в медицине: не агент клиники, а плательщик"],
+ ["Объекты","Привязка контекста оформления к исполнению","Связывает мандат с тем, что фактически приобретается","Связь назначения с записью в медкарте и строкой реестра счетов","—","dir","Проверка «назначено то, что оказано и оплачено» — основа автоматического контроля качества"],
+ ["Объекты","Артефакт исполнения","Подтверждение того, что произошло при исполнении","Электронный медицинский документ с подписью врача, строка реестра счетов","—","dir","Доказательством служит подписанный документ, а не вывод модели"],
+ ["Режимы и слои","Немедленный режим","Человек присутствует и одобряет; агент исполняет сразу","ИИ при враче: подсказка во время приёма","—","dir","Решение принимает врач в моменте"],
+ ["Режимы и слои","Автономный режим","Границы заданы заранее, человек отсутствует при исполнении","ИИ без врача в моменте: скрининг потока, отбор на экспертизу, ответы пациенту","—","dir","Автономия допустима только в заранее согласованных границах и с проверкой против них"],
+ ["Режимы и слои","Переход автономного режима в немедленный","Если нужно участие человека","Эскалация к врачу","—","dir","Случай удерживается, а не отклоняется; у удержания есть срок и владелец"],
+ ["Режимы и слои","Слой 1: якорь доверия","Криптографическая основа","Электронная подпись, ЕСИА, федеральный регистр медработников","—","part","Кто подписал и имел ли право — проверяется вне модели"],
+ ["Режимы и слои","Слой 2: санкционированное намерение","Согласие, делегированные полномочия, выборочное раскрытие","Согласие на вмешательство, согласие на обработку данных, законный представитель","—","dir","Выборочное раскрытие — аналог минимизации медицинских данных для каждого участника"],
+ ["Режимы и слои","Слой 3: исполнение","Мандат, ограничения, привязка, исполнение, жизненный цикл","Оказание помощи и её оплата","—","part","Основная область продукта"],
+ ["Контроль и расчёт","Опознание агента (KYA)","Идентификация агента, метаданные, версия, реестр — в рамке пока повестка","Регистрация медизделия с ИИ, версия модели, сведения в АИС Росздравнадзора","—","dir","В медицине то, что рамка только обсуждает, уже нормативно: реестр, версия, мониторинг"],
+ ["Контроль и расчёт","Аутентификация покупателя (3-D Secure)","Подтверждение, что за операцией стоит человек","Подтверждение врачом: подпись протокола","—","part","Подпись должна подтверждать проверку, а не быть формальностью"],
+ ["Контроль и расчёт","Авторизация эмитентом","Решение по операции против лимитов и риска","Согласование объёма: гарантийное письмо ДМС, предварительная авторизация (WISeR)","—","dir","Автоматизация согласования — сценарий с прямой экономикой для плательщика"],
+ ["Контроль и расчёт","Антифрод","Решение по совокупности факторов; агентный трафик не должен приниматься за мошенничество","МЭК, МЭЭ, отбор случаев на экспертизу","—","dir","Отбор случаев с ИИ — это антифрод плательщика; нужна «золотая карта» для добросовестных клиник"],
+ ["Контроль и расчёт","Клиринг и расчёт","Распределение сумм между участниками","Реестры счетов, расчёты между фондом, СМО и медорганизацией","—","part","Здесь автоматический контроль качества встраивается в денежный поток"],
+ ["После операции","Спор и чарджбэк","Оспаривание операции, ответственность за ошибку","Экспертиза качества, санкции, обжалование","—","dir","Спор решается по записям операции, а не по переписке сторон"],
+ ["После операции","Индикатор агентной операции","Совместимый сигнал, что в операции участвовал агент","Отметка об участии ИИ в медицинском документе, тип решения в АИС","—","dir","Индикатор должен ссылаться на доказательства: версию модели и её вывод"],
+ ["После операции","Возврат","Отмена или частичный возврат суммы","Снятие с оплаты, повторное оказание услуги","—","an","Деньги вернуть можно, вмешательство — нет"],
+ ["После операции","Надзорный след","Передача сведений в финансовый мониторинг","Пострегистрационный мониторинг медизделий","—","part","Мониторинг проектируется в продукте с первого релиза"]
+];
+
+/* ДОКУМЕНТЫ К ПАРАЛЛЕЛЯМ */
+const PDOC={D1:"Рамка агентных платежей EMVCo (черновик)",D2:"EMV 3-D Secure",D3:"EMV Payment Tokenisation",D4:"EMV Secure Remote Commerce",D5:"EMV Digital Payment Credential",D6:"EMVCo: цифровая идентичность в платежах",D7:"Рамка совместимости опознания агентов (Visa, Mastercard, Ant)",D8:"Visa Trusted Agent Protocol",D9:"Visa Intelligent Commerce",D10:"Mastercard Agent Pay",D12:"Agentic Commerce Protocol (OpenAI, Stripe)",D13:"AP2 — протокол платежей агентов",D19:"161-ФЗ «О национальной платёжной системе»",D22:"Передача сведений в финансовый мониторинг",D25:"Mir Accept 2.0",D26:"Агентская схема подключения к СБП",D27:"Правила платёжной системы «Мир»",D28:"Операционный и клиринговый центр НСПК",
+ A1:"Проект: признак агентной операции",A2:"Проект: реестр агентов и подпись обращений",A3:"Проект: ограничения полномочий агента",A4:"Проект: ответственность при операции агентом",A5:"Проект: требования к ТСП при агентных операциях",A7:"Проект: мандат агента — состав, хранение, отзыв",A8:"Проект: методика оценки исполнения агентов"};
+const KB="00-ukazatel-bz-ii-medicina.html#reestr", KBF="01-zarubezhnyy-segment.html#reestr";
+const MDOC={
+ f323:["323-ФЗ «Об основах охраны здоровья граждан»","https://www.consultant.ru/document/cons_doc_LAW_121895/"],
+ f152:["152-ФЗ «О персональных данных»","https://www.consultant.ru/document/cons_doc_LAW_61801/"],
+ pp1684:["ПП РФ № 1684 (правила регистрации медизделий)","https://www.vniiimt.ru/blog/pravila-gosudarstvennoy-registratsii-meditsinskikh-izdeliy-versiya-2024-2025/"],
+ pp447:["ПП РФ № 447 (иные ИС в здравоохранении)","http://government.ru/docs/32336/"],
+ pp140:["ПП РФ № 140 «О ЕГИСЗ»","http://publication.pravo.gov.ru/Document/View/0001202202110036"],
+ pgg:["Программа госгарантий на 2026–2028 годы",KB],
+ dms:["Правила страхования и договор ДМС",KB],
+ n686:["Приказ Минздрава № 686н (классы риска ПО)","http://publication.pravo.gov.ru/Document/View/0001202008100015"],
+ n341:["Приказ Минздрава № 341н (обезличивание)","http://publication.pravo.gov.ru/Document/View/0001201808090005"],
+ rzn750:["Регламент регистрации, приказ Росздравнадзора № 750","https://gxpnews.net/2026/09/roszdravnadzor-obnovil-reglament-registraczii-medizdelij/"],
+ ais:["Порядок передачи данных о МИ с ИИ в АИС Росздравнадзора","https://www.vademec.ru/news/2026/05/13/roszdravnadzor-izmenil-poryadok-avtomaticheskoy-peredachi-dannykh-o-medizdeliyakh-s-ii-v-ais/"],
+ g72313:["ГОСТ Р 72313-2025 (извлечение из неструктурированных записей)","https://protect.gost.ru/v.aspx?control=8&id=257748"],
+ g71671:["ГОСТ Р 71671-2024 (СППВР)","https://protect.gost.ru/v.aspx?control=8&id=251696"],
+ g72357:["ГОСТ Р 72357-2025 (СППВР в лекарственной терапии)","https://protect.gost.ru/v.aspx?control=8&id=258273"],
+ g72484:["ГОСТ Р 72484-2025 (термины и классификация)","https://protect.gost.ru/v.aspx?control=8&id=259296"],
+ g599214:["ГОСТ Р 59921.4-2021 (контроль параметров в эксплуатации)","https://rst.gov.ru:8443/file-service/file/load/1682520962975"],
+ g599216:["ГОСТ Р 59921.6-2021 (эксплуатация)","https://rst.gov.ru:8443/file-service/file/load/1682520997925"],
+ g71737:["ГОСТ Р 71737-2024 (менеджмент риска МИ с ИИ)","https://protect.gost.ru/v.aspx?control=8&id=252327"],
+ pnst961:["ПНСТ 961-2024 (этические аспекты)","https://protect.gost.ru/v.aspx?control=8&id=252298"],
+ wiser:["CMS: модель WISeR","https://www.cms.gov/priorities/innovation/files/wiser-provider-supplier-guide.pdf"],
+ oms:["Правила ОМС: ФЛК, МЭК, МЭЭ, ЭКМП",KB],
+ egisz:["ЕГИСЗ и региональные сегменты",KB]
+};
+/* [пункт рамки, коды пула, ключи медицинских документов] — по строкам PAR */
+const PLINK=[
+ ["2.1",["D1","A7"],["f323","f152"]],
+ ["2.2",["D1","D7","A2"],["pp1684","g72484"]],
+ ["2.6",["D1","A5","D27"],["f323","pp447"]],
+ ["2.3",["D1","D3","D10"],["dms","pgg"]],
+ ["2.4",["D1","D27","D19"],["pgg","oms"]],
+ ["2.5, 5",["D1","D13","A7"],["pp140","egisz"]],
+ ["1.6, 4.3.1",["D1","D13","A7"],["f323","f152"]],
+ ["4.3.2",["D1","D13","A7"],["dms","f323"]],
+ ["4.3.3",["D1","A3"],["g71671","g72357"]],
+ ["4.3.3, 5.5",["D1","A3"],["dms","pgg"]],
+ ["4.3.4",["D1","D12","A1"],["g72313","oms"]],
+ ["4.3.5, 5.6",["D1","A1"],["g72313","f323"]],
+ ["4.1.1",["D1","D4"],["g71671"]],
+ ["4.1.2",["D1","D9","A3"],["g599216","g71737"]],
+ ["4.1",["D1","A3","A5"],["g599216"]],
+ ["4.2.2",["D1","D6","D5"],["f323"]],
+ ["4.2.3",["D1","D6","D13"],["f323","f152","n341"]],
+ ["4.2.4",["D1"],["f323","oms"]],
+ ["3",["D1","D7","D8","A2","A8"],["pp1684","rzn750","ais"]],
+ ["1.5.1",["D2","D25"],["f323"]],
+ ["1.2.2 (вне области)",["D27","D28","A3"],["dms","wiser"]],
+ ["вне области",["D25","D27"],["oms","wiser"]],
+ ["вне области",["D28","D26"],["oms","pgg"]],
+ ["вне области",["D27","A4"],["oms","f323"]],
+ ["8",["D1","A1"],["ais","g72313"]],
+ ["вне области",["D27"],["oms"]],
+ ["вне области",["D22","D19"],["ais","g599214"]]
+];
+function docCell(i){
+  const L=PLINK[i]; if(!L) return "";
+  const pay=L[1].map(c=>{const h=c[0]==="A"?"../agentic/21-drafty-dokumentov.html#"+c:"../agentic/03-reestr-dokumentov.html#"+c;return `<a href="${h}" title="${esc(PDOC[c]||c)}">${c}</a> ${esc(PDOC[c]||"")}`}).join("<br>");
+  const med=L[2].map(k=>{const d=MDOC[k];const ext=/^https?:/.test(d[1]);return `<a href="${esc(d[1])}"${ext?' target="_blank" rel="noopener"':""}>${esc(d[0])}</a>`}).join("<br>");
+  return `<div class="dl"><span class="dh">Рамка EMVCo:</span> <a href="../agentic/33-ramka-po-kostochkam.html" title="Рамка по косточкам: поиск по номеру пункта">п. ${esc(L[0])}</a></div><div class="dl"><span class="dh">Платежи:</span><br>${pay}</div><div class="dl"><span class="dh">Медицина:</span><br>${med}</div>`;
+}
+
+function renderPar(){
+  const groups=[...new Set(PAR.map(p=>p[0]))]; groups.forEach(g=>$("#pG").insertAdjacentHTML("beforeend",`<option>${esc(g)}</option>`));
+  const f=()=>{const q=$("#pQ").value.toLowerCase(),g=$("#pG").value,s=$("#pS").value;
+    const rows=PAR.filter(p=>(!g||p[0]===g)&&(!s||p[5]===s)&&(!q||p.join(" ").toLowerCase().includes(q)));
+    let last=""; $("#pBody").innerHTML=rows.map(p=>{let h="";if(p[0]!==last&&!g){h=`<tr><td colspan="6" style="background:var(--tint);font:600 15px var(--serif)">${esc(p[0])}</td></tr>`;last=p[0];}
+      return h+`<tr><td><b>${esc(p[1])}</b></td><td>${esc(p[2])}</td><td><b>${esc(p[3])}</b>${p[4]!=="—"?"<br><span style='color:var(--ink2)'>"+esc(p[4])+"</span>":""}</td><td>${STR[p[5]]}</td><td>${esc(p[6])}</td><td class="docs">${docCell(PAR.indexOf(p))}</td></tr>`}).join("")||'<tr><td colspan="6">Ничего не найдено. Сбросьте фильтры.</td></tr>';
+    $("#pCount").textContent=rows.length+" из "+PAR.length;};
+  ["#pQ","#pG","#pS"].forEach(s=>$(s).addEventListener("input",f)); f();
+}
+
+/* ДВЕ ОСИ */
+const OS=[
+ {p:"Допуск",pw:"Агент получает идентичность и право обращаться: ключи, идентификатор, запись в реестре",m:"Допуск ИИ-сервиса",mw:"Регистрация как медизделия, если требуется; подключение к МИС и ЕГИСЗ как иной информационной системы; решение региона о внедрении",ai:["Регистрация версии модели","Подключение к медкарте и справочникам"],roles:["Разработчик","Росздравнадзор","Региональный орган здравоохранения"],docs:["ПП РФ № 1684","ПП РФ № 447","ГОСТ Р 59921.0-2022"],emv:"Опознание агента (KYA)",weak:"Плотно регламентировано: регистрация, стандарты, мониторинг"},
+ {p:"Поручение",pw:"Человек делегирует: границы, бюджет, срок, подпись",m:"Согласие и цель обращения",mw:"Пациент даёт согласие на вмешательство и обработку данных, предъявляет полис; в ДМС действует программа страхования",ai:["Разъяснение пациенту","Фиксация согласия и его границ"],roles:["Пациент","Медорганизация","Страховщик"],docs:["323-ФЗ","152-ФЗ"],emv:"Намерение, слой 2",weak:"Согласие на использование ИИ отдельно не оформляется: неясно, что именно разрешил пациент"},
+ {p:"Поиск",pw:"Агент обращается к площадкам и каталогам",m:"Маршрутизация",mw:"Подбор врача и медорганизации, сортировка по срочности",ai:["Сбор анамнеза","Триаж","Подбор специалиста"],roles:["Пациент","Сервис записи","Регион"],docs:["ПНСТ 962-2024"],emv:"Вне области рамки",weak:"Пропуск неотложного состояния; нейтральность выдачи клиник не регламентирована"},
+ {p:"Заказ",pw:"Состав, цена и условия фиксируются: корзина, оформление",m:"Назначение",mw:"Врач назначает обследование или лечение, выдаёт направление",ai:["Подсказка по клиническим рекомендациям","Проверка назначений"],roles:["Врач","Медорганизация"],docs:["ГОСТ Р 71671-2024","ГОСТ Р 72357-2025"],emv:"Контекст оформления, мандат корзины",weak:"Граница, где подсказка становится решением, — самое слабое место середины случая"},
+ {p:"Подтверждение",pw:"Проверяется, что за операцией стоит поручение человека; операция помечается как агентная",m:"Подтверждение врачом",mw:"Врач проверяет и подписывает протокол; отметка об участии ИИ",ai:["Показ уверенности и источников","Отметка об участии ИИ"],roles:["Врач"],docs:["ГОСТ Р 72313-2025","Проект стандарта по генеративным моделям"],emv:"Немедленный режим, индикатор агентной операции",weak:"Подпись без проверки: автоматизационное доверие"},
+ {p:"Авторизация",pw:"Скоринг, авторизация, при условной схеме — удержание средств",m:"Согласование объёма",mw:"Страховщик ДМС выдаёт гарантийное письмо; в ОМС — проверка объёмов и правил оплаты",ai:["Автоматическое согласование типовых случаев","Проверка лимита полиса"],roles:["Страховщик","ФОМС и СМО"],docs:["Программа госгарантий","Правила страхования ДМС"],emv:"Ограничения с состоянием, авторизация",weak:"Кто ведёт остаток лимита при параллельных услугах"},
+ {p:"Расчёт",pw:"Списание, распределение сумм, перевод участникам",m:"Оказание и оплата",mw:"Услуга оказана, документ подписан, случай попадает в реестр счетов, проходит ФЛК и МЭК, оплачивается",ai:["Сверка назначенного, оказанного и выставленного","Проверка реестра до отправки"],roles:["Медорганизация","ТФОМС","СМО","Страховщик ДМС"],docs:["Правила ОМС","ГОСТ Р 72313-2025"],emv:"Привязка и артефакт исполнения",weak:"Ошибка в документе переходит в счёт без сверки с источником"},
+ {p:"После сделки",pw:"Возвраты, спор, ответственность, репутация, надзорный след",m:"Экспертиза и мониторинг",mw:"МЭЭ и ЭКМП, санкции и обжалование, жалобы, пострегистрационный мониторинг ИИ",ai:["Отбор случаев на экспертизу","Подготовка обоснования для эксперта","Мониторинг дрейфа модели"],roles:["СМО","Эксперт","Росздравнадзор"],docs:["Порядок передачи данных о МИ с ИИ в АИС","ГОСТ Р 59921.4-2021"],emv:"Спор, индикатор со ссылкой на доказательства",weak:"Регламентировано плотно, но спор по выводу модели без записей тянется неделями"}
+];
+function renderOs(){
+  $("#path").innerHTML=OS.map((s,i)=>`<button class="stage" data-s="${i}" aria-pressed="false"><span class="dot">${i}</span>${esc(s.m)}</button>`).join("");
+  $("#path").addEventListener("click",e=>{const b=e.target.closest(".stage");if(b)selOs(+b.dataset.s)});
+  selOs(5);
+}
+function selOs(i){
+  $$("#path .stage").forEach(b=>b.setAttribute("aria-pressed",+b.dataset.s===i?"true":"false"));
+  const s=OS[i];
+  $("#osDetail").innerHTML=`<div class="lane"><div><h5>Стадия ${i} в агентной коммерции</h5><div class="big">${esc(s.p)}</div>${esc(s.pw)}</div><div><h5>Медицинский двойник</h5><div class="big">${esc(s.m)}</div>${esc(s.mw)}</div></div>
+  <div class="dgrid" style="margin-top:12px"><div><h5>Функции ИИ</h5>${li(s.ai)}</div><div><h5>Роли</h5>${li(s.roles)}</div><div><h5>Документы</h5>${li(s.docs)}</div><div><h5>Понятие рамки EMVCo</h5><p style="margin:0">${esc(s.emv)}</p></div></div>
+  <div class="callout" style="margin-bottom:0"><b>Слабое место.</b> ${esc(s.weak)}</div>`;
+}
+
+/* РЕЖИМЫ */
+const MSC=[
+ {n:"Подсказка врачу по клиническим рекомендациям",risk:"mid",state:false},
+ {n:"Расшифровка анализов для пациента",risk:"mid",state:false},
+ {n:"Автоматическое согласование услуги по полису ДМС",risk:"low",state:true},
+ {n:"Отбор случаев на экспертизу качества",risk:"low",state:true},
+ {n:"Черновик выписки из истории болезни",risk:"mid",state:false},
+ {n:"Приоритизация исследований КТ по срочности",risk:"high",state:false},
+ {n:"Продление назначения хроническому пациенту",risk:"high",state:true}
+];
+const THR={low:70,mid:85,high:95}, RISKN={low:"низкий",mid:"средний",high:"высокий"};
+let mode="imm";
+function renderMod(){
+  $("#mSc").innerHTML=MSC.map((s,i)=>`<option value="${i}">${esc(s.n)}</option>`).join("");
+  $("#mMode").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;mode=b.dataset.v;$$("#mMode button").forEach(x=>x.setAttribute("aria-pressed",x===b?"true":"false"));calcMod();});
+  ["#mSc","#mConf","#mState","#mSrc","#mRev"].forEach(s=>$(s).addEventListener("input",calcMod));
+  $("#mRules").innerHTML=[
+   ["Отозванное согласие останавливает действие с момента получения сведений","Отзыв поручения действует немедленно (замечание З04)","152-ФЗ, 323-ФЗ"],
+   ["Если нужное состояние недоступно, действие не считается укладывающимся в границы","Ограничения с состоянием в автономном режиме (замечание к п. 6.7.6)","Правила ДМС и ОМС"],
+   ["Высокий риск не исполняется автономно: только при враче","Автономный режим переходит в немедленный","Класс риска медизделия, приказ № 686н"],
+   ["Порог уверенности зависит от риска: 70, 85 и 95%","Порог подтверждения человеком","Критерии приёмки, согласованные с заказчиком"],
+   ["Утверждение без ссылки на источник не уходит пациенту или в документ без врача","Проверяемость против галлюцинаций агента","ГОСТ Р 72313-2025"],
+   ["Удержание, а не отказ: у удержанного случая есть срок и владелец","Именованное состояние «удержано для потребителя»","Регламент эскалации в клинике"]
+  ].map(r=>`<tr><td><b>${esc(r[0])}</b></td><td>${esc(r[1])}</td><td>${esc(r[2])}</td></tr>`).join("");
+  calcMod();
+}
+function calcMod(){
+  const sc=MSC[+$("#mSc").value], conf=+$("#mConf").value, st=$("#mState").value==="1", src=$("#mSrc").value==="1", rev=$("#mRev").value==="1";
+  $("#oConf").textContent=conf+"%";
+  const why=[]; let v="ok";
+  if(!rev){v="stop";why.push("Согласие пациента отозвано: любое дальнейшее действие вне полномочий.");}
+  else{
+    if(sc.state&&!st){v="hold";why.push("Сценарию нужно текущее состояние, а оно недоступно: нельзя проверить, укладывается ли действие в лимит или историю.");}
+    if(mode==="aut"&&sc.risk==="high"){v="hold";why.push("Высокий риск: автономное исполнение запрещено, случай переходит к врачу.");}
+    if(conf<THR[sc.risk]){v="hold";why.push(`Уверенность ${conf}% ниже порога ${THR[sc.risk]}% для риска «${RISKN[sc.risk]}».`);}
+    if(!src&&mode==="aut"){v="hold";why.push("Нет ссылок на источник: без врача такой вывод не уходит ни пациенту, ни в документ.");}
+    if(!src&&mode==="imm"){why.push("Нет ссылок на источник: врач видит подсказку, но должен проверить её вручную; рекомендуется исправить.");}
+  }
+  let title,cls;
+  if(v==="stop"){title="Остановлено";cls="v-stop";}
+  else if(v==="hold"){title=mode==="aut"?"Удержано для врача":"Подсказка с предупреждением врачу";cls="v-hold";}
+  else{title=mode==="aut"?"Можно исполнить автономно":"Подсказка врачу, решает врач";cls="v-ok";why.push(mode==="aut"?"Все условия автономного режима выполнены: действие в заранее согласованных границах, с записью об исполнении.":"Врач присутствует; подсказка показывается с уверенностью и источниками.");}
+  $("#mOut").innerHTML=`<p class="verdict ${cls}">${title}</p><p style="margin:0 0 6px;color:var(--ink2)">Риск сценария: ${RISKN[sc.risk]} · нужен учёт состояния: ${sc.state?"да":"нет"} · режим: ${mode==="aut"?"автономный":"немедленный"}</p>${li(why)}
+  <p style="margin:8px 0 0;font-size:14px;color:var(--ink2)">Аналог в рамке EMVCo: ${mode==="aut"?"автономный режим с проверкой итоговых значений против исходного намерения; при необходимости — переход в немедленный.":"немедленный режим: человек присутствует и одобряет итоговые значения."}</p>`;
+}
+
+/* КОНФЛИКТЫ */
+const STN=["Допуск","Согласие","Маршрутизация","Назначение","Подтверждение","Согласование","Оплата","Экспертиза"];
+const CF=[
+ {c:"М1",s:0,n:"ИИ-сервис без регистрации применяется для диагностики",w:{o:"stop",at:0,r:"разработчик",t:"Сервис не подключается к медкарте, пока не определён его статус и не пройдена регистрация."},wo:{o:"unres",at:7,r:"пациент и медорганизация",t:"Сервис работает; при инциденте ответственность ложится на клинику и врача, а доказать качество изделия нечем."},by:"ПП РФ № 1684; ПП РФ № 447"},
+ {c:"М2",s:1,n:"Согласие на обработку данных отозвано, а анализ продолжается",w:{o:"stop",at:1,r:"никто",t:"Отзыв действует с момента получения: обработка остановлена, случай передан врачу без ИИ."},wo:{o:"stop",at:7,r:"оператор данных",t:"Анализ продолжен, результат ушёл в документ; нарушение выявляется при проверке."},by:"152-ФЗ; урок З04"},
+ {c:"М3",s:2,n:"Ассистент пропустил признаки неотложного состояния",w:{o:"hold",at:2,r:"распределён",t:"Правило эскалации срабатывает на признаках: пациент направлен на срочную помощь, врач уведомлён."},wo:{o:"stop",at:2,r:"пациент",t:"Пациент записан на плановый приём через неделю."},by:"Правило перехода в немедленный режим"},
+ {c:"М4",s:3,n:"Подсказка предлагает назначение с противопоказанием",w:{o:"ret",at:4,r:"никто",t:"Проверка назначений и подпись врача перехватывают ошибку до исполнения."},wo:{o:"stop",at:6,r:"пациент",t:"Назначение исполнено; вред обнаружен после."},by:"ГОСТ Р 72357-2025; подтверждение врачом"},
+ {c:"М5",s:4,n:"Врач подписывает подсказку не читая",w:{o:"hold",at:4,r:"врач",t:"При низкой уверенности случай удерживается; контрольные случаи выявляют формальную подпись."},wo:{o:"unres",at:7,r:"пациент и врач",t:"Подпись формально есть, проверки по существу не было."},by:"Показ уверенности; контрольные случаи"},
+ {c:"М6",s:5,n:"Лимит полиса ведёт агент клиники, две услуги прошли параллельно",w:{o:"hold",at:5,r:"никто",t:"Остаток лимита у страховщика, списание атомарное; вторая услуга ждёт согласования."},wo:{o:"ret",at:7,r:"клиника или пациент",t:"Перерасход обнаружен постфактум; в оплате второй услуги отказано."},by:"Урок З01: состояние держит плательщик"},
+ {c:"М7",s:5,n:"Новая клиническая рекомендация — требование, неизвестное модели",w:{o:"hold",at:5,r:"никто",t:"Строгий режим: случай уходит на ручную проверку до оплаты."},wo:{o:"unres",at:7,r:"медорганизация",t:"Участники оценили случай по-разному; спор при экспертизе."},by:"Урок З03: неизвестное ограничение — строгий отказ"},
+ {c:"М8",s:6,n:"Галлюцинация в выписке попала в реестр счетов",w:{o:"ret",at:6,r:"никто",t:"Сверка утверждений с медкартой перехватывает дефект до отправки реестра."},wo:{o:"stop",at:7,r:"медорганизация",t:"Случай оплачен; при экспертизе — санкция за дефект документации."},by:"ГОСТ Р 72313-2025; привязка к источнику"},
+ {c:"М9",s:6,n:"Услуги дробятся ради обхода порога согласования",w:{o:"hold",at:5,r:"никто",t:"Учёт по пациенту и периоду складывает части и направляет случай на согласование."},wo:{o:"ok",at:7,r:"плательщик",t:"Каждая часть ниже порога и проходит; переплата накапливается."},by:"Ограничения с состоянием"},
+ {c:"М10",s:7,n:"Санкция по выводу модели оспаривается клиникой",w:{o:"ok",at:7,r:"по результату",t:"Модель отобрала случай, эксперт решил; запись со ссылками на документы закрывает спор за часы."},wo:{o:"unres",at:7,r:"плательщик",t:"Спор по переписке тянется неделями; санкция может быть отменена."},by:"Урок З02: доказывает запись, а не модель"},
+ {c:"М11",s:7,n:"Модель деградировала после смены оборудования",w:{o:"ret",at:7,r:"разработчик",t:"Мониторинг замечает дрейф; версия откатывается, сведения переданы регулятору."},wo:{o:"stop",at:7,r:"пациенты",t:"Пропуски копятся месяцами, пока не станут заметны."},by:"Порядок передачи данных в АИС; урок З06"},
+ {c:"М12",s:7,n:"Неясно, участвовал ли ИИ в случае",w:{o:"ok",at:7,r:"по результату",t:"Отметка в документе ссылается на версию модели и её вывод; участие устанавливается из записей."},wo:{o:"unres",at:7,r:"неясно",t:"Участие ИИ не восстановить; ответственность не распределить."},by:"Урок З07: индикатор со ссылкой на доказательства"}
+];
+const ON={ok:"прошла",hold:"удержание для врача",ret:"возврат",stop:"остановлена или вред",unres:"не решено"};
+let cSel=0,cMode="with",cPos=-1,cTimer=null;
+function renderCf(){
+  let html="",last=-1;
+  CF.forEach((c,i)=>{if(c.s!==last){html+=`<div class="st">стадия ${c.s} · ${STN[c.s]}</div>`;last=c.s;} html+=`<button data-i="${i}" aria-pressed="false">${c.c} ${esc(c.n)}</button>`;});
+  $("#cList").innerHTML=html;
+  $("#cList").addEventListener("click",e=>{const b=e.target.closest("button");if(b){cSel=+b.dataset.i;resetCf();}});
+  $("#cMode").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;cMode=b.dataset.v;$$("#cMode button").forEach(x=>x.setAttribute("aria-pressed",x===b?"true":"false"));resetCf();});
+  $("#cPlay").addEventListener("click",()=>{stopT();if(cPos>=endPos())cPos=-1;cTimer=setInterval(()=>{if(!stepCf())stopT();},550);});
+  $("#cStep").addEventListener("click",()=>{stopT();stepCf();});
+  $("#cReset").addEventListener("click",resetCf);
+  $("#cTable").innerHTML=CF.map(c=>`<tr><td>${c.c}</td><td><b>${esc(c.n)}</b><br><span class="count">стадия ${c.s} · ${STN[c.s]}</span></td><td>${esc(c.w.t)} <span class="count">Риск: ${esc(c.w.r)}.</span></td><td>${esc(c.wo.t)} <span class="count">Риск: ${esc(c.wo.r)}.</span></td><td>${esc(c.by)}</td></tr>`).join("");
+  resetCf();
+}
+function stopT(){if(cTimer){clearInterval(cTimer);cTimer=null;}}
+function endPos(){return CF[cSel][cMode==="with"?"w":"wo"].at}
+function drawCf(){
+  const c=CF[cSel], r=c[cMode==="with"?"w":"wo"];
+  $$("#cList button").forEach(b=>b.setAttribute("aria-pressed",+b.dataset.i===cSel?"true":"false"));
+  $("#cTrk").innerHTML=STN.map((n,i)=>{let cls="box";
+    if(i<=cPos){cls+= (i<r.at||cPos<r.at)?(i===r.at?" "+r.o:" ok"):" "+r.o;}
+    if(i===cPos)cls+=" cur"; if(i===c.s)cls+=" flash";
+    return `<div class="${cls}"><b>стадия ${i}</b>${esc(n)}</div>`}).join("");
+  const done=cPos>=r.at;
+  $("#cOut").innerHTML=done?`<p class="verdict">${ON[r.o][0].toUpperCase()+ON[r.o].slice(1)} на стадии ${r.at} · ${STN[r.at]}</p><p style="margin:0">${esc(r.t)}</p><p class="count" style="margin-top:6px">Риск: ${esc(r.r)} · ${cMode==="with"?"решено: "+esc(c.by):"без контролей"}</p>`
+    :`<p style="margin:0">${c.c} · ${esc(c.n)}. Конфликт возникает на стадии ${c.s} · ${STN[c.s]}. Нажмите «Пуск» или «Шаг».</p>`;
+}
+function stepCf(){const e=endPos(); if(cPos>=e)return false; cPos++; drawCf(); return cPos<e;}
+function resetCf(){stopT();cPos=-1;drawCf();}
+
+/* ИЗДЕРЖКИ */
+const KP=[
+ {id:"auto",l:"Доля автономных действий ИИ",u:"%",min:0,max:100,st:1,v:30},
+ {id:"err",l:"Частота ошибки модели",u:"%",min:0.1,max:10,st:0.1,v:2},
+ {id:"catch",l:"Доля ошибок, перехваченных контролями",u:"%",min:0,max:100,st:1,v:85},
+ {id:"harm",l:"Средняя цена непойманной ошибки: вред, санкция, повторная помощь",u:"₽",min:500,max:100000,st:500,v:8000},
+ {id:"esc",l:"Доля случаев, удержанных для врача",u:"%",min:0,max:50,st:1,v:12},
+ {id:"rev",l:"Стоимость проверки врачом",u:"₽",min:50,max:2000,st:10,v:300},
+ {id:"rec",l:"Стоимость записи об исполнении",u:"₽ на случай",min:0,max:30,st:0.5,v:2},
+ {id:"disp",l:"Доля спорных случаев",u:"%",min:0,max:5,st:0.1,v:0.5},
+ {id:"dNo",l:"Разбор спора без записей",u:"₽",min:500,max:30000,st:500,v:6000},
+ {id:"dYes",l:"Разбор спора по записям",u:"₽",min:100,max:10000,st:100,v:800}
+];
+let N=200000;
+function renderK(){
+  $("#kParams").innerHTML=KP.map(p=>`<div><label for="k_${p.id}">${esc(p.l)}: <output id="ko_${p.id}"></output> ${esc(p.u)}</label><input type="range" id="k_${p.id}" min="${p.min}" max="${p.max}" step="${p.st}" value="${p.v}"></div>`).join("");
+  KP.forEach(p=>$("#k_"+p.id).addEventListener("input",calcK));
+  $("#kScale").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;N=+b.dataset.v;$$("#kScale button").forEach(x=>x.setAttribute("aria-pressed",x===b?"true":"false"));calcK();});
+  calcK();
+}
+function calcK(){
+  const g=id=>+$("#k_"+id).value; KP.forEach(p=>$("#ko_"+p.id).textContent=String(g(p.id)).replace(".",","));
+  const auto=g("auto")/100, err=g("err")/100, cat=g("catch")/100, harm=g("harm"), esc_=g("esc")/100, rev=g("rev"), rec=g("rec"), disp=g("disp")/100, dNo=g("dNo"), dYes=g("dYes");
+  const errN=N*err;
+  // ошибки: без контролей непойманы все ошибки в автономе и половина при враче (врач ловит половину сам)
+  const lossErrSoft=errN*(auto*1+(1-auto)*0.5)*harm;
+  const lossErrStrict=errN*(auto*(1-cat)+(1-auto)*0.5*(1-cat))*harm;
+  const costRev=N*esc_*rev;
+  const lossDispSoft=N*disp*dNo, lossDispStrict=N*disp*dYes, costRec=N*rec;
+  const rows=[
+   ["Ошибки модели: удержание и проверка врачом", lossErrSoft, lossErrStrict+costRev],
+   ["Споры: запись об исполнении", lossDispSoft, lossDispStrict+costRec]
+  ];
+  const soft=rows.reduce((s,r)=>s+r[1],0), strict=rows.reduce((s,r)=>s+r[2],0), net=soft-strict;
+  $("#kTable").innerHTML=rows.map(r=>`<tr><td><b>${esc(r[0])}</b></td><td>${fmt(r[1])}</td><td>${fmt(r[2])}</td><td style="color:${r[1]-r[2]>=0?"var(--accent)":"var(--danger)"}">${r[1]-r[2]>=0?"+":""}${fmt(r[1]-r[2])}</td></tr>`).join("");
+  $("#kOut").innerHTML=`<div class="neg"><b>${fmt(soft)} ₽</b>потери мягкой схемы в месяц</div><div><b>${fmt(strict)} ₽</b>строгая схема: остаточные потери и цена контроля</div><div class="${net>=0?"pos":"neg"}"><b>${net>=0?"+":""}${fmt(net)} ₽</b>чистый эффект строгости</div><div><b>${fmt(N*esc_)}</b>случаев в месяц уходит врачам</div>`;
+  // точка безубыточности по частоте ошибки
+  const perErr=(auto+(1-auto)*0.5)*cat*harm; const fixed=costRev+costRec-(lossDispSoft-lossDispStrict);
+  const be=perErr>0?fixed/(N*perErr)*100:Infinity;
+  $("#kNote").innerHTML=`Строгость окупается, если частота ошибки модели выше <b>${isFinite(be)&&be>0?be.toFixed(2).replace(".",",")+"%":"0%"}</b> при остальных параметрах. Чем выше цена ошибки и доля автономных действий, тем раньше наступает окупаемость. Самые чувствительные параметры — частота ошибки, цена непойманной ошибки и доля удержанных случаев: именно их должен измерить пилот. <span class="tag t-inf">вывод</span>`;
+}
+
+/* УРОКИ */
+const UR=[
+ ["З01 · Кто ведёт состояние бюджета","Кто ведёт остаток лимита полиса ДМС и объёмы ОМС","Остаток ведёт агент клиники: при параллельных услугах перерасход обнаруживается после, в оплате отказано","Остаток держит плательщик; списание атомарное и однократное; спорная услуга ждёт согласования"],
+ ["З02 · Что доказывает исполнение","Что доказывает, что помощь оказана","Доказательство — вывод модели и переписка сторон; спор идёт неделями","Доказывает подписанный медицинский документ, связанный с назначением и строкой счёта; модель лишь указывает на него"],
+ ["З03 · Неизвестный тип ограничения","Новая клиническая рекомендация или правило оплаты, которых модель не знает","Мягкий режим: каждый участник толкует по-своему, спор при экспертизе","Строгий режим: случай с неизвестным требованием уходит на ручную проверку до оплаты"],
+ ["З04 · Отзыв поручения","Отзыв согласия на вмешательство или обработку данных","Отзыв не остановил уже запущенную обработку","Отзыв действует с момента получения сведений; все действия ИИ по случаю останавливаются"],
+ ["З05 · Выбор инструмента в момент оплаты","Выбор источника оплаты: ОМС, ДМС или личные средства","Источник выбран заранее агентом; при несоответствии услуга срывается","Выбор источника остаётся за пациентом в момент услуги"],
+ ["З06 · История исполнения агента","История работы версии модели","Регистрация есть, а отличить стабильно работающую модель от деградировавшей нельзя","Мониторинг метрик версии в эксплуатации; история учитывается при допуске и продлении"],
+ ["З07 · Индикатор без ссылки на доказательства","Отметка «с участием ИИ» в медицинском документе","Отметка есть, но не связана с конкретным выводом и версией","Отметка ссылается на версию модели, её вывод и источники; спор решается по документам случая"]
+];
+
+const URL_=[
+ [["00-ukazatel-bz-ii-medicina.html#zak","Заказчики: ДМС и ОМС"],["00-ukazatel-bz-ii-medicina.html#put","Стадия «Согласование объёма»"]],
+ [["00-ukazatel-bz-ii-medicina.html#gloss","ЭМД в глоссарии"],["00-ukazatel-bz-ii-medicina.html#put","Стадия «Оплата и контроль качества»"]],
+ [["00-ukazatel-bz-ii-medicina.html#reestr","Клинические рекомендации"],["#konf","Конфликт М7"]],
+ [["00-ukazatel-bz-ii-medicina.html#reestr","152-ФЗ в реестре"],["#rezh","Модель режимов"]],
+ [["00-ukazatel-bz-ii-medicina.html#zak","Кто платит"],["#osi","Стадия «Согласование»"]],
+ [["00-ukazatel-bz-ii-medicina.html#reestr","Мониторинг МИ с ИИ"],["#konf","Конфликт М11"]],
+ [["00-ukazatel-bz-ii-medicina.html#risk","Реестр рисков"],["#konf","Конфликт М12"]]
+];
+const lk2=a=>`<a href="${a[0]}">${a[1]}</a>`;
+
+function renderU(){ $("#uBody").innerHTML=UR.map((r,i)=>`<tr><td><b>${esc(r[0])}</b></td><td>${esc(r[1])}${URL_[i]?`<br><span class="count">${URL_[i].map(lk2).join(" · ")}</span>`:""}</td><td>${esc(r[2])}</td><td>${esc(r[3])}</td></tr>`).join(""); }
+
+/* НАВИГАЦИЯ */
+const panes=$$("section.pane");
+function go(id,push){
+  const t=panes.find(p=>p.id===id)||panes[0];
+  panes.forEach(p=>p.classList.toggle("on",p===t));
+  $$("nav.side button").forEach(b=>b.setAttribute("aria-current",b.dataset.go===t.id?"true":"false"));
+  $("#mob").value=t.id;
+  if(push!==false){try{history.replaceState(null,"","#"+t.id)}catch(e){}}
+  window.scrollTo({top:$(".layout").offsetTop-10,behavior:"auto"});
+}
+function renderNav(){
+  let h="",last="";
+  panes.forEach(p=>{if(p.dataset.grp!==last){h+=`<li class="grp">${esc(p.dataset.grp)}</li>`;last=p.dataset.grp;} h+=`<li><button data-go="${p.id}">${esc(p.dataset.title)}</button></li>`;});
+  $("#sidenav").innerHTML=h;
+  $("#mob").innerHTML=panes.map(p=>`<option value="${p.id}">${esc(p.dataset.grp)}: ${esc(p.dataset.title)}</option>`).join("");
+  $("#mob").addEventListener("change",e=>go(e.target.value));
+  document.addEventListener("click",e=>{const b=e.target.closest("[data-go]");if(b){e.preventDefault();go(b.dataset.go)}});
+}
+$$(".tl").forEach(b=>{b.style.cssText="background:none;border:0;padding:0;color:var(--accent);font:inherit;cursor:pointer;text-decoration:underline"});
+$("#printBtn").addEventListener("click",()=>window.print());
+renderNav(); renderPar(); renderOs(); renderMod(); renderCf(); renderK(); renderU();
+go((location.hash||"").slice(1)||"ukaz",false);
+})();
+</script>
+</body>
+</html>

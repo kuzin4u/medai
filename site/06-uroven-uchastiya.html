@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Уровень участия пациента: интерактивная модель</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Serif:wght@500;600&family=IBM+Plex+Sans+Condensed:wght@500&family=IBM+Plex+Mono&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#F7FAF9; --panel:#FFFFFF; --ink:#16302C; --ink2:#4A615C; --line:#CFDDD9;
+  --tint:#E4F0EC; --accent:#0B6E60; --accent2:#084F45; --warn:#9A5B00; --warntint:#FBF0DE;
+  --danger:#A3322A; --dangertint:#FBE7E4; --info:#2F5D8A; --infotint:#E6EEF7;
+  --serif:"IBM Plex Serif", Georgia, "Times New Roman", serif;
+  --sans:"IBM Plex Sans", "Segoe UI", Roboto, Arial, sans-serif;
+  --cond:"IBM Plex Sans Condensed", "Arial Narrow", Arial, sans-serif;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#0F1B19; --panel:#152623; --ink:#E3EFEC; --ink2:#A4BAB5; --line:#2C4540;
+    --tint:#1B332F; --accent:#4FC2AE; --accent2:#7ED9C8; --warn:#E3A64A; --warntint:#33280F;
+    --danger:#EE8A80; --dangertint:#3A1D1A; --info:#8DB6E0; --infotint:#172A3D;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#0F1B19; --panel:#152623; --ink:#E3EFEC; --ink2:#A4BAB5; --line:#2C4540;
+  --tint:#1B332F; --accent:#4FC2AE; --accent2:#7ED9C8; --warn:#E3A64A; --warntint:#33280F;
+  --danger:#EE8A80; --dangertint:#3A1D1A; --info:#8DB6E0; --infotint:#172A3D;
+}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*::before,*::after{box-sizing:inherit}
+body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.6 var(--sans);-webkit-text-size-adjust:100%}
+a{color:var(--accent)}
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.wrap{max-width:1180px;margin:0 auto;padding:0 20px}
+header.top{border-bottom:1px solid var(--line);background:var(--panel)}
+.top .wrap{display:flex;flex-wrap:wrap;gap:8px 18px;align-items:center;padding-top:12px;padding-bottom:12px}
+.brand{font-family:var(--cond);font-size:14px;color:var(--ink2)}
+.toplinks{display:flex;flex-wrap:wrap;gap:6px;margin-left:auto}
+.toplinks a.home{text-decoration:none;white-space:nowrap}
+.toplinks button,.toplinks a.home,.btn{font:500 14px var(--sans);background:transparent;color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:5px 10px;cursor:pointer}
+.toplinks button:hover,.btn:hover{border-color:var(--accent);color:var(--accent)}
+.hero{padding:40px 0 18px}
+.hero h1{font:600 clamp(28px,4.4vw,44px)/1.12 var(--serif);margin:0 0 14px;max-width:22ch;letter-spacing:-.01em}
+.hero p.lead{font-size:18px;max-width:70ch;color:var(--ink2);margin:0 0 10px}
+.task{border-left:3px solid var(--accent);background:var(--tint);padding:12px 16px;margin:18px 0 6px;max-width:80ch;border-radius:0 6px 6px 0}
+.task b{font-weight:600}
+.meta{font-family:var(--cond);font-size:14px;color:var(--ink2);margin-top:10px}
+.layout{display:grid;grid-template-columns:250px 1fr;gap:28px;padding:18px 0 60px}
+nav.side{position:sticky;top:env(safe-area-inset-top,0px);align-self:start;max-height:100vh;overflow:auto;padding-top:8px}
+nav.side ol{list-style:none;margin:0;padding:0}
+nav.side li{margin:0}
+nav.side .grp{font-family:var(--cond);font-size:13px;color:var(--ink2);margin:14px 0 4px}
+nav.side button{display:block;width:100%;text-align:left;background:none;border:0;border-left:2px solid transparent;padding:5px 10px;font:15px/1.35 var(--sans);color:var(--ink);cursor:pointer}
+nav.side button:hover{color:var(--accent)}
+nav.side button[aria-current="true"]{border-left-color:var(--accent);color:var(--accent);font-weight:600;background:var(--tint)}
+.mobnav{display:none;margin:10px 0}
+.mobnav select{width:100%;font:16px var(--sans);padding:8px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--ink)}
+section.pane{display:none}
+section.pane.on{display:block}
+h2{font:600 28px/1.2 var(--serif);margin:4px 0 8px}
+h3{font:600 19px/1.3 var(--serif);margin:26px 0 8px}
+.pane > p.intro{color:var(--ink2);max-width:75ch;margin:0 0 18px}
+p,li{max-width:78ch}
+.tree{font:15px/1.55 var(--sans);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:16px 18px;overflow-x:auto}
+.tree ul{list-style:none;margin:0;padding-left:20px;border-left:1px solid var(--line)}
+.tree > ul{border-left:0;padding-left:0}
+.tree li{position:relative;padding:3px 0 3px 12px;max-width:none}
+.tree li::before{content:"";position:absolute;left:-20px;top:15px;width:26px;border-top:1px solid var(--line)}
+.tree > ul > li::before{display:none}
+.tree .branch{font-weight:600}
+.tree .cnt{font-family:var(--cond);color:var(--ink2);font-size:13px;margin-left:6px}
+.tree button.lnk{background:none;border:0;padding:0;color:var(--accent);font:inherit;cursor:pointer;text-decoration:underline;text-underline-offset:2px}
+.tree .note{color:var(--ink2)}
+.tree .plan{color:var(--ink2);font-style:italic}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px;margin:10px 0}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:14px 16px}
+.card h4{margin:0 0 6px;font:600 16px/1.3 var(--sans)}
+.card p{margin:0;color:var(--ink2);font-size:15px}
+.card .foot{margin-top:8px;font-family:var(--cond);font-size:13px;color:var(--ink2)}
+.scroll{overflow-x:auto;border:1px solid var(--line);border-radius:8px;background:var(--panel);margin:10px 0}
+table{border-collapse:collapse;width:100%;font-size:14.5px;line-height:1.45}
+th,td{text-align:left;vertical-align:top;padding:9px 12px;border-bottom:1px solid var(--line)}
+th{font:500 13.5px var(--cond);color:var(--ink2);background:var(--tint);position:sticky;top:0}
+tr:last-child td{border-bottom:0}
+td.num{white-space:nowrap}
+.tag{display:inline-block;font:500 12.5px var(--cond);padding:1px 7px;border-radius:10px;border:1px solid var(--line);white-space:nowrap;margin:1px 2px 1px 0}
+.t-doc{background:var(--tint);color:var(--accent2);border-color:transparent}
+.t-obs{background:var(--infotint);color:var(--info);border-color:transparent}
+.t-inf{background:var(--warntint);color:var(--warn);border-color:transparent}
+.t-proj{background:var(--dangertint);color:var(--danger);border-color:transparent}
+.filters{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:8px 0}
+.filters input,.filters select{font:15px var(--sans);padding:6px 9px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--ink);min-width:0}
+.filters input[type=search]{flex:1 1 220px}
+.chip{font:500 14px var(--sans);border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:16px;padding:4px 11px;cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--panel)}
+.count{font-family:var(--cond);font-size:13.5px;color:var(--ink2)}
+/* путь случая — главная интерактивная полоса */
+.path{display:grid;grid-template-columns:repeat(9,minmax(96px,1fr));gap:0;margin:16px 0 4px;overflow-x:auto;padding-bottom:4px}
+.stage{position:relative;background:none;border:0;cursor:pointer;padding:34px 6px 8px;text-align:center;color:var(--ink);font:500 14px/1.25 var(--sans)}
+.stage::before{content:"";position:absolute;left:0;right:0;top:15px;border-top:2px solid var(--line)}
+.stage .dot{position:absolute;left:50%;top:6px;width:20px;height:20px;margin-left:-10px;border-radius:50%;background:var(--panel);border:2px solid var(--line);font:600 11px/16px var(--cond);color:var(--ink2)}
+.stage:hover .dot{border-color:var(--accent)}
+.stage[aria-pressed="true"] .dot{background:var(--accent);border-color:var(--accent);color:var(--panel)}
+.stage[aria-pressed="true"]{color:var(--accent)}
+.stage[aria-pressed="true"]::before{border-top-color:var(--accent)}
+.detail{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:16px 18px;margin-top:8px}
+.detail h3{margin-top:0}
+.dgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px 22px}
+.dgrid h5{margin:0 0 4px;font:500 13.5px var(--cond);color:var(--ink2)}
+.dgrid ul{margin:0;padding-left:18px}
+.dgrid li{font-size:15px;margin:2px 0}
+.steps{counter-reset:s;list-style:none;padding:0;margin:10px 0}
+.steps > li{counter-increment:s;position:relative;padding:12px 14px 12px 52px;border:1px solid var(--line);border-radius:8px;background:var(--panel);margin-bottom:8px;max-width:none}
+.steps > li::before{content:counter(s);position:absolute;left:14px;top:12px;width:26px;height:26px;border-radius:50%;background:var(--tint);color:var(--accent2);font:600 14px/26px var(--cond);text-align:center}
+.steps h4{margin:0 0 4px;font:600 16px var(--sans)}
+.steps .row{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:4px 18px;font-size:14.5px;color:var(--ink2);margin-top:6px}
+.steps .row b{color:var(--ink);font-weight:500}
+.calc{display:grid;grid-template-columns:minmax(240px,320px) 1fr;gap:18px;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:16px 18px;margin:12px 0}
+.calc label{display:block;font-size:14.5px;margin:10px 0 2px}
+.calc input[type=range]{width:100%;accent-color:var(--accent)}
+.calc output{font-family:var(--cond);font-weight:500}
+.cm{display:grid;grid-template-columns:auto 1fr 1fr;gap:4px;font-size:14.5px;align-self:start}
+.cm div{padding:9px 10px;border-radius:6px;background:var(--tint)}
+.cm .h{background:none;font:500 13.5px var(--cond);color:var(--ink2);padding:4px 6px}
+.cm .bad{background:var(--dangertint);color:var(--danger)}
+.cm .big{font:600 20px var(--cond);display:block}
+.res{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:10px 26px;border-top:1px solid var(--line);padding-top:12px;font-size:15px}
+.res b{font:600 22px var(--cond);display:block;color:var(--accent)}
+.callout{border-left:3px solid var(--warn);background:var(--warntint);padding:10px 14px;border-radius:0 6px 6px 0;margin:12px 0;max-width:80ch}
+.callout.ok{border-left-color:var(--accent);background:var(--tint)}
+.gl dt{font-weight:600;margin-top:12px}
+.gl dd{margin:2px 0 0;color:var(--ink2);max-width:78ch}
+.gl .grp{font:600 17px var(--serif);margin:22px 0 4px;color:var(--accent2)}
+footer.foot{border-top:1px solid var(--line);padding:18px 0 30px;color:var(--ink2);font-size:14px}
+@media (max-width:860px){
+  .layout{grid-template-columns:1fr}
+  nav.side{display:none}
+  .mobnav{display:block}
+  .calc{grid-template-columns:1fr}
+  .path{grid-template-columns:repeat(9,112px)}
+}
+@media print{
+  header.top,nav.side,.mobnav,.filters,.toplinks{display:none!important}
+  section.pane{display:block!important;page-break-before:always}
+  .layout{display:block}
+  body{background:#fff;color:#000}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+<style>
+.two{display:grid;grid-template-columns:minmax(260px,330px) 1fr;gap:16px}
+.out{border:1px solid var(--line);border-radius:8px;padding:14px 16px;background:var(--panel)}
+.ctrl label{display:block;font-size:14px;margin:10px 0 3px}
+.ctrl input[type=range]{width:100%;accent-color:var(--accent)}
+.ctrl select{width:100%;font:15px var(--sans);padding:6px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--ink)}
+.ctrl .grp{font:500 13px var(--cond);color:var(--ink2);margin:16px 0 2px;border-top:1px solid var(--line);padding-top:10px}
+.lvls{display:grid;grid-template-columns:repeat(5,1fr);gap:0;margin:14px 0 6px;overflow-x:auto}
+.lv{position:relative;background:none;border:0;cursor:pointer;padding:32px 6px 10px;text-align:center;font:500 14px/1.25 var(--sans);color:var(--ink)}
+.lv::before{content:"";position:absolute;left:0;right:0;top:14px;border-top:2px solid var(--line)}
+.lv .dot{position:absolute;left:50%;top:5px;width:20px;height:20px;margin-left:-10px;border-radius:50%;background:var(--panel);border:2px solid var(--line);font:600 11px/16px var(--cond);color:var(--ink2)}
+.lv[aria-pressed="true"] .dot{background:var(--accent);border-color:var(--accent);color:var(--panel)}
+.lv[aria-pressed="true"]{color:var(--accent)}
+.lv[aria-pressed="true"]::before{border-top-color:var(--accent)}
+.lv.cur .dot{box-shadow:0 0 0 4px var(--tint)}
+.gauge{height:10px;background:var(--tint);border-radius:6px;overflow:hidden;margin:6px 0 2px}
+.gauge i{display:block;height:100%;background:var(--accent);width:0;transition:width .25s}
+.gauge.warn i{background:var(--warn)} .gauge.bad i{background:var(--danger)}
+.kpis{display:flex;flex-wrap:wrap;gap:10px 22px;margin:10px 0}
+.kpis div{font-size:13.5px;color:var(--ink2)}
+.kpis b{display:block;font:600 21px "IBM Plex Sans Condensed",var(--cond);color:var(--ink)}
+.kpis .bad b{color:var(--danger)} .kpis .good b{color:var(--accent)}
+.verdict{font:600 21px var(--serif);margin:0 0 4px}
+.v-ok{color:var(--accent)} .v-hold{color:var(--warn)} .v-stop{color:var(--danger)}
+.flow{display:grid;grid-template-columns:repeat(9,minmax(86px,1fr));gap:5px;margin:10px 0;overflow-x:auto}
+.cell{border:1px solid var(--line);border-radius:8px;padding:8px;background:var(--panel);font-size:13px;min-height:86px}
+.cell b{display:block;font:500 12px var(--cond);color:var(--ink2);margin-bottom:3px}
+.cell.act{background:var(--tint);border-color:var(--accent)}
+.cell .w{display:block;margin-top:4px;font:600 15px var(--cond);color:var(--accent)}
+.cell.none .w{color:var(--ink2)}
+pre{font:13px/1.5 "IBM Plex Mono",monospace;background:var(--tint);border:1px solid var(--line);border-radius:8px;padding:12px;overflow-x:auto}
+.risk{border-left:3px solid var(--danger);background:var(--dangertint);padding:10px 14px;border-radius:0 6px 6px 0;margin:10px 0;max-width:80ch}
+.chk label{display:flex;gap:8px;align-items:flex-start;font-size:15px;margin:6px 0;max-width:none}
+.chk input{margin-top:4px;accent-color:var(--accent)}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.seg button{border:0;background:var(--panel);color:var(--ink);padding:6px 12px;font:500 14px var(--sans);cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--accent);color:var(--panel)}
+@media (max-width:860px){.two{grid-template-columns:1fr}.lvls{grid-template-columns:repeat(5,120px)}.flow{grid-template-columns:repeat(9,110px)}}
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap">
+  <span class="brand">ИИ в медицине · модель участия пациента</span>
+  <div class="toplinks">
+    <a class="btn home" href="index.html" title="К начальному меню комплекта">← Комплект</a>
+    <button data-go="shkala">Шкала</button>
+    <button data-go="kalk">Расчёт уровня</button>
+    <button data-go="proc">Влияние на процессы</button>
+    <button data-go="riski">Риски</button>
+    <button id="printBtn">Печать</button>
+  </div>
+</div></header>
+
+<div class="wrap"><div class="hero">
+  <h1>Уровень участия пациента в диагностике и лечении</h1>
+  <p class="lead">Медицина работает с усреднённым пациентом: инструкции одинаковы для человека с многолетней практикой наблюдения за собой и для того, кто впервые задумался о теле. Модель вводит недостающую переменную — измеримый уровень участия конкретного человека — и показывает, что он меняет в пути случая, а что не меняет никогда.</p>
+  <div class="task"><b>Главное правило модели.</b> Уровень участия меняет частоту наблюдения, порог обращения и вес описаний пациента при неоднозначных данных. Он не меняет того, кто ставит диагноз и назначает лечение: решение остаётся за врачом на любом уровне. Расширяется вход, а не право решать.</div>
+  <div class="meta">Черновик для обсуждения · 28.09.2026 · модель, а не норма: пороги и веса подобраны для проверки логики и требуют согласования с врачами</div>
+</div></div>
+
+<div class="wrap">
+  <div class="mobnav"><label for="mob" class="count">Раздел</label><select id="mob"></select></div>
+  <div class="layout">
+    <nav class="side" aria-label="Разделы"><ol id="sidenav"></ol></nav>
+    <main id="main">
+
+<section class="pane" id="shkala" data-title="Шкала уровней" data-grp="Модель">
+  <h2>Пять уровней участия</h2>
+  <p class="intro">Уровень описывает не мотивацию и не уверенность, а подтверждённое данными качество наблюдения. Выберите уровень, чтобы увидеть, что на нём меняется для пациента и для врача.</p>
+  <div class="lvls" id="lvls" role="group" aria-label="Уровни участия"></div>
+  <div class="out" id="lvDetail" aria-live="polite"></div>
+  <div class="callout">Движение по шкале только вверх и только по подтверждённым данным, как храповик: уровень нельзя присвоить себе, его можно накопить. Понижение происходит автоматически при нарушении границ — это единственное быстрое движение вниз.</div>
+</section>
+
+<section class="pane" id="kalk" data-title="Расчёт уровня" data-grp="Модель">
+  <h2>Расчёт уровня конкретного человека</h2>
+  <p class="intro">Четыре измеримых признака вместо самооценки. Ни один не опирается на уверенность человека в себе: уверенность к компетентности отношения не имеет и часто обратна ей. Подвигайте ползунки.</p>
+  <div class="two">
+    <div class="ctrl" id="ctrl"></div>
+    <div>
+      <div class="out" id="res" aria-live="polite"></div>
+      <h3>Как считается</h3>
+      <div class="scroll"><table><thead><tr><th>Признак</th><th>Что показывает</th><th>Как измеряется на практике</th><th>Вес</th></tr></thead><tbody id="critBody"></tbody></table></div>
+      <div class="risk" id="gateNote"></div>
+    </div>
+  </div>
+</section>
+
+<section class="pane" id="proc" data-title="Влияние на процессы" data-grp="Модель">
+  <h2>Что меняется в пути случая</h2>
+  <p class="intro">Девять стадий пути медицинского случая и вес участия пациента на каждой при выбранном уровне. Там, где вес отсутствует, участие пациента не влияет на процесс ни на одном уровне — и это тоже часть модели.</p>
+  <div class="filters"><span class="count">Уровень:</span><div class="seg" id="procSeg"></div></div>
+  <div class="flow" id="flow"></div>
+  <div class="out" id="stDetail" aria-live="polite"></div>
+</section>
+
+<section class="pane" id="riski" data-title="Риски и границы" data-grp="Модель">
+  <h2>Риски конструкции</h2>
+  <p class="intro">Четыре возражения, которые будут предъявлены первыми, и ответ модели на каждое. Если ответа нет, это честно сказано.</p>
+  <div class="scroll"><table><thead><tr><th>Возражение</th><th>В чём опасность</th><th>Ответ модели</th><th>Остаточный риск</th></tr></thead><tbody id="riskBody"></tbody></table></div>
+  <h3>Что уровень не меняет никогда</h3>
+  <div class="chk" id="never"></div>
+  <h3>Где проверять конструкцию первой</h3>
+  <p>Не в диагностике острых состояний, а в ведении хронических заболеваний: там пациент между визитами и так ведёт наблюдения, а врач и так на них опирается, только неформально. Формализовать происходящее легче, чем вводить новое. Проверяемая гипотеза пилота: у пациентов с подтверждённым уровнем 3 и выше отклонение обнаруживается раньше, а число необоснованных внеплановых обращений не растёт.</p>
+</section>
+
+<section class="pane" id="dannye" data-title="Профиль и данные" data-grp="Модель">
+  <h2>Профиль участия: что хранится и кто им владеет</h2>
+  <p class="intro">Уровень должен быть записан и пересчитываем, иначе он останется разговором. Ниже — профиль конкретного человека в том виде, в каком его увидели бы пациент и врач; он меняется вместе с расчётом в предыдущем разделе.</p>
+  <div class="out" id="prof" aria-live="polite"></div>
+  <div class="btnrow" style="display:flex;gap:6px;margin:10px 0"><button class="btn" id="jsonBtn">Показать в формате данных</button></div>
+  <pre id="json" style="display:none"></pre>
+  <div class="scroll"><table><thead><tr><th>Правило</th><th>Почему так</th></tr></thead><tbody id="ruleBody"></tbody></table></div>
+</section>
+
+    </main>
+  </div>
+</div>
+
+<footer class="foot"><div class="wrap">
+  <p>Уровень участия пациента · черновик для обсуждения от 28.09.2026 · не является медицинским изделием и не предназначен для диагностики или лечения</p>
+</div></footer>
+
+<script>
+(function(){
+"use strict";
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>Array.from(r.querySelectorAll(s));
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const li=a=>"<ul>"+a.map(x=>"<li>"+esc(x)+"</li>").join("")+"</ul>";
+
+/* ---------- УРОВНИ ---------- */
+const LV=[
+ {k:0,n:"Вне наблюдения",short:"0 · вне",
+  who:"Человек обращается к медицине эпизодически, по факту жалобы. Собственных записей нет.",
+  pat:["Приходит, когда уже болит","Описывает состояние по памяти, обычно неточно","Плановые обследования пропускает"],
+  doc:["Опирается только на измерения и осмотр","Описания пациента принимает с обычной осторожностью","Инструкции даёт в стандартном виде"],
+  gain:"Никакого дополнительного входа у врача нет. Это состояние по умолчанию, и для большинства оно нормально.",
+  dang:"Изменения замечаются поздно — не потому, что человек невнимателен, а потому, что не с чем сравнивать."},
+ {k:1,n:"Регулярные записи",short:"1 · записи",
+  who:"Человек ведёт простой дневник: самочувствие, сон, нагрузка, приём препаратов. Регулярно, но без структуры.",
+  pat:["Отмечает состояние по фиксированной шкале","Приходит на приём с записями, а не с воспоминаниями","Знает свою обычную норму"],
+  doc:["Получает динамику вместо среза","Может отличить «так было всегда» от «изменилось три недели назад»","Экономит время приёма на сборе анамнеза"],
+  gain:"Появляется базовая линия. Это главный скачок на всей шкале: без неё любое наблюдение — единичная точка.",
+  dang:"Записи могут быть нерегулярными или вестись только в плохие дни, и тогда картина смещена."},
+ {k:2,n:"Структурированное наблюдение",short:"2 · структура",
+  who:"Наблюдение ведётся по согласованному набору показателей, часть из них измеряется приборами: давление, пульс, вес, сахар, шаги.",
+  pat:["Измеряет по протоколу, а не когда вспомнил","Фиксирует ожидание до измерения — это позволяет проверить калибровку","Отмечает пропуски так же, как измерения"],
+  doc:["Получает сопоставимые во времени данные","Может судить о тренде, а не об отдельных значениях","Реже назначает повторные измерения «для проверки»"],
+  gain:"Наблюдение становится данными: его можно сравнивать, усреднять и проверять.",
+  dang:"Избыточные измерения сами по себе повышают тревогу и число случайных отклонений."},
+ {k:3,n:"Калиброванное наблюдение",short:"3 · калибровка",
+  who:"Подтверждено, что ощущения и оценки человека совпадают с измерениями: он отмечает ожидание до анализа, и оно систематически сбывается.",
+  pat:["Различает «мне кажется» и «я знаю», и это проверено данными","Не сообщает о значимых изменениях, которые ничем не подтверждаются","Соблюдает правила обращения при тревожных признаках"],
+  doc:["Может учитывать описание пациента при неоднозначных данных","Сокращает частоту контрольных визитов без потери безопасности","Раньше получает сигнал об изменении состояния"],
+  gain:"Появляется то, чего нет ни у одного прибора: непрерывное наблюдение с известной точностью.",
+  dang:"Калибровка проверена на прошлом периоде и может ухудшиться; её нужно перепроверять."},
+ {k:4,n:"Партнёрство в ведении",short:"4 · партнёрство",
+  who:"Человек с длительной историей калиброванного наблюдения, обычно при хроническом заболевании, участвует в корректировке плана в согласованных границах.",
+  pat:["Корректирует согласованные параметры в заданных пределах","Ведёт наблюдение непрерывно, включая периоды хорошего самочувствия","Обращается по согласованным правилам, а не по тревоге"],
+  doc:["Опирается на наблюдения как на часть клинической картины","Реже видит пациента, но лучше знает его течение","Меняет план по данным, а не по жалобам на приёме"],
+  gain:"Между визитами появляется управление, а не пустота.",
+  dang:"Самый узкий уровень: он оправдан для отдельных хронических состояний и не переносится на всё подряд."}
+];
+let sel=2;
+function renderLv(){
+  $("#lvls").innerHTML=LV.map(l=>`<button class="lv" data-k="${l.k}" aria-pressed="${l.k===sel}"><span class="dot">${l.k}</span>${esc(l.short.split(" · ")[1])}</button>`).join("");
+  $("#lvls").addEventListener("click",e=>{const b=e.target.closest("[data-k]");if(b){sel=+b.dataset.k;renderLv();renderProc();}});
+  const l=LV[sel];
+  $("#lvDetail").innerHTML=`<h3 style="margin-top:0">Уровень ${l.k}. ${esc(l.n)}</h3><p>${esc(l.who)}</p>
+   <div class="dgrid"><div><h5>Что делает пациент</h5>${li(l.pat)}</div><div><h5>Что меняется для врача</h5>${li(l.doc)}</div></div>
+   <div class="callout ok" style="margin-bottom:8px"><b>Что даёт уровень.</b> ${esc(l.gain)}</div>
+   <div class="callout" style="margin-bottom:0"><b>Чем ограничен.</b> ${esc(l.dang)}</div>`;
+  $$("#procSeg button").forEach(b=>b.setAttribute("aria-pressed",+b.dataset.k===sel?"true":"false"));
+}
+
+/* ---------- КРИТЕРИИ ---------- */
+const CR=[
+ {id:"reg",n:"Регулярность",w:.25,l:"Доля дней с записями за последние 3 месяца",u:"%",v:70,
+  show:"Непрерывность наблюдения. Ценность даёт кривая, а не яркие отдельные эпизоды.",
+  how:"Считается автоматически по журналу: дни с записью к общему числу дней."},
+ {id:"cal",n:"Калибровка",w:.3,l:"Совпадение ожиданий с измерениями",u:"%",v:60,
+  show:"Насколько то, что человек сообщает, соответствует тому, что показывают приборы и врач.",
+  how:"Человек отмечает ожидание до измерения или анализа; сравнивается с результатом. Ключевое: ожидание фиксируется заранее, иначе память подстраивается под факт."},
+ {id:"spec",n:"Специфичность",w:.25,l:"Доля сообщений о значимом изменении, не подтвердившихся ничем",u:"%",v:30,inv:true,
+  show:"Цена высокой чувствительности. Внимание не только обнаруживает ощущение, но и порождает его, поэтому ложные тревоги нужно измерять отдельно.",
+  how:"Доля обращений и отметок «значимое изменение», не подтверждённых измерением, осмотром или повторным появлением."},
+ {id:"bound",n:"Соблюдение границ",w:.2,l:"Доля тревожных признаков, при которых человек обратился за помощью",u:"%",v:100,
+  show:"Главный критерий безопасности. Без него высокая наблюдательность опаснее низкой.",
+  how:"По журналу: отмечен признак из списка остановки — было ли обращение. Один пропуск обнуляет уровень до 1."}
+];
+function score(){
+  let s=0; CR.forEach(c=>{const v=+$("#c_"+c.id).value; s+=(c.inv?100-v:v)*c.w;});
+  return s;
+}
+function lvlFromScore(s,bound){
+  if(bound<100) return 1;
+  if(s>=85) return 4; if(s>=70) return 3; if(s>=50) return 2; if(s>=25) return 1; return 0;
+}
+function renderCalc(){
+  $("#ctrl").innerHTML=`<div class="grp">Признаки наблюдения</div>`+CR.map(c=>
+   `<label for="c_${c.id}">${esc(c.l)}: <output id="o_${c.id}"></output>${esc(c.u)}</label><input type="range" id="c_${c.id}" min="0" max="100" step="5" value="${c.v}">`).join("")
+   +`<div class="grp">Контекст</div><label for="c_hist">Длительность непрерывного наблюдения</label><select id="c_hist"><option value="0">меньше месяца</option><option value="1">1–3 месяца</option><option value="2" selected>3–12 месяцев</option><option value="3">больше года</option></select>
+     <label for="c_cond">Ситуация</label><select id="c_cond"><option value="well">здоров, профилактика</option><option value="chron" selected>хроническое заболевание под наблюдением</option><option value="acute">острое состояние</option></select>`;
+  CR.forEach(c=>{const el=$("#c_"+c.id);el.addEventListener("input",calc);});
+  ["#c_hist","#c_cond"].forEach(s=>$(s).addEventListener("input",calc));
+  $("#critBody").innerHTML=CR.map(c=>`<tr><td><b>${esc(c.n)}</b></td><td>${esc(c.show)}</td><td>${esc(c.how)}</td><td>${Math.round(c.w*100)}%</td></tr>`).join("");
+  calc();
+}
+function calc(){
+  CR.forEach(c=>$("#o_"+c.id).textContent=$("#c_"+c.id).value);
+  const s=score(), bound=+$("#c_bound").value, hist=+$("#c_hist").value, cond=$("#c_cond").value;
+  let lv=lvlFromScore(s,bound);
+  const caps=[];
+  if(hist<2&&lv>2){lv=2;caps.push("Уровень ограничен до 2: наблюдение ведётся меньше трёх месяцев, калибровку не на чем подтвердить.");}
+  if(hist<3&&lv>3){lv=3;caps.push("Уровень 4 требует больше года непрерывного наблюдения.");}
+  if(cond==="acute"&&lv>1){lv=1;caps.push("Острое состояние: уровень участия временно понижен до 1. Решения принимает врач, наблюдения пациента используются только как анамнез.");}
+  if(cond==="well"&&lv>3){lv=3;caps.push("Уровень 4 предусмотрен для ведения хронического заболевания, а не для профилактики у здорового человека.");}
+  if(bound<100)caps.push("Нарушение границ: уровень понижен до 1 независимо от остальных признаков. Это единственное быстрое движение вниз по шкале.");
+  const L=LV[lv];
+  const cls=lv>=3?"v-ok":lv>=2?"v-hold":"v-stop";
+  $("#res").innerHTML=`<p class="verdict ${cls}">Уровень ${lv}. ${esc(L.n)}</p>
+   <div class="gauge ${s<50?"bad":s<70?"warn":""}"><i style="width:${Math.max(2,Math.round(s))}%"></i></div>
+   <p class="count" style="margin:2px 0 8px">Сводный показатель ${Math.round(s)} из 100 · признаки взвешены, безопасность имеет право вето</p>
+   <div class="kpis">
+    <div class="${$("#c_reg").value<50?"bad":""}"><b>${$("#c_reg").value}%</b>регулярность</div>
+    <div class="${$("#c_cal").value<60?"bad":"good"}"><b>${$("#c_cal").value}%</b>калибровка</div>
+    <div class="${$("#c_spec").value>40?"bad":""}"><b>${$("#c_spec").value}%</b>ложных тревог</div>
+    <div class="${bound<100?"bad":"good"}"><b>${bound}%</b>границы соблюдены</div>
+   </div>
+   ${caps.length?`<div class="risk" style="margin-bottom:0"><b>Ограничения уровня.</b>${li(caps)}</div>`:`<p style="margin:0">Ограничений нет: признаки, длительность наблюдения и ситуация согласуются с этим уровнем.</p>`}
+   <p class="count" style="margin:8px 0 0">Что это меняет в процессах — в разделе «Влияние на процессы»; уровень там подставляется автоматически.</p>`;
+  sel=lv; renderLv();
+  $("#gateNote").innerHTML=`<b>Почему безопасность имеет право вето.</b> Соблюдение границ — единственный признак, который не усредняется с остальными: любой пропуск тревожного признака понижает уровень до 1, какими бы хорошими ни были регулярность и калибровка. Высокая наблюдательность без соблюдения границ опаснее, чем отсутствие наблюдения: человек углубляется в ощущение вместо того, чтобы обратиться за помощью.`;
+  renderProc();
+  renderProfile(lv,L,s,bound,hist,cond);
+  $("#json").textContent=JSON.stringify({version:"0.1",participation:{level:lv,label:L.n,score:Math.round(s),
+   signals:{regularity:+$("#c_reg").value,calibration:+$("#c_cal").value,false_alarms:+$("#c_spec").value,boundaries:bound},
+   history_months:[0,"1-3","3-12",">12"][hist],context:cond},
+   effect:{decides:"врач на любом уровне",changes:["частота наблюдения","порог обращения","вес описаний пациента при неоднозначных данных","что пациент делает между визитами"]},
+   review:{recalculated:"ежеквартально",downgrade_on:"нарушение границ — немедленно"},
+   labeling:"модель участия, не диагностический инструмент"},null,2);
+}
+
+
+function renderProfile(lv,L,sc,bound,hist,cond){
+  const histT=["меньше месяца","от месяца до трёх","от трёх месяцев до года","больше года"][hist];
+  const condT={well:"здоров, профилактическое наблюдение",chron:"хроническое заболевание под наблюдением",acute:"острое состояние"}[cond];
+  const reg=+$("#c_reg").value, cal=+$("#c_cal").value, spec=+$("#c_spec").value;
+  const rows=[
+   ["Уровень участия",`${lv} — ${L.n}`,"Пересчитывается по журналу ежеквартально. Сам человек его не назначает."],
+   ["Сводный показатель",`${Math.round(sc)} из 100`,"Взвешенная оценка четырёх признаков; безопасность имеет право вето."],
+   ["Регулярность наблюдения",`записи в ${reg}% дней за три месяца`, reg>=70?"Непрерывности достаточно, чтобы говорить о динамике.":reg>=40?"Пропусков много: картина смещена в сторону плохих дней.":"Наблюдение эпизодическое, базовой линии нет."],
+   ["Калибровка",`ожидания сбываются в ${cal}% случаев`, cal>=80?"Описания человека можно учитывать при неоднозначных данных.":cal>=60?"Описания полезны как дополнительный довод, не более.":"Ощущения расходятся с измерениями: опираться на них нельзя."],
+   ["Ложные тревоги",`${spec}% сообщений не подтвердились`, spec<=20?"Специфичность высокая: сообщения о значимых изменениях заслуживают внимания.":spec<=40?"Умеренный уровень ложных тревог, стоит следить за динамикой.":"Ложных тревог много: высокая чувствительность без специфичности перегружает врача."],
+   ["Соблюдение границ", bound>=100?"нарушений не зафиксировано":`пропущено ${100-bound}% тревожных признаков`, bound>=100?"Главное условие безопасности выполнено.":"Уровень понижен до 1 автоматически: без обращения при тревожных признаках наблюдательность опасна."],
+   ["Длительность наблюдения",histT, hist>=3?"Истории достаточно для верхних уровней.":hist>=2?"Истории хватает для калибровки, но не для партнёрства в ведении.":"Истории мало: калибровку не на чем подтвердить."],
+   ["Ситуация",condT, cond==="acute"?"В остром состоянии уровень временно понижается: решения принимает врач, наблюдения используются как анамнез.":cond==="well"?"Для профилактики верхняя граница — уровень 3.":"Именно здесь конструкция проверяется в первую очередь."]
+  ];
+  const ch=["частота наблюдения","порог обращения за помощью","вес описаний пациента при неоднозначных данных","что пациент делает между визитами"];
+  $("#prof").innerHTML=`<h3 style="margin-top:0">Профиль участия</h3>
+   <div class="scroll" style="margin-top:6px"><table><thead><tr><th>Поле</th><th>Значение</th><th>Что это означает</th></tr></thead><tbody>
+   ${rows.map(r=>`<tr><td><b>${esc(r[0])}</b></td><td>${esc(r[1])}</td><td>${esc(r[2])}</td></tr>`).join("")}
+   </tbody></table></div>
+   <div class="dgrid" style="margin-top:12px">
+    <div><h5>Что профиль меняет</h5>${li(ch)}</div>
+    <div><h5>Чего профиль не меняет</h5>${li(["кто ставит диагноз — врач на любом уровне","назначение и отмену лекарственной терапии","действия при тревожных признаках","объём положенной базовой помощи"])}</div>
+   </div>
+   <p class="count" style="margin:10px 0 0">Профиль принадлежит пациенту, не содержит диагнозов и не является медицинским заключением. Понижение при нарушении границ происходит немедленно, всё остальное движение — только вверх и постепенно.</p>`;
+}
+
+/* ---------- ПРОЦЕССЫ ---------- */
+const ST=[
+ {n:"Профилактика",w:[0,2,3,3,3],what:"Регулярность обследований и раннее замечание отклонения от собственной нормы",
+  chg:{0:"стандартный график диспансеризации",2:"график дополняется собственными измерениями между визитами",3:"интервал между визитами может обсуждаться по данным наблюдения",4:"наблюдение ведётся непрерывно, визит назначается по тренду"}},
+ {n:"Маршрутизация",w:[0,1,2,3,3],what:"Порог обращения и точность описания на входе",
+  chg:{0:"обращение по факту жалобы",1:"обращение с записями: понятно, когда началось",2:"обращение по правилу, а не по тревоге",3:"описание пациента помогает выбрать специалиста с первого раза"}},
+ {n:"Анализы",w:[0,1,2,3,3],what:"Интерпретация результата в контексте собственной динамики",
+  chg:{0:"результат сравнивается с референсом",1:"результат сравнивается с прошлыми значениями пациента",2:"ожидание фиксируется до анализа — появляется проверка калибровки",3:"расхождение ожидания и результата само становится сигналом"}},
+ {n:"Лучевая диагностика",w:[0,0,0,0,0],what:"Участие пациента не влияет: сигнал считывается прибором, а не человеком",
+  chg:{0:"вес участия отсутствует на всех уровнях"}},
+ {n:"Решение врача",w:[0,0,1,2,2],what:"Вес описаний пациента при неоднозначных данных",
+  chg:{0:"решение по измерениям и осмотру",2:"описание пациента учитывается как дополнительный довод",3:"при расхождении данных описание калиброванного пациента имеет вес",4:"наблюдения входят в клиническую картину наравне с измерениями"}},
+ {n:"Документация",w:[0,2,3,3,4],what:"Часть записи формируется наблюдениями пациента",
+  chg:{0:"анамнез со слов на приёме",1:"к записи прикладывается дневник",2:"структурированные наблюдения попадают в карту как данные",4:"наблюдения ведутся непрерывно и доступны врачу между визитами"}},
+ {n:"Лечение",w:[0,0,1,2,4],what:"Корректировка согласованных параметров в заданных границах",
+  chg:{0:"план выполняется как назначено",2:"пациент сообщает о переносимости по протоколу",3:"переносимость учитывается при плановой корректировке",4:"согласованные параметры корректируются пациентом в пределах, заданных врачом"}},
+ {n:"Контроль качества",w:[0,0,1,1,1],what:"Обратная связь пациента как источник для экспертизы",
+  chg:{0:"экспертиза по документации",2:"наблюдения пациента дополняют картину случая при разборе"}},
+ {n:"Мониторинг",w:[0,1,2,3,3],what:"Непрерывные данные вместо срезов",
+  chg:{0:"данные появляются в момент визита",1:"есть история между визитами",2:"данные сопоставимы во времени",3:"изменение тренда обнаруживается до появления жалоб"}}
+];
+function wLabel(w){return ["нет","низкий","заметный","высокий","определяющий"][w]}
+let selSt=4;
+function renderProcSeg(){
+  $("#procSeg").innerHTML=LV.map(l=>`<button data-k="${l.k}" aria-pressed="${l.k===sel}">${l.k}</button>`).join("");
+  $("#procSeg").addEventListener("click",e=>{const b=e.target.closest("[data-k]");if(b){sel=+b.dataset.k;renderLv();renderProc();}});
+}
+function renderProc(){
+  $("#flow").innerHTML=ST.map((s,i)=>{const w=s.w[sel];
+   return `<div class="cell ${w?"act":"none"} ${i===selSt?"":""}" data-st="${i}" style="cursor:pointer${i===selSt?";outline:2px solid var(--ink);outline-offset:1px":""}"><b>стадия ${i+1}</b>${esc(s.n)}<span class="w">${wLabel(w)}</span></div>`}).join("");
+  const s=ST[selSt], w=s.w[sel];
+  const keys=Object.keys(s.chg).map(Number).filter(k=>k<=sel).sort((a,b)=>b-a);
+  const txt=keys.length?s.chg[keys[0]]:s.chg[0];
+  $("#stDetail").innerHTML=`<h3 style="margin-top:0">${selSt+1}. ${esc(s.n)} · вес участия: ${wLabel(w)}</h3>
+   <p>${esc(s.what)}</p>
+   <p><b>На уровне ${sel}:</b> ${esc(txt)}.</p>
+   ${w===0?`<div class="callout" style="margin-bottom:0">На этой стадии участие пациента не меняет процесс ни на одном уровне. Это часть модели, а не пробел: там, где сигнал считывается прибором, наблюдательность человека не добавляет информации.</div>`:`<div class="callout ok" style="margin-bottom:0">Решение на этой стадии принимает врач независимо от уровня. Меняется вес входящего сигнала, а не право решать.</div>`}`;
+  $$("#procSeg button").forEach(b=>b.setAttribute("aria-pressed",+b.dataset.k===sel?"true":"false"));
+}
+
+/* ---------- РИСКИ ---------- */
+const RK=[
+ ["Неравенство доступа","Человек с хорошей самодиагностикой получит больше внимания, а нуждаются часто как раз те, кто наблюдать за собой не умеет","Уровень расширяет вход, но не сокращает базовый объём помощи: нижние уровни получают тот же стандарт, что и раньше. Модель не должна использоваться для распределения дефицитного ресурса","Остаётся: при нехватке времени врача внимание всё равно смещается к тем, кто приходит с данными"],
+ ["Тревожная фиксация","Высокая наблюдательность плюс высокая тревожность дают поток ложных тревог, который выглядит как прилежность","Специфичность — отдельный измеряемый признак с весом 25%, а не побочный эффект. Рост ложных тревог понижает уровень, а не повышает его","Остаётся: сам факт регулярного наблюдения может усиливать тревогу у предрасположенных людей"],
+ ["Ответственность врача","Если врач учёл наблюдения пациента и ошибся, отвечает всё равно он — и это не располагает их учитывать","Уровень не переносит ответственность: он меняет вес входящего сигнала, а решение и его обоснование остаются за врачом. Наблюдения входят в картину как анамнез, а не как заключение","Остаётся: юридического механизма учёта таких данных сегодня нет, и это придётся решать отдельно"],
+ ["Ложное чувство защищённости","Регулярная практика наблюдения создаёт ощущение, что всё под контролем, и человек пропускает плановые обследования","Модель прямо фиксирует: отсутствие ощущения не означает здоровья, значительная часть органов не даёт сигнала вообще. Регулярность обследований входит в признак соблюдения границ","Остаётся: убеждение сильнее инструкции, и проверять это нужно в пилоте"]
+];
+const NEVER=[
+ "Кто ставит диагноз. На любом уровне это врач.",
+ "Назначение и отмену лекарственной терапии.",
+ "Действия при тревожных признаках: боль в груди, обморок, внезапная слабость, нарушение речи, одышка в покое. На любом уровне — немедленное обращение за помощью.",
+ "Объём базовой помощи: нижние уровни не получают меньше, чем получали бы без модели.",
+ "Необходимость плановых обследований: наблюдение за собой их не заменяет."
+];
+const RULES=[
+ ["Профиль принадлежит пациенту","Это описание его собственного наблюдения, а не оценка личности; он вправе видеть его целиком и отказаться от ведения"],
+ ["Уровень пересчитывается, а не присваивается","Считается по данным журнала ежеквартально; заявленная самим человеком компетентность в расчёт не входит"],
+ ["Понижение при нарушении границ — немедленное","Единственное быстрое движение вниз; всё остальное движение только вверх и постепенно"],
+ ["Уровень не передаётся между заболеваниями автоматически","Калибровка подтверждена на конкретном наборе показателей; при новом состоянии проверяется заново"],
+ ["Уровень не влияет на объём положенной помощи","Иначе модель превращается в инструмент ограничения доступа"],
+ ["Профиль не является медицинским заключением","Не содержит диагнозов и не может использоваться как основание для решения о лечении"]
+];
+
+/* ---------- НАВИГАЦИЯ ---------- */
+const panes=$$("section.pane");
+function go(id,push){const t=panes.find(p=>p.id===id)||panes[0];panes.forEach(p=>p.classList.toggle("on",p===t));$$("nav.side button").forEach(b=>b.setAttribute("aria-current",b.dataset.go===t.id?"true":"false"));$("#mob").value=t.id;if(push!==false){try{history.replaceState(null,"","#"+t.id)}catch(e){}}}
+let h="",last="";panes.forEach(p=>{if(p.dataset.grp!==last){h+=`<li class="grp">${esc(p.dataset.grp)}</li>`;last=p.dataset.grp;}h+=`<li><button data-go="${p.id}">${esc(p.dataset.title)}</button></li>`;});
+$("#sidenav").innerHTML=h;
+$("#mob").innerHTML=panes.map(p=>`<option value="${p.id}">${esc(p.dataset.title)}</option>`).join("");
+$("#mob").addEventListener("change",e=>go(e.target.value));
+document.addEventListener("click",e=>{const b=e.target.closest("[data-go]");if(b){e.preventDefault();go(b.dataset.go);}
+ const c=e.target.closest("[data-st]");if(c){selSt=+c.dataset.st;renderProc();}});
+$("#printBtn").addEventListener("click",()=>window.print());
+$("#jsonBtn").addEventListener("click",()=>{const j=$("#json");const on=j.style.display==="none";j.style.display=on?"block":"none";$("#jsonBtn").textContent=on?"Скрыть формат данных":"Показать в формате данных";});
+$("#riskBody").innerHTML=RK.map(r=>`<tr><td><b>${esc(r[0])}</b></td><td>${esc(r[1])}</td><td>${esc(r[2])}</td><td>${esc(r[3])}</td></tr>`).join("");
+$("#never").innerHTML=NEVER.map(x=>`<label><input type="checkbox" checked disabled> <span>${esc(x)}</span></label>`).join("");
+$("#ruleBody").innerHTML=RULES.map(r=>`<tr><td><b>${esc(r[0])}</b></td><td>${esc(r[1])}</td></tr>`).join("");
+renderProcSeg(); renderLv(); renderCalc();
+go((location.hash||"").slice(1)||"shkala",false);
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Трек освоения базы знаний по ИИ в медицине</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Serif:wght@500;600&family=IBM+Plex+Sans+Condensed:wght@500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#F7FAF9; --panel:#FFFFFF; --ink:#16302C; --ink2:#4A615C; --line:#CFDDD9;
+  --tint:#E4F0EC; --accent:#0B6E60; --accent2:#084F45; --warn:#9A5B00; --warntint:#FBF0DE;
+  --danger:#A3322A; --dangertint:#FBE7E4; --info:#2F5D8A; --infotint:#E6EEF7;
+  --serif:"IBM Plex Serif", Georgia, "Times New Roman", serif;
+  --sans:"IBM Plex Sans", "Segoe UI", Roboto, Arial, sans-serif;
+  --cond:"IBM Plex Sans Condensed", "Arial Narrow", Arial, sans-serif;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#0F1B19; --panel:#152623; --ink:#E3EFEC; --ink2:#A4BAB5; --line:#2C4540;
+    --tint:#1B332F; --accent:#4FC2AE; --accent2:#7ED9C8; --warn:#E3A64A; --warntint:#33280F;
+    --danger:#EE8A80; --dangertint:#3A1D1A; --info:#8DB6E0; --infotint:#172A3D;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#0F1B19; --panel:#152623; --ink:#E3EFEC; --ink2:#A4BAB5; --line:#2C4540;
+  --tint:#1B332F; --accent:#4FC2AE; --accent2:#7ED9C8; --warn:#E3A64A; --warntint:#33280F;
+  --danger:#EE8A80; --dangertint:#3A1D1A; --info:#8DB6E0; --infotint:#172A3D;
+}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*::before,*::after{box-sizing:inherit}
+body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.6 var(--sans);-webkit-text-size-adjust:100%}
+a{color:var(--accent)}
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.wrap{max-width:1180px;margin:0 auto;padding:0 20px}
+header.top{border-bottom:1px solid var(--line);background:var(--panel)}
+.top .wrap{display:flex;flex-wrap:wrap;gap:8px 18px;align-items:center;padding-top:12px;padding-bottom:12px}
+.brand{font-family:var(--cond);font-size:14px;color:var(--ink2)}
+.toplinks{display:flex;flex-wrap:wrap;gap:6px;margin-left:auto}
+.toplinks a.home{text-decoration:none;white-space:nowrap}
+.toplinks button,.toplinks a.home,.btn{font:500 14px var(--sans);background:transparent;color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:5px 10px;cursor:pointer}
+.toplinks button:hover,.btn:hover{border-color:var(--accent);color:var(--accent)}
+.hero{padding:40px 0 18px}
+.hero h1{font:600 clamp(28px,4.4vw,44px)/1.12 var(--serif);margin:0 0 14px;max-width:22ch;letter-spacing:-.01em}
+.hero p.lead{font-size:18px;max-width:70ch;color:var(--ink2);margin:0 0 10px}
+.task{border-left:3px solid var(--accent);background:var(--tint);padding:12px 16px;margin:18px 0 6px;max-width:80ch;border-radius:0 6px 6px 0}
+.task b{font-weight:600}
+.meta{font-family:var(--cond);font-size:14px;color:var(--ink2);margin-top:10px}
+.layout{display:grid;grid-template-columns:250px 1fr;gap:28px;padding:18px 0 60px}
+nav.side{position:sticky;top:env(safe-area-inset-top,0px);align-self:start;max-height:100vh;overflow:auto;padding-top:8px}
+nav.side ol{list-style:none;margin:0;padding:0}
+nav.side li{margin:0}
+nav.side .grp{font-family:var(--cond);font-size:13px;color:var(--ink2);margin:14px 0 4px}
+nav.side button{display:block;width:100%;text-align:left;background:none;border:0;border-left:2px solid transparent;padding:5px 10px;font:15px/1.35 var(--sans);color:var(--ink);cursor:pointer}
+nav.side button:hover{color:var(--accent)}
+nav.side button[aria-current="true"]{border-left-color:var(--accent);color:var(--accent);font-weight:600;background:var(--tint)}
+.mobnav{display:none;margin:10px 0}
+.mobnav select{width:100%;font:16px var(--sans);padding:8px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--ink)}
+section.pane{display:none}
+section.pane.on{display:block}
+h2{font:600 28px/1.2 var(--serif);margin:4px 0 8px}
+h3{font:600 19px/1.3 var(--serif);margin:26px 0 8px}
+.pane > p.intro{color:var(--ink2);max-width:75ch;margin:0 0 18px}
+p,li{max-width:78ch}
+.tree{font:15px/1.55 var(--sans);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:16px 18px;overflow-x:auto}
+.tree ul{list-style:none;margin:0;padding-left:20px;border-left:1px solid var(--line)}
+.tree > ul{border-left:0;padding-left:0}
+.tree li{position:relative;padding:3px 0 3px 12px;max-width:none}
+.tree li::before{content:"";position:absolute;left:-20px;top:15px;width:26px;border-top:1px solid var(--line)}
+.tree > ul > li::before{display:none}
+.tree .branch{font-weight:600}
+.tree .cnt{font-family:var(--cond);color:var(--ink2);font-size:13px;margin-left:6px}
+.tree button.lnk{background:none;border:0;padding:0;color:var(--accent);font:inherit;cursor:pointer;text-decoration:underline;text-underline-offset:2px}
+.tree .note{color:var(--ink2)}
+.tree .plan{color:var(--ink2);font-style:italic}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px;margin:10px 0}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:14px 16px}
+.card h4{margin:0 0 6px;font:600 16px/1.3 var(--sans)}
+.card p{margin:0;color:var(--ink2);font-size:15px}
+.card .foot{margin-top:8px;font-family:var(--cond);font-size:13px;color:var(--ink2)}
+.scroll{overflow-x:auto;border:1px solid var(--line);border-radius:8px;background:var(--panel);margin:10px 0}
+table{border-collapse:collapse;width:100%;font-size:14.5px;line-height:1.45}
+th,td{text-align:left;vertical-align:top;padding:9px 12px;border-bottom:1px solid var(--line)}
+th{font:500 13.5px var(--cond);color:var(--ink2);background:var(--tint);position:sticky;top:0}
+tr:last-child td{border-bottom:0}
+td.num{white-space:nowrap}
+.tag{display:inline-block;font:500 12.5px var(--cond);padding:1px 7px;border-radius:10px;border:1px solid var(--line);white-space:nowrap;margin:1px 2px 1px 0}
+.t-doc{background:var(--tint);color:var(--accent2);border-color:transparent}
+.t-obs{background:var(--infotint);color:var(--info);border-color:transparent}
+.t-inf{background:var(--warntint);color:var(--warn);border-color:transparent}
+.t-proj{background:var(--dangertint);color:var(--danger);border-color:transparent}
+.filters{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:8px 0}
+.filters input,.filters select{font:15px var(--sans);padding:6px 9px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--ink);min-width:0}
+.filters input[type=search]{flex:1 1 220px}
+.chip{font:500 14px var(--sans);border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:16px;padding:4px 11px;cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--panel)}
+.count{font-family:var(--cond);font-size:13.5px;color:var(--ink2)}
+/* путь случая — главная интерактивная полоса */
+.path{display:grid;grid-template-columns:repeat(9,minmax(96px,1fr));gap:0;margin:16px 0 4px;overflow-x:auto;padding-bottom:4px}
+.stage{position:relative;background:none;border:0;cursor:pointer;padding:34px 6px 8px;text-align:center;color:var(--ink);font:500 14px/1.25 var(--sans)}
+.stage::before{content:"";position:absolute;left:0;right:0;top:15px;border-top:2px solid var(--line)}
+.stage .dot{position:absolute;left:50%;top:6px;width:20px;height:20px;margin-left:-10px;border-radius:50%;background:var(--panel);border:2px solid var(--line);font:600 11px/16px var(--cond);color:var(--ink2)}
+.stage:hover .dot{border-color:var(--accent)}
+.stage[aria-pressed="true"] .dot{background:var(--accent);border-color:var(--accent);color:var(--panel)}
+.stage[aria-pressed="true"]{color:var(--accent)}
+.stage[aria-pressed="true"]::before{border-top-color:var(--accent)}
+.detail{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:16px 18px;margin-top:8px}
+.detail h3{margin-top:0}
+.dgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px 22px}
+.dgrid h5{margin:0 0 4px;font:500 13.5px var(--cond);color:var(--ink2)}
+.dgrid ul{margin:0;padding-left:18px}
+.dgrid li{font-size:15px;margin:2px 0}
+.steps{counter-reset:s;list-style:none;padding:0;margin:10px 0}
+.steps > li{counter-increment:s;position:relative;padding:12px 14px 12px 52px;border:1px solid var(--line);border-radius:8px;background:var(--panel);margin-bottom:8px;max-width:none}
+.steps > li::before{content:counter(s);position:absolute;left:14px;top:12px;width:26px;height:26px;border-radius:50%;background:var(--tint);color:var(--accent2);font:600 14px/26px var(--cond);text-align:center}
+.steps h4{margin:0 0 4px;font:600 16px var(--sans)}
+.steps .row{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:4px 18px;font-size:14.5px;color:var(--ink2);margin-top:6px}
+.steps .row b{color:var(--ink);font-weight:500}
+.calc{display:grid;grid-template-columns:minmax(240px,320px) 1fr;gap:18px;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:16px 18px;margin:12px 0}
+.calc label{display:block;font-size:14.5px;margin:10px 0 2px}
+.calc input[type=range]{width:100%;accent-color:var(--accent)}
+.calc output{font-family:var(--cond);font-weight:500}
+.cm{display:grid;grid-template-columns:auto 1fr 1fr;gap:4px;font-size:14.5px;align-self:start}
+.cm div{padding:9px 10px;border-radius:6px;background:var(--tint)}
+.cm .h{background:none;font:500 13.5px var(--cond);color:var(--ink2);padding:4px 6px}
+.cm .bad{background:var(--dangertint);color:var(--danger)}
+.cm .big{font:600 20px var(--cond);display:block}
+.res{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:10px 26px;border-top:1px solid var(--line);padding-top:12px;font-size:15px}
+.res b{font:600 22px var(--cond);display:block;color:var(--accent)}
+.callout{border-left:3px solid var(--warn);background:var(--warntint);padding:10px 14px;border-radius:0 6px 6px 0;margin:12px 0;max-width:80ch}
+.callout.ok{border-left-color:var(--accent);background:var(--tint)}
+.gl dt{font-weight:600;margin-top:12px}
+.gl dd{margin:2px 0 0;color:var(--ink2);max-width:78ch}
+.gl .grp{font:600 17px var(--serif);margin:22px 0 4px;color:var(--accent2)}
+footer.foot{border-top:1px solid var(--line);padding:18px 0 30px;color:var(--ink2);font-size:14px}
+@media (max-width:860px){
+  .layout{grid-template-columns:1fr}
+  nav.side{display:none}
+  .mobnav{display:block}
+  .calc{grid-template-columns:1fr}
+  .path{grid-template-columns:repeat(9,112px)}
+}
+@media print{
+  header.top,nav.side,.mobnav,.filters,.toplinks{display:none!important}
+  section.pane{display:block!important;page-break-before:always}
+  .layout{display:block}
+  body{background:#fff;color:#000}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+<style>
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--paper);border-bottom:1px solid var(--line);padding:8px 0;margin-bottom:8px}
+.bar .in{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center}
+.prog{flex:1 1 200px;height:8px;background:var(--tint);border-radius:5px;overflow:hidden;min-width:140px}
+.prog i{display:block;height:100%;background:var(--accent);width:0;transition:width .25s}
+.bar .n{font-family:var(--cond);font-size:13.5px;color:var(--ink2);white-space:nowrap}
+.steps2{list-style:none;padding:0;margin:0}
+.st{border:1px solid var(--line);border-radius:10px;background:var(--panel);margin-bottom:12px;overflow:hidden}
+.st.done{border-color:var(--accent)}
+.st > .hd{display:flex;gap:12px;align-items:flex-start;padding:14px 16px;cursor:pointer;user-select:none}
+.st .idx{flex:0 0 32px;height:32px;border-radius:50%;background:var(--tint);color:var(--accent2);font:600 15px/32px var(--cond);text-align:center}
+.st.done .idx{background:var(--accent);color:var(--panel)}
+.st .ttl{flex:1;min-width:0}
+.st .ttl h3{margin:0;font:600 19px/1.25 var(--serif)}
+.st .ttl .sub{font-family:var(--cond);font-size:13px;color:var(--ink2);margin-top:3px}
+.st .bd{display:none;padding:0 16px 16px}
+.st.open .bd{display:block}
+.st h4{margin:16px 0 5px;font:500 13.5px var(--cond);color:var(--ink2);text-transform:uppercase;letter-spacing:.04em}
+.st p{margin:0 0 8px}
+.st .why{border-left:3px solid var(--warn);background:var(--warntint);padding:10px 14px;border-radius:0 6px 6px 0;margin:0 0 4px;max-width:80ch}
+.st .do{border:1px dashed var(--accent);border-radius:8px;padding:12px 14px;background:var(--tint);margin:4px 0 0}
+.st .do ol{margin:6px 0 0;padding-left:20px}
+.st .do li{margin:3px 0}
+.q{border-top:1px solid var(--line);margin-top:14px;padding-top:10px}
+.q p.qq{font-weight:500;margin:0 0 6px}
+.q .ans{display:none;color:var(--ink2);border-left:3px solid var(--accent);padding-left:10px;margin:6px 0 0}
+.q.on .ans{display:block}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:12px}
+.btn.pri{background:var(--accent);color:var(--panel);border-color:var(--accent)}
+.tag2{display:inline-block;font:500 12.5px var(--cond);padding:1px 8px;border-radius:10px;background:var(--tint);color:var(--accent2);margin-right:4px}
+.gate{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:0 8px 8px 0;padding:14px 16px;margin:16px 0}
+.gate h4{margin:0 0 6px;font:600 17px var(--serif)}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.seg button{border:0;background:var(--panel);color:var(--ink);padding:7px 13px;font:500 14px var(--sans);cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--accent);color:var(--panel)}
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap">
+  <span class="brand">База знаний · ИИ в медицине · трек освоения</span>
+  <div class="toplinks">
+    <a class="btn home" href="index.html" title="К начальному меню комплекта">← Комплект</a>
+    <button data-go="start">Быстрый старт</button>
+    <button data-go="track">Трек</button>
+    <button data-go="zrelo">Дальше</button>
+    <button id="printBtn">Печать</button>
+  </div>
+</div></header>
+
+<div class="wrap"><div class="hero">
+  <h1>Трек освоения: от нуля до рабочего владения темой</h1>
+  <p class="lead">База знаний построена как справочник — её открывают под вопрос, а не читают подряд. Эта страница даёт второй вход: два трека — девять шагов по российскому рынку и шесть по зарубежным. Каждый шаг даёт одну идею, одно действие с видимым результатом и проверку. Порядок построен так, чтобы после каждого шага можно было остановиться и уже что-то уметь.</p>
+  <div class="task"><b>Как устроен шаг.</b> Сначала — зачем это нужно прямо сейчас и что будет, если не знать. Потом одна идея, без деталей. Потом действие в базе знаний, результат которого виден сразу. В конце — вопрос для самопроверки. Шаг занимает 8–12 минут; российский трек — около полутора часов, зарубежный — около часа, и проходить их за один раз не нужно. У треков отдельный прогресс.</p></div>
+  <div class="meta">Редакция 2 · 28.09.2026 · два трека: 9 + 6 шагов · отметки о пройденном хранятся в этом браузере · справочник: <a href="00-ukazatel-bz-ii-medicina.html">российский</a> и <a href="01-zarubezhnyy-segment.html">зарубежный</a> сегменты</div>
+</div></div>
+
+<div class="wrap">
+  <div class="bar"><div class="in">
+    <span class="n" id="pn">Шаг 0 из 9</span>
+    <div class="prog"><i id="pi"></i></div>
+    <span class="n" id="pt"></span>
+    <button class="btn" id="next">Следующий шаг</button>
+    <button class="btn" id="clear">Сбросить отметки</button>
+    <span class="n" id="persistNote"></span>
+  </div></div>
+
+  <div class="mobnav"><label for="mob" class="count">Раздел</label><select id="mob"></select></div>
+  <div class="layout">
+    <nav class="side" aria-label="Разделы"><ol id="sidenav"></ol></nav>
+    <main id="main">
+
+<section class="pane" id="start" data-title="Быстрый старт" data-grp="Вход">
+  <h2>Быстрый старт: 20 минут до первого результата</h2>
+  <p class="intro">Если времени мало, сделайте только это. За три действия вы получите готовый ответ на самый частый вопрос о любом медицинском ИИ-продукте и увидите, как устроена база.</p>
+  <ol class="steps" id="qs"></ol>
+  <div class="gate"><h4>Что вы будете уметь после быстрого старта</h4>
+  <p>Отвечать на вопрос «попадёт ли этот продукт под регистрацию как медизделие и от чего это зависит» — и показывать, откуда взят ответ. Этого достаточно для первого разговора с заказчиком или командой; остальное трек добавляет слой за слоем.</p></div>
+</section>
+
+<section class="pane" id="track" data-title="Шаги" data-grp="Освоение">
+  <h2 id="trackH">Девять шагов</h2>
+  <div class="filters"><div class="seg" id="trSeg"><button data-v="ru" aria-pressed="true">Российский рынок · 9 шагов</button><button data-v="en" aria-pressed="false">Зарубежные рынки · 6 шагов</button></div></div>
+  <p class="intro" id="trackI">Нажмите на шаг, чтобы раскрыть. Отметка «Пройдено» сохраняется в этом браузере, прогресс виден в полосе сверху. Шаги идут от того, что нужно в разговоре завтра, к тому, что нужно на горизонте месяцев.</p>
+  <ol class="steps2" id="trackList"></ol>
+</section>
+
+<section class="pane" id="zrelo" data-title="После трека" data-grp="Освоение">
+  <h2>После трека: как пользоваться справочником дальше</h2>
+  <p class="intro">Пройденный трек даёт каркас, и дальше справочник работает так, как задумано: по запросу. Ниже — двенадцать рабочих ситуаций со ссылками прямо в нужные разделы зрелой части базы. Ссылки открывают сразу тот раздел, а не страницу целиком.</p>
+  <div class="scroll"><table><thead><tr><th>Ситуация</th><th>Куда идти</th><th>Что оттуда взять</th></tr></thead><tbody id="mapBody"></tbody></table></div>
+  <h3>Что стоит перечитывать</h3>
+  <ol>
+    <li><b>Реестры документов</b> — они устаревают быстрее всего. Проверяйте перед подготовкой любого документа для заказчика.</li>
+    <li><b>Рынок и игроки</b> — состояние на сентябрь 2026 года; через полгода часть фактов сменится.</li>
+    <li><b>Каркас</b> — путь случая, уровни документов, метрики, ворота — меняется медленно, его достаточно освоить один раз.</li>
+  </ol>
+  <div class="gate"><h4>Признак, что материал освоен</h4>
+  <p>Вы можете объяснить своими словами, не заглядывая в базу: из чего складывается путь случая, кто в медицине платит и за что, от чего зависит статус медизделия, почему модельная метрика не доказывает пользы и что мешает пилоту стать промышленным внедрением. Всё остальное — детали, которые ищутся за минуту.</p></div>
+</section>
+
+    </main>
+  </div>
+</div>
+
+<footer class="foot"><div class="wrap">
+  <p>Трек освоения · редакция 1 от 28.09.2026 · <a href="index.html">комплект</a> · <a href="00-ukazatel-bz-ii-medicina.html">российский сегмент</a> · <a href="01-zarubezhnyy-segment.html">зарубежный сегмент</a> · <a href="02-paralleli-i-modeli.html">параллели и модели</a></p>
+</div></footer>
+
+<script>
+(function(){
+"use strict";
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>Array.from(r.querySelectorAll(s));
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const mem={};let persist=true;
+try{localStorage.setItem("kb_probe","1");localStorage.removeItem("kb_probe");}catch(e){persist=false;}
+const st={get(k,d){if(!persist)return k in mem?mem[k]:d;try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return k in mem?mem[k]:d}},
+ set(k,v){mem[k]=v;if(!persist)return;try{localStorage.setItem(k,JSON.stringify(v))}catch(e){persist=false;}}};
+
+const QS=[
+ {n:"Откройте квалификатор сценария",t:"В зарубежном сегменте есть раздел «Квалификатор сценария»: восемь типовых продуктов и их статус в четырёх юрисдикциях.",l:["01-zarubezhnyy-segment.html#qual","Открыть квалификатор"]},
+ {n:"Выберите сценарий, ближайший к вашему продукту",t:"Например, голосовой ввод записи приёма, подсказку врачу по клиническим рекомендациям или расшифровку анализов для пациента. Посмотрите не только вердикт, но и основание под ним: именно оно объясняет, почему статус такой."},
+ {n:"Сформулируйте одно предложение",t:"«Наш продукт — <что он делает> с назначением <какое назначение заявлено>, поэтому он <скорее изделие / зависит от формулировок / скорее нет>, потому что <основание>». Это предложение и есть результат: с него начинается любой разговор о регуляторике продукта."}
+];
+
+const T=[
+ {t:"Путь медицинского случая",min:10,
+  why:"Без этой оси любой разговор о медицинском ИИ рассыпается на отдельные частные случаи. С ней вы за минуту понимаете, о какой части системы идёт речь и кто в ней участвует. Это первое, что даёт общий язык с врачом и с заказчиком.",
+  idea:"Случай проходит девять стадий: профилактика, обращение и маршрутизация, лабораторная диагностика, инструментальная диагностика, врачебное решение, документация, лечение, оплата и контроль качества, мониторинг. На каждой стадии свои данные, свой заказчик и своя цена ошибки. ИИ-продукт почти всегда живёт на одной-двух стадиях, но обязан знать соседние: данные приходят слева, а деньги — справа.",
+  doo:["Откройте путь случая и щёлкните по стадии «Оплата и контроль качества»","Посмотрите, кто там заказчик и какие метрики названы","Определите, на какой стадии живёт продукт, который вам ближе всего"],
+  link:["00-ukazatel-bz-ii-medicina.html#put","Путь случая"],
+  q:"Почему продукту, работающему на стадии документации, важно знать стадию оплаты?",
+  a:"Потому что дефект в медицинском документе превращается в дефект в счёте: ошибка, допущенная при документировании, обнаруживается уже при экспертизе качества и стоит клинике денег. Стадии связаны через одни и те же данные."},
+ {t:"Кто платит и за что",min:10,
+  why:"В медицине тот, кто пользуется продуктом, почти никогда за него не платит. Непонимание этого — самая частая причина, почему хороший пилот не превращается в контракт: команда доказала пользу врачу, а деньги лежат у региона или фонда.",
+  idea:"В сделке три разные роли: пользователь (врач, эксперт, пациент), заказчик (регион, клиника, фонд) и плательщик (бюджет, ОМС, ДМС, сам пациент). Продукт должен давать ценность каждому, но по-разному: пользователю — экономию времени, заказчику — движение его показателя, плательщику — экономику. У каждого типа заказчика свой источник денег и свой цикл решения.",
+  doo:["Откройте раздел заказчиков и найдите тип, ближайший к вашему случаю","Прочитайте колонку «Кто решает и как платит»","Выпишите три вопроса из списка вопросов к заказчику, которые вы зададите на первой встрече"],
+  link:["00-ukazatel-bz-ii-medicina.html#zak","Заказчики и деньги"],
+  q:"Врачи в пилоте довольны, клиника согласна продолжать, но контракта нет. Где искать причину?",
+  a:"Скорее всего, в разрыве между заказчиком и плательщиком: клиника не платит сама, внедрение финансируется регионом или фондом, а их показатель продукт пока не двигает. Нужно найти, чей KPI меняется, и измерить именно его."},
+ {t:"Статус медицинского изделия",min:12,
+  why:"От этого зависит срок выхода на рынок: недели или полтора года. Решение принимается в начале, а цену ошибки платят в конце, когда переделывать поздно.",
+  idea:"Статус определяет не технология, а назначение, заявленное производителем. Одна и та же модель в формулировке «помогает врачу заметить отклонение» и «выявляет заболевание» попадает в разные категории. Общая тенденция 2026 года: регуляторы США и Великобритании сужают периметр изделия там, где врач сам проверяет результат, а Евросоюз сохраняет двойной контур правил об изделиях и об ИИ.",
+  doo:["Пройдите быстрый старт, если ещё не проходили","Откройте квалификатор и сравните два сценария: голосовой ввод записи приёма и подсказку по клиническим рекомендациям","Найдите, чем различаются основания в колонке США"],
+  link:["01-zarubezhnyy-segment.html#qual","Квалификатор сценария"],
+  q:"Продукт готовит черновик записи приёма. Что переведёт его в категорию медицинского изделия?",
+  a:"Добавление функций, влияющих на клиническое решение: подстановка диагнозов и кодов, предложение назначений или действие без проверки врачом. Пока инструмент только расшифровывает и структурирует под контролем врача, он остаётся вне периметра."},
+ {t:"Где лежат данные",min:10,
+  why:"Проект может остановиться не на модели, а на доступе к данным: они лежат в системах, к которым нужно подключаться по правилам, и используются на определённых основаниях. Это выясняется на первой встрече, а не на третьем месяце.",
+  idea:"Основные источники: электронная медицинская карта в МИС, лаборатория в ЛИС, изображения в PACS, счета в реестрах фондов, а сверху — ЕГИСЗ с региональными сегментами. Данные о здоровье относятся к особой категории, поэтому у любого использования должно быть законное основание, а для обучения моделей — обезличивание по установленному порядку. Подключение стороннего сервиса к государственным системам само по себе требует статуса и регистрации.",
+  doo:["Откройте глоссарий и прочитайте подряд термины ЕГИСЗ, МИС, ЭМД и обезличивание","Для каждого отметьте, есть ли у вашего сценария доступ к этому источнику","Выпишите, какого доступа не хватает — это и есть первый риск проекта"],
+  link:["00-ukazatel-bz-ii-medicina.html#gloss","Глоссарий"],
+  q:"Чем электронный медицинский документ отличается от записи в медицинской карте и почему это важно для ИИ?",
+  a:"Документ подписан и имеет доказательственную силу в экспертизе и в споре. Поэтому вывод модели становится его частью только после подтверждения врачом: до подписи это подсказка, после — юридически значимое утверждение, за которое отвечает врач."},
+ {t:"Метрики и цена ошибки",min:12,
+  why:"Именно здесь ломаются переговоры о приёмке. Команда показывает 95% точности, заказчик слышит «почти без ошибок», а в реальном потоке врачи получают сотни ложных срабатываний и перестают пользоваться продуктом.",
+  idea:"Метрики делятся на три уровня: модельные (что умеет модель), продуктовые (пользуется ли ею человек) и клинико-экономические (что изменилось у заказчика). Модельная метрика без продуктовой ничего не доказывает. Отдельная ловушка — зависимость от распространённости: при редкой патологии даже хорошая модель даёт в основном ложные тревоги, и эту нагрузку несут врачи.",
+  doo:["Откройте калькулятор цены ошибки","Оставьте чувствительность 95% и специфичность 90%, поставьте распространённость 2% и посмотрите долю ложных среди срабатываний","Поднимите распространённость до 20% и сравните: это разница между скринингом и работой с отобранной группой"],
+  link:["00-ukazatel-bz-ii-medicina.html#metriki","Метрики и калькулятор"],
+  q:"Заказчик просит зафиксировать в договоре точность 95%. Что ответить?",
+  a:"Уточнить, о какой метрике речь, и добавить к ней вторую сторону: чувствительность без специфичности и без расчёта PPV при реальной распространённости не описывает нагрузку на врачей. В критерии приёмки лучше закладывать долю ложных срабатываний на поток и продуктовую метрику использования."},
+ {t:"Почему LLM требует других метрик",min:10,
+  why:"Языковые модели попадают в медицину через документацию и ассистентов — это самый быстрорастущий класс продуктов. Проверять их привычными способами нельзя, и ошибка здесь дороже: неверный факт попадает в юридически значимый документ.",
+  idea:"Метрики текстового совпадения вроде BLEU и ROUGE для медицины не годятся: ответ может почти дословно совпадать с эталоном и содержать неверную дозу. Измеряют фактическую точность относительно источника, полноту извлечения по полям, долю галлюцинаций и долю корректных отказов. Архитектурный ответ тот же: факты подаются модели из источника истины, а у каждого утверждения есть ссылка, которую можно проверить без модели.",
+  doo:["Откройте раздел метрик и найдите объяснение, почему BLEU и ROUGE не подходят","Посмотрите в реестре стандарт по извлечению данных из неструктурированных записей","Сформулируйте, как в вашем сценарии проверялось бы каждое утверждение ответа"],
+  link:["00-ukazatel-bz-ii-medicina.html#metriki","Метрики"],
+  q:"Сводка истории болезни выглядит безупречно. Как убедиться, что в ней нет выдуманного факта?",
+  a:"Сверить каждое утверждение с записями, из которых оно выведено: у утверждения должна быть ссылка на источник, а числа должны сверяться кодом, а не глазами. Правдоподобность текста ничего не говорит о его верности."},
+ {t:"Восемь ворот от пилота к внедрению",min:12,
+  why:"Большинство медицинских ИИ-проектов застревает именно между пилотом и промышленной эксплуатацией: модель работает, а внедрения нет. Причины почти всегда неновые — не решили с регистрацией, с интеграцией, с владельцем процесса или с деньгами на тиражирование.",
+  idea:"Путь разбит на восемь ворот: ценность и показатель заказчика, PoC на ретроспективных данных, врачебная валидация, регуляторная квалификация, пилот в клинике, промышленное внедрение, мониторинг и управление изменениями, масштабирование. У каждых ворот есть критерий прохождения и артефакт на выходе. Вопросы регистрации и денег на тиражирование решаются в начале, а не в конце.",
+  doo:["Откройте ворота и прочитайте критерии первых четырёх","Отметьте, на каких воротах сейчас находится ваш проект или проект, который вам интересен","Проверьте, есть ли артефакт предыдущих ворот; если нет — это и есть текущая задача"],
+  link:["00-ukazatel-bz-ii-medicina.html#cikl","От PoC до промышленности"],
+  q:"Пилот прошёл успешно, но тиражирования нет уже полгода. Какие ворота, скорее всего, не пройдены?",
+  a:"Чаще всего регуляторная квалификация (не решён вопрос статуса изделия) или масштабирование (нет источника финансирования и подтверждённого клинико-экономического эффекта). Оба вопроса должны были быть заданы на первых воротах."},
+ {t:"Иерархия документов",min:10,
+  why:"Ссылка на документ в разговоре с заказчиком работает только тогда, когда вы понимаете его вес. Ссылаться на стандарт как на обязательное требование — ошибка, которую заметят; не сослаться на обязательный акт — тоже.",
+  idea:"Шесть уровней: федеральные законы, указы и поручения, акты Правительства, ведомственные акты, национальные стандарты, международные аналоги. Нижестоящее не противоречит вышестоящему и обычно принимается в его развитие. Стандарты стоят особняком: применяются добровольно, но становятся обязательными, когда на них ссылается акт или когда производитель заявил соответствие в досье.",
+  doo:["Откройте реестр и включите фильтр по уровню «Национальные стандарты»","Посмотрите, какие документы показаны с отступом — это принятые в развитие других","Найдите документ, который прямо касается вашего сценария, и запомните его уровень"],
+  link:["00-ukazatel-bz-ii-medicina.html#reestr","Реестр документов"],
+  q:"Заказчик спрашивает, обязателен ли для вашего продукта ГОСТ. Что ответить?",
+  a:"Сам по себе — нет, стандарты применяются добровольно. Он становится обязательным, если на него ссылается нормативный акт или если производитель заявил соответствие ему в регистрационном досье. Второе — обычная практика, потому что иначе нечем доказывать качество."},
+ {t:"Зарубежный опыт и параллели с платежами",min:12,
+  why:"Зарубежные рынки на год-два раньше проходят те же развилки, и их решения — готовые аргументы в разговоре с российским заказчиком. А параллель с платёжными системами позволяет опереться на уже имеющийся у вас опыт, а не начинать с нуля.",
+  idea:"Медицинская помощь устроена как платёжная система с третьим плательщиком: услугу получает пациент, оказывает клиника, оплачивает фонд или страховая. Гарантийное письмо ДМС работает как платёжный мандат, экспертиза качества — как спор по операции, отбор случаев — как антифрод. Отсюда переносятся решения: кто ведёт остаток лимита, что доказывает исполнение, как действует отзыв согласия. Ломается параллель в одном месте: деньги можно вернуть, вмешательство — нет.",
+  doo:["Откройте параллели и найдите три строки с пометкой «прямое» соответствие","Откройте модель режимов и задайте сценарий с высоким риском в автономном режиме","Посмотрите, при каких условиях случай удерживается для врача"],
+  link:["02-paralleli-i-modeli.html#par","Параллели и модели"],
+  q:"Какой вывод из платёжной практики важнее всего для медицинского ИИ?",
+  a:"Всё, что в платежах разрешается спором после факта, в медицине нужно переносить на стадию до исполнения — в подтверждение врачом и согласование. Причина в необратимости вмешательства."}
+];
+
+
+const TEN=[
+ {t:"Зачем вообще смотреть на зарубежные рынки",min:8,
+  why:"Даже если вы не выходите за рубеж, эти рынки на год-два раньше проходят те же развилки, и их решения — готовые аргументы в разговоре с российским заказчиком. Ссылка на то, как вопрос решён у регулятора США или Великобритании, часто весит больше, чем собственное рассуждение.",
+  idea:"Зарубежный сегмент отвечает на три вопроса: что уже признано медицинским изделием и по каким основаниям, кто и как платит за ИИ, и что показали данные о реальном эффекте. Отдельный раздел собирает уроки для российской команды: каждый зарубежный факт там привязан к российской точке применения — конкретному сценарию или документу.",
+  doo:["Откройте раздел «Уроки для России»","Найдите три урока, которые касаются вашего сценария","Проверьте в колонке справа, к какому российскому документу или процессу они привязаны"],
+  link:["01-zarubezhnyy-segment.html#perenos","Уроки для России"],
+  q:"Российский заказчик сомневается, можно ли доверить модели отбор случаев на экспертизу. Какой зарубежный довод уместен?",
+  a:"Модель CMS: в шести штатах с 2026 года отдельные услуги проходят проверку обоснованности с применением ИИ, причём вознаграждение подрядчика привязано к доле полученной экономии, а добросовестные исполнители освобождаются от проверки. Это показывает и работающую схему оплаты, и механизм снятия сопротивления."},
+ {t:"Статус изделия в трёх юрисдикциях",min:12,
+  why:"Одинаковый продукт в США, ЕС и Великобритании получает разный статус, и от этого зависит и срок выхода, и стоимость. Ошибка здесь стоит не переделки интерфейса, а года работы.",
+  idea:"США: отдельного закона об ИИ нет, статус определяется назначением, а часть программ поддержки решений прямо исключена из определения изделия, если врач может проверить основание рекомендации. Евросоюз: двойной контур — регламент об изделиях плюс регламент об ИИ, где изделие с участием нотифицированного органа автоматически становится ИИ высокого риска. Великобритания: сузила периметр для инструментов, которые лишь готовят документацию под контролем врача. Общая тенденция — сужение периметра там, где решение остаётся за человеком.",
+  doo:["Откройте квалификатор и выберите сценарий «Голосовой ввод и черновик записи приёма»","Сравните основания для США, ЕС и Великобритании","Переключитесь на «Подсказка врачу по клиническим рекомендациям» и посмотрите, что изменилось"],
+  link:["01-zarubezhnyy-segment.html#qual","Квалификатор сценария"],
+  q:"Почему один и тот же черновик записи приёма в Великобритании не изделие, а в ЕС может им стать?",
+  a:"Британское руководство прямо выводит транскрибирование и подготовку черновиков под проверкой врача из-под режима изделия. В ЕС статус определяется медицинским назначением: как только инструмент подставляет диагнозы или влияет на назначения, появляется медицинская цель, а с ней — регламент об изделиях и категория высокого риска."},
+ {t:"Кто платит за ИИ за рубежом",min:10,
+  why:"Регуляторный допуск и деньги — разные вещи. Продукт может быть допущен и при этом не иметь источника оплаты; именно на этом останавливается большинство зарубежных стартапов.",
+  idea:"Шесть механизмов: отдельный код услуги, надбавка за новую технологию, доля подтверждённой экономии плательщика, подписка за врача в месяц, встраивание в лицензию медицинской информационной системы и экосистемный доступ без прямой оплаты. Самый поучительный для нас — оплата долей экономии: подрядчик получает процент от сокращения расходов, то есть платит результат, а не лицензия.",
+  doo:["Откройте раздел «Заказчики и деньги» в зарубежном сегменте","Найдите механизм, который подошёл бы вашему сценарию","Проверьте в колонке «Особенность продажи», кто принимает решение у этого типа заказчика"],
+  link:["01-zarubezhnyy-segment.html#dengi","Заказчики и деньги"],
+  q:"Чем оплата долей экономии лучше лицензии для сценария контроля качества?",
+  a:"Она снимает главный спор с плательщиком: не нужно доказывать ценность заранее, вознаграждение возникает только из подтверждённого результата. Взамен появляется требование к прослеживаемости: каждая сэкономленная сумма должна быть обоснована записями."},
+ {t:"Данные: допуск и локальность",min:10,
+  why:"Именно правила о данных чаще всего определяют, в какой стране продукт вообще может работать. Пример на виду: крупный пациентский ИИ-сервис при запуске исключил Великобританию, Европейскую экономическую зону и Швейцарию.",
+  idea:"США: медицинская информация защищена отдельным законом, а обработка сторонним поставщиком требует специального договора — поэтому корпоративные версии LLM продаются прежде всего как соответствующие ему. ЕС: данные о здоровье — особая категория, а новое пространство данных здравоохранения открывает легальный канал вторичного использования для исследований и обучения моделей. Страны Залива: данные в основном должны оставаться внутри страны, доступ идёт через национальные обмены.",
+  doo:["Откройте глоссарий зарубежного сегмента и прочитайте подряд HIPAA, BAA, GDPR и EHDS","Определите, какой из режимов применим к рынку, который вам интересен","Проверьте, что в вашей архитектуре мешает ему соответствовать"],
+  link:["01-zarubezhnyy-segment.html#gloss","Глоссарий"],
+  q:"Что нужно сделать до того, как подключать внешнюю языковую модель к реальным данным пациентов в США?",
+  a:"Заключить с поставщиком договор, по которому он принимает обязанности по защите медицинской информации. Без него обработка данных пациентов внешним сервисом незаконна, каким бы качественным ни был сам сервис."},
+ {t:"Что делать с моделью после выхода на рынок",min:10,
+  why:"Медицинский ИИ живёт годами, а модель меняется месяцами. Если не решить этот вопрос заранее, каждое переобучение будет означать новую регистрацию, и продукт застынет.",
+  idea:"Ответ регуляторов — заранее согласованный план изменений: в досье описывается, какие изменения модели допустимы и как они будут проверяться, после чего их можно вносить без новой заявки. Параллельно действует надзор после выхода на рынок: отчётность о происшествиях, мониторинг метрик и обнаружение дрейфа. Российская упрощённая процедура для модификаций ИИ-ПО решает ту же задачу, поэтому подход переносится почти целиком.",
+  doo:["Найдите в реестре зарубежного сегмента документ о заранее согласованном плане изменений","Сравните его назначение с российской процедурой модификаций в реестре российского сегмента","Опишите одним абзацем, какие изменения вашей модели вы бы объявили допустимыми заранее"],
+  link:["01-zarubezhnyy-segment.html#reestr","Реестр документов"],
+  q:"Зачем заранее описывать допустимые изменения, если модель ещё не зарегистрирована?",
+  a:"Потому что после регистрации сделать это дороже: без заранее согласованного плана каждое обновление требует новой процедуры. План — это способ сохранить возможность улучшать модель, не останавливая продукт."},
+ {t:"Выбор рынка выхода",min:10,
+  why:"Рынки различаются не качеством требований, а тем, чего они стоят. Для российской команды разница между ближайшим и дальним рынком измеряется годами и бюджетом.",
+  idea:"ЕАЭС — самый короткий путь: общие правила регистрации, русский язык, похожая логика регулирования, а регистрация по правилам союза открывает сразу несколько стран. Страны Залива требуют локальной валидации, партнёра в стране и хранения данных внутри. Китай — высокий барьер: локальные испытания и сильные национальные игроки. США и ЕС дают самый большой рынок и самую дорогую регуляторику. Отдельно стоит держать в уме, что допуск и попадание в закупку — разные события.",
+  doo:["Откройте обзор трёх регионов и сравните строку «Путь для российского продукта»","Откройте карту юрисдикций и посмотрите столбцы США, ЕС и Великобритании по тем же измерениям","Выберите один рынок и выпишите три требования, которые придётся выполнить первыми"],
+  link:["01-zarubezhnyy-segment.html#drugie","Обзор трёх регионов"],
+  q:"Почему ЕАЭС для российского продукта обычно короче, чем Залив?",
+  a:"Совпадают язык, нормативная логика и путь регистрации, а регистрация по правилам союза действует сразу в нескольких странах. В Заливе к регуляторике добавляются локальная клиническая валидация, партнёр в стране и требование хранить данные внутри."}
+];
+const TRACKS={ru:T,en:TEN};
+const TKEY={ru:"kb_track_done",en:"kb_track_done_en"};
+let cur="ru";
+
+const MAP=[
+ ["Готовлюсь к первой встрече с заказчиком",
+  [["00-ukazatel-bz-ii-medicina.html#zak","Заказчики и деньги"],["00-ukazatel-bz-ii-medicina.html#put","Путь случая"]],
+  "Список вопросов для первой встречи, три роли в сделке и показатели, на языке которых говорит заказчик"],
+ ["Решаем, нужна ли регистрация",
+  [["01-zarubezhnyy-segment.html#qual","Квалификатор сценария"],["00-ukazatel-bz-ii-medicina.html#reestr","Реестр: уровни 3 и 4"]],
+  "Оценка по заявленному назначению, класс риска и практический срок процедуры"],
+ ["Согласуем критерии приёмки",
+  [["00-ukazatel-bz-ii-medicina.html#metriki","Метрики и калькулятор"],["00-ukazatel-bz-ii-medicina.html#risk","Цена ошибки"]],
+  "Три уровня метрик, расчёт нагрузки от ложных срабатываний и ранние признаки рисков"],
+ ["Планируем пилот",
+  [["00-ukazatel-bz-ii-medicina.html#cikl","Восемь ворот"],["03-koncentraciya-i-ii-medicina.html#pilot","Протокол пилота"]],
+  "Критерии прохождения и артефакты каждых ворот, расчёт объёма выборки и готовый протокол"],
+ ["Пишем ТЗ для AI-команды",
+  [["00-ukazatel-bz-ii-medicina.html#reestr","Реестр: стандарт на ТЗ"],["00-ukazatel-bz-ii-medicina.html#metriki","Метрики"]],
+  "Структура требований по стандарту и измеримые критерии вместо общих формулировок"],
+ ["Спорим о том, кто отвечает за ошибку",
+  [["02-paralleli-i-modeli.html#konf","Модель конфликтов"],["02-paralleli-i-modeli.html#rezh","Модель режимов"]],
+  "Разбор сбоя по стадиям, распределение риска с контролями и без, правила эскалации к врачу"],
+ ["Готовим аргументы про зарубежный опыт",
+  [["01-zarubezhnyy-segment.html#perenos","Уроки для России"],["01-zarubezhnyy-segment.html#rynok","Рынок и игроки"]],
+  "Факты с источниками и готовые переносы с привязкой к российским документам"],
+ ["Выбираем рынок для выхода",
+  [["01-zarubezhnyy-segment.html#drugie","Обзор трёх регионов"],["01-zarubezhnyy-segment.html#jur","Карта юрисдикций"]],
+  "Сравнение ЕАЭС, Залива, Китая, США, ЕС и Великобритании по требованиям и стоимости входа"],
+ ["Объясняем термин коллеге",
+  [["00-ukazatel-bz-ii-medicina.html#gloss","Глоссарий, российский"],["01-zarubezhnyy-segment.html#gloss","Глоссарий, зарубежный"]],
+  "Расшифровка сокращения, определение и ссылка на документ-первоисточник"],
+ ["Считаем экономику контроля и строгость схемы",
+  [["02-paralleli-i-modeli.html#izd","Издержки контроля"],["04-processnaya-model.html#model","Процессная модель"]],
+  "Потери без контроля против цены строгости, узкое место конвейера и срок набора материала"],
+ ["Проверяем формулировки перед публикацией",
+  [["03-koncentraciya-i-ii-medicina.html#formul","Проверка формулировок"],["01-zarubezhnyy-segment.html#qual","Квалификатор"]],
+  "Подсветка заявлений медицинского назначения и варианты, как их переписать"],
+ ["Разбираемся, откуда брать данные",
+  [["00-ukazatel-bz-ii-medicina.html#gloss","Глоссарий: данные и системы"],["00-ukazatel-bz-ii-medicina.html#put","Путь случая: стадии"]],
+  "Какие системы держат нужные данные и на каком основании их можно использовать"]
+];
+
+let open=-1;
+const T_=()=>TRACKS[cur];
+function done(){return st.get(TKEY[cur],[])}
+function setDone(i,v){const d=done().filter(x=>x!==i); if(v)d.push(i); st.set(TKEY[cur],d); render();}
+function render(){
+  const d=done();
+  $("#trackList").innerHTML=T_().map((s,i)=>{
+    const isDone=d.includes(i);
+    return `<li class="st ${isDone?"done":""} ${open===i?"open":""}" data-i="${i}">
+     <div class="hd" data-t="${i}"><div class="idx">${isDone?"✓":i+1}</div>
+      <div class="ttl"><h3>${esc(s.t)}</h3><div class="sub">${s.min} мин${isDone?" · пройдено":""} · ${open===i?"свернуть":"развернуть"}</div></div></div>
+     <div class="bd">
+      <h4>Зачем это сейчас</h4><div class="why">${esc(s.why)}</div>
+      <h4>Одна идея</h4><p>${esc(s.idea)}</p>
+      <h4>Сделайте — результат виден сразу</h4>
+      <div class="do"><a class="btn pri" href="${s.link[0]}">${esc(s.link[1])}</a><ol>${s.doo.map(x=>`<li>${esc(x)}</li>`).join("")}</ol></div>
+      <div class="q" data-q="${i}"><p class="qq">Проверьте себя: ${esc(s.q)}</p><button class="btn" data-show="${i}">Показать ответ</button><div class="ans">${esc(s.a)}</div></div>
+      <div class="row"><button class="btn pri" data-done="${i}">${isDone?"Снять отметку":"Пройдено, дальше"}</button>
+      <span class="count">${i+1} из ${T_().length}</span></div>
+     </div></li>`}).join("");
+  const n=d.length;
+  $("#pn").textContent=`Шаг ${n} из ${T_().length}`;
+  $("#pi").style.width=Math.round(n/T_().length*100)+"%";
+  const left=T_().filter((s,i)=>!d.includes(i)).reduce((a,s)=>a+s.min,0);
+  $("#pt").textContent=n>=T_().length?"трек пройден":`осталось около ${left} мин`;
+  const w=$("#persistNote"); if(w)w.textContent=persist?"":"отметки сохранятся только до закрытия вкладки: браузер не разрешает хранение для файла, открытого с диска";
+}
+function toggle(i){open=open===i?-1:i;render();
+  const el=$(`.st[data-i="${i}"]`); if(el&&open===i&&el.scrollIntoView)el.scrollIntoView({block:"nearest"});}
+
+document.addEventListener("click",e=>{
+  const h=e.target.closest("[data-t]"); const dn=e.target.closest("[data-done]"); const sh=e.target.closest("[data-show]");
+  if(dn){const i=+dn.dataset.done;const was=done().includes(i);setDone(i,!was);if(!was){open=Math.min(i+1,T_().length-1);render();}return;}
+  if(sh){const q=$(`.q[data-q="${sh.dataset.show}"]`);if(q){q.classList.add("on");sh.style.display="none";}return;}
+  if(h){toggle(+h.dataset.t);return;}
+  const g=e.target.closest("[data-go]"); if(g){e.preventDefault();go(g.dataset.go);}
+});
+$("#next").addEventListener("click",()=>{const d=done();const i=T_().findIndex((s,k)=>!d.includes(k));go("track");toggle(i<0?0:i);});
+$("#clear").addEventListener("click",()=>{st.set(TKEY[cur],[]);open=-1;render();});
+$("#printBtn").addEventListener("click",()=>window.print());
+
+$("#qs").innerHTML=QS.map(q=>`<li><h4>${esc(q.n)}</h4><div>${esc(q.t)}</div>${q.l?`<div class="row"><a class="btn pri" href="${q.l[0]}">${esc(q.l[1])}</a></div>`:""}</li>`).join("");
+$("#mapBody").innerHTML=MAP.map(r=>`<tr><td><b>${esc(r[0])}</b></td><td>${r[1].map(l=>`<a href="${l[0]}">${esc(l[1])}</a>`).join("<br>")}</td><td>${esc(r[2])}</td></tr>`).join("");
+
+const panes=$$("section.pane");
+function go(id,push){const t=panes.find(p=>p.id===id)||panes[0];panes.forEach(p=>p.classList.toggle("on",p===t));$$("nav.side button").forEach(b=>b.setAttribute("aria-current",b.dataset.go===t.id?"true":"false"));$("#mob").value=t.id;if(push!==false){try{history.replaceState(null,"","#"+t.id)}catch(e){}}}
+let h="",last="";panes.forEach(p=>{if(p.dataset.grp!==last){h+=`<li class="grp">${esc(p.dataset.grp)}</li>`;last=p.dataset.grp;}h+=`<li><button data-go="${p.id}">${esc(p.dataset.title)}</button></li>`;});
+$("#sidenav").innerHTML=h;
+$("#mob").innerHTML=panes.map(p=>`<option value="${p.id}">${esc(p.dataset.title)}</option>`).join("");
+$("#mob").addEventListener("change",e=>go(e.target.value));
+$("#trSeg").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;cur=b.dataset.v;open=-1;
+ $$("#trSeg button").forEach(x=>x.setAttribute("aria-pressed",x===b?"true":"false"));
+ $("#trackH").textContent=cur==="ru"?"Девять шагов: российский рынок":"Шесть шагов: зарубежные рынки";
+ $("#trackI").textContent=cur==="ru"?"Шаги идут от того, что нужно в разговоре завтра, к тому, что нужно на горизонте месяцев. Отметка «Пройдено» сохраняется в этом браузере.":"Второй трек: проходить его имеет смысл после российского, потому что он опирается на тот же каркас. Полезен и без планов выхода за рубеж — как источник аргументов для российского заказчика.";
+ render();});
+render(); go((location.hash||"").slice(1)||"start",false);
+})();
+</script>
+</body>
+</html>
