@@ -5037,7 +5037,7 @@ document.addEventListener('keydown',e=>{
 // ── ПОВОДЫ · ВОПРОСЫ ДО/ПОСЛЕ · ЗАПИСЬ СЕССИИ ──────────────────────
 (function(){
   const $=id=>document.getElementById(id);
-  const FMT='cb-record-1';                      // версия формата записи
+  const FMT='cb-record-2';                      // версия формата записи
 
   // Шаблоны поводов: цель, режим, вопросы
   const T={};
@@ -5061,23 +5061,24 @@ document.addEventListener('keydown',e=>{
             {k:'done',t:'Удалось то, ради чего садились',type:'choice',opts:['да','частично','нет']}]}
   };
   const REASONS=[
-    ['Дискомфорт','😣','pain','soft',null],
-    ['Боль','🔴','pain','soft',null],
-    ['Острая боль','🔥','pain','soft',null],
-    ['Хроническая боль','⚡','pain','first',null],
-    ['Воспаление','🌡','pain','soft',null],
-    ['Расслабление','🌿','calm','first','solar'],
-    ['Восстановление','💚','well','deep','heart'],
-    ['Усталость','😴','calm','soft','solar'],
-    ['Концентрация','🎯','mind','first','brain'],
-    ['Тревога','😰','calm','first','solar'],
-    ['Интуиция','✨','mind','deep','brain'],
-    ['Профилактика','🛡','well','first','solar']
+    ['R01','Дискомфорт','😣','pain','soft',null],
+    ['R02','Боль','🔴','pain','soft',null],
+    ['R03','Острая боль','🔥','pain','soft',null],
+    ['R04','Хроническая боль','⚡','pain','first',null],
+    ['R05','Воспаление','🌡','pain','soft',null],
+    ['R06','Расслабление','🌿','calm','first','solar'],
+    ['R07','Восстановление','💚','well','deep','heart'],
+    ['R08','Усталость','😴','calm','soft','solar'],
+    ['R09','Концентрация','🎯','mind','first','brain'],
+    ['R10','Тревога','😰','calm','first','solar'],
+    ['R11','Интуиция','✨','mind','deep','brain'],
+    ['R12','Профилактика','🛡','well','first','solar']
   ];
   const RCOL={'Дискомфорт':'#ff8844','Боль':'#ff3322','Острая боль':'#ff0000','Хроническая боль':'#cc2200',
     'Воспаление':'#ff6600','Расслабление':'#22cc66','Восстановление':'#44aa44','Усталость':'#4488aa',
     'Концентрация':'#ffcc00','Тревога':'#aa44cc','Интуиция':'#44ccff','Профилактика':'#228844'};
-  REASONS.forEach(([n,ic,g,pr,org])=>{ T[n]={n,icon:ic,group:g,preset:pr,organ:org,
+  // код причины неизменяем: история держится на нём, а не на формулировке (Р-8)
+  REASONS.forEach(([c,n,ic,g,pr,org])=>{ T[n]={code:c,n,icon:ic,group:g,preset:pr,organ:org,
     pre:GROUPS[g].pre, post:GROUPS[g].post,
     postpone:(n==='Расслабление'||n==='Профилактика')?null:null }; });
 
@@ -5088,6 +5089,15 @@ document.addEventListener('keydown',e=>{
   const FALLBACK='Профилактика';
   const tOf=r=>T[r]||T[FALLBACK];
   let cur={reason:null,pre:{},post:{}};
+
+  // Старые записи без кода: код по строке, неизвестная строка — R00. Исходник не меняется.
+  function withCode(store,r){
+    if(!r||r.reasonCode||(store!=='index'&&store!=='sessions')) return r;
+    const t=T[r.reason], o=Object.assign({},r,{reasonCode:t?t.code:'R00'});
+    if(store==='sessions') o.reasonGroup=t?t.group:null;
+    if(!t) o.reasonUnknown=true;
+    return o;
+  }
 
   // ── Хранилище: указатель, сессии, ряды ──
   const DB={db:null,
@@ -5104,9 +5114,10 @@ document.addEventListener('keydown',e=>{
         tx.objectStore(store).put(obj); tx.oncomplete=()=>res(true); tx.onerror=()=>res(false); }); },
     async all(store){ const d=await this.open(); if(!d) return [];
       return new Promise(res=>{ const q=d.transaction(store,'readonly').objectStore(store).getAll();
-        q.onsuccess=()=>res(q.result||[]); q.onerror=()=>res([]); }); }
+        q.onsuccess=()=>res((q.result||[]).map(r=>withCode(store,r))); q.onerror=()=>res([]); }); }
   };
   window.CB_DB=DB;
+  window.CB_REASON_CODES=Object.fromEntries(REASONS.map(([c,n])=>[n,c]));
 
   // ── Отрисовка вопросов ──
   function qHTML(q,val,ns){
@@ -5202,7 +5213,7 @@ document.addEventListener('keydown',e=>{
     const sb=document.getElementById('session-start-btn');
     if(sb) sb.click();                       // строит список органов
     cur={reason:null,pre:{},post:{}};
-    $('rs-reasons').innerHTML=REASONS.map(([n,ic])=>
+    $('rs-reasons').innerHTML=REASONS.map(([,n,ic])=>
       `<div class="rs-item rs-reason" data-reason="${n}" style="--rc:${RCOL[n]}"><span style="color:${RCOL[n]}">${ic}</span> ${n}</div>`).join('');
     $('rs-questions').innerHTML=''; const rc=$('rs-card'); if(rc) rc.innerHTML='';
     document.getElementById('session-setup').style.display='none';
@@ -5293,7 +5304,7 @@ document.addEventListener('keydown',e=>{
     const rec={id,fmt:FMT,startedAt:new Date(started).toISOString(),
       tz:Intl.DateTimeFormat().resolvedOptions().timeZone,
       durationSec:Math.round((Date.now()-started)/1000),
-      reason:cur.reason,
+      reason:cur.reason, reasonCode:t.code, reasonGroup:t.group,
       stated:{pre:cur.pre,post:answers,note:note||null,postSkipped:!!skipped},
       set:{organ:cur.pre.area||window.__cbSavedOrgan||null,
            params:(()=>{const o={},ids=['t-in','t-h1','t-out','t-h2','s-h2','c-freq','c-force','heart-rate'];
@@ -5303,7 +5314,7 @@ document.addEventListener('keydown',e=>{
       measured:{device:null,samples:0},
       marked:{},derived:{}};
     const ok=await DB.put('sessions',rec);
-    await DB.put('index',{id,at:rec.startedAt,reason:cur.reason,
+    await DB.put('index',{id,at:rec.startedAt,reason:cur.reason,reasonCode:t.code,
       area:cur.pre.area||null, areaOther:cur.pre.areaOther||null,pre:cur.pre.level??null,post:answers.level??null,
       dur:rec.durationSec,device:false});
     started=null; cur={reason:null,pre:{},post:{}};

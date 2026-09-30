@@ -1,14 +1,15 @@
 # Запись сессии, хранение и выгрузка
 
 ## Версия формата
-`cb-record-1`. Следующая — `cb-record-2` с кодом причины (задача З-1, решение Р-8).
+`cb-record-2` — с кодом причины (задача З-1, решение Р-8). Предыдущая — `cb-record-1`.
+Старые записи при чтении получают `reasonCode` по строке; неизвестная строка — `R00` и `reasonUnknown: true`.
 Менять только с записью в `DECISIONS.md`.
 
 ## Состав записи
 | Группа | Поля | Происхождение |
 |---|---|---|
 | служебное | id, fmt, startedAt, tz, durationSec | — |
-| stated | reason, pre{ctx, area, quality, level}, post{level, change, done, hinder}, note, postSkipped | заявлено человеком |
+| stated | reason, reasonCode, reasonGroup, pre{ctx, area, quality, level}, post{level, change, done, hinder}, note, postSkipped | заявлено человеком |
 | set | organ, params{t-in, t-h1, t-out, t-h2, s-h2, c-freq, c-force, heart-rate}, preset | задано настройкой |
 | measured | device, samples, ряды пульса, RR-интервалов, SpO₂ | измерено прибором |
 | marked | события: контакт, Б1, Б2, отклик; ряд реакции | отмечено во время сессии |
@@ -17,7 +18,7 @@
 Состояния ответа: **дан**, **пропущен** (`__skipped`), **не задавался** (поля нет).
 
 ## Хранилище (IndexedDB `cb_records`)
-- `index` — строка на сессию для списков и сводок (~200 байт).
+- `index` — строка на сессию для списков и сводок (~200 байт), с `reasonCode`.
 - `sessions` — полная запись без сырья (<1 КБ).
 - `series` — сырые ряды (~10 КБ на 15 минут). **Пока не заполняется — задача З-2.**
 

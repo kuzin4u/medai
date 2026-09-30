@@ -123,10 +123,30 @@ const click = (W, el) => el && el.dispatchEvent(new W.MouseEvent('click', {bubbl
   idx.length && ses.length ? ok('запись сохранена в указатель и сессии') : bad('запись не сохранилась');
   if (ses.length) {
     const r = ses[ses.length-1];
-    r.fmt === 'cb-record-1' ? ok('формат записи cb-record-1') : bad('неверная версия формата');
+    r.fmt === 'cb-record-2' ? ok('формат записи cb-record-2') : bad('неверная версия формата');
+    r.reason === 'Боль' && r.reasonCode === 'R02' && r.reasonGroup === 'pain'
+      ? ok('в записи причина, код и группа') : bad('в записи нет кода или группы причины');
+    idx[idx.length-1].reasonCode === 'R02' ? ok('код причины в указателе') : bad('в указателе нет кода причины');
     r.stated.pre.level === 7 && r.stated.post.level === 3 ? ok('ответы до и после записаны') : bad('ответы записаны неверно');
     r.set.params && r.set.params['t-h2'] === 20 ? ok('фактические параметры записаны') : bad('параметры сессии не записаны');
   }
+
+  // Коды причин неизменяемы (Р-8): соответствие коду и строке
+  const CODES = {'Дискомфорт':'R01','Боль':'R02','Острая боль':'R03','Хроническая боль':'R04','Воспаление':'R05',
+    'Расслабление':'R06','Восстановление':'R07','Усталость':'R08','Концентрация':'R09','Тревога':'R10',
+    'Интуиция':'R11','Профилактика':'R12'};
+  JSON.stringify(W.CB_REASON_CODES) === JSON.stringify(CODES)
+    ? ok('коды причин R01–R12 соответствуют строкам') : bad('коды причин не совпадают с таблицей');
+
+  // Старые записи cb-record-1: код подставляется при чтении, исходник не меняется
+  await W.CB_DB.put('sessions', {id:'OLD1', fmt:'cb-record-1', reason:'Тревога'});
+  await W.CB_DB.put('sessions', {id:'OLD2', fmt:'cb-record-1', reason:'Бессонница'});
+  const old = Object.fromEntries((await W.CB_DB.all('sessions')).map(x => [x.id, x]));
+  old.OLD1.reasonCode === 'R10' && old.OLD1.reasonGroup === 'calm' && !old.OLD1.reasonUnknown
+    ? ok('старая запись получает код по строке') : bad('старая запись не получила код');
+  old.OLD2.reasonCode === 'R00' && old.OLD2.reasonUnknown === true && old.OLD2.reason === 'Бессонница'
+    ? ok('неизвестная причина — R00 с пометкой') : bad('неизвестная причина обработана неверно');
+  old.OLD1.fmt === 'cb-record-1' ? ok('версия старой записи не переписывается') : bad('версия старой записи изменена');
 
   // Возврат из настроек
   click(W, d.getElementById('tb-set'));
