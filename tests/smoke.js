@@ -116,7 +116,7 @@ const click = (W, el) => el && el.dispatchEvent(new W.MouseEvent('click', {bubbl
   const fbOrig = W.__cbFbTrack, fbStart = W.performance.now() - 2000;
   // сессия идёт уже ~250 мс: точки 1.9 и 1.95 внутри её первой секунды, 1.0 — до старта
   W.__cbFbTrack = () => ({start: fbStart, track: [{t:1.0, v:99}, {t:1.9, v:10}, {t:1.95, v:20}]});
-  W.__cbSessEvent('contact');
+  W.__cbSessEvent('hold'); W.__cbSessEvent('contact'); W.__cbSessEvent('release');
   click(W, d.getElementById('sess-exit'));
   await wait(250);
   d.getElementById('post-screen').classList.contains('on') ? ok('экран вопросов после сессии') : bad('нет экрана после сессии');
@@ -142,7 +142,7 @@ const click = (W, el) => el && el.dispatchEvent(new W.MouseEvent('click', {bubbl
     sr && idx.some(x => x.id === r.id) ? ok('series: запись с тем же id, что в sessions и index') : bad('в series нет записи сессии');
     if (sr) {
       const ev = sr.events.map(x => x.e).join(',');
-      ev === 'start,contact,end' ? ok('series.events: start, contact, end') : bad('series.events: ' + ev);
+      ev === 'start,hold,contact,release,end' ? ok('series.events: start, hold, contact, release, end') : bad('series.events: ' + ev);
       sr.events.every((x, i, a) => typeof x.t === 'number' && (!i || x.t >= a[i-1].t))
         ? ok('время событий растёт от старта') : bad('время событий неверно');
       JSON.stringify(sr.react) === '[20]' ? ok('react: окно сессии, одно значение в секунду') : bad('react: ' + JSON.stringify(sr.react));
@@ -187,6 +187,45 @@ const click = (W, el) => el && el.dispatchEvent(new W.MouseEvent('click', {bubbl
   const ess = esr && (await W.CB_DB.all('series')).find(x => x.id === esr.id);
   ess && Array.isArray(ess.react) && ess.react.length === 0 && ess.events.map(x => x.e).join(',') === 'start,end'
     ? ok('series после Escape: пустой react, события start и end') : bad('series после Escape записан неверно');
+
+  // З-11: производные от событий в derived
+  const D = W.CB_DERIVE, eq = (a, b) => JSON.stringify(a) === JSON.stringify(b);
+  const d1 = D([{t:0,e:'start'},{t:5,e:'hold'},{t:8.2,e:'contact'},{t:12,e:'b2'},{t:20,e:'release'},
+    {t:30,e:'hold'},{t:41.5,e:'release'},{t:45,e:'response',v:1},{t:50,e:'end'}]);
+  d1.holds === 2 && eq(d1.holdSec, [15, 11.5]) && eq(d1.holdOpen, [false, false]) && d1.lastHoldOpen === false
+    ? ok('derived: две задержки, длительности') : bad('derived: ' + JSON.stringify(d1));
+  eq(d1.contactSec, [3.2, null]) ? ok('derived: время до контакта, без контакта — null') : bad('contactSec: ' + JSON.stringify(d1.contactSec));
+  d1.boundaryReached === true && d1.response === 1 ? ok('derived: граница сред и отклик +1') : bad('derived: b2 или отклик неверны');
+  const d2 = D([{t:0,e:'start'},{t:4,e:'hold'},{t:9,e:'release'},{t:15,e:'end'}]);
+  d2.response === null && d2.boundaryReached === false ? ok('derived: сессия без отклика — null') : bad('derived без отклика: ' + JSON.stringify(d2));
+  const d3 = D([{t:0,e:'start'},{t:5,e:'hold'},{t:6,e:'contact'},{t:17.3,e:'end'}]);
+  eq(d3.holdSec, [12.3]) && eq(d3.holdOpen, [true]) && d3.lastHoldOpen === true
+    ? ok('derived: прервана в задержке — holdSec до end, lastHoldOpen') : bad('derived прерванной: ' + JSON.stringify(d3));
+  const d4 = D([{t:0,e:'start'},{t:5,e:'hold'},{t:9,e:'hold'},{t:16,e:'release'},{t:20,e:'end'}]);
+  d4.holds === 2 && eq(d4.holdSec, [4, 7]) && eq(d4.holdOpen, [true, false]) && d4.lastHoldOpen === false
+    ? ok('derived: задержка, оборванная следующим hold, помечена') : bad('derived оборванной: ' + JSON.stringify(d4));
+
+  // в сохранённой записи: одна задержка с контактом
+  const s1 = ses[ses.length-1];
+  s1.derived.holds === 1 && eq(s1.derived.holdOpen, [false]) && typeof s1.derived.contactSec[0] === 'number'
+    ? ok('derived записан при сохранении') : bad('derived в записи: ' + JSON.stringify(s1.derived));
+
+  // запись без derived (З-2): считается при чтении из series, исходник не переписывается
+  await W.CB_DB.put('sessions', {id:'S2OLD', fmt:'cb-record-2', reason:'Боль', reasonCode:'R02', derived:{}});
+  await W.CB_DB.put('series', {id:'S2OLD', fmt:'cb-record-2', react:[],
+    events:[{t:0,e:'start'},{t:3,e:'hold'},{t:10,e:'release'},{t:12,e:'end'}]});
+  const s2 = (await W.CB_DB.all('sessions')).find(x => x.id === 'S2OLD');
+  const raw2 = (await W.CB_DB.getMany('sessions', ['S2OLD'])).S2OLD;
+  s2.derived.holds === 1 && eq(s2.derived.holdSec, [7]) && eq(raw2.derived, {})
+    ? ok('без derived — считается при чтении, исходник не меняется') : bad('derived при чтении: ' + JSON.stringify(s2.derived));
+
+  // сырьё удалено — derived в записи остаётся; запись series восстанавливается для проверок ниже
+  const sr1 = (await W.CB_DB.getMany('series', [s1.id]))[s1.id];
+  await W.CB_DB.del('series', s1.id);
+  const kept = (await W.CB_DB.all('sessions')).find(x => x.id === s1.id);
+  !(await W.CB_DB.all('series')).some(x => x.id === s1.id) && kept.derived.holds === 1
+    ? ok('после удаления series derived остаётся') : bad('derived пропал вместе с series');
+  sr1 && await W.CB_DB.put('series', sr1);
 
   // Возврат из настроек
   click(W, d.getElementById('tb-set'));

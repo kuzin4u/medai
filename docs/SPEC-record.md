@@ -9,16 +9,21 @@
 | Группа | Поля | Происхождение |
 |---|---|---|
 | служебное | id, fmt, startedAt, tz, durationSec | — |
-| stated | reason, reasonCode, reasonGroup, pre{ctx, area, quality, level}, post{level, change, done, hinder}, note, postSkipped | заявлено человеком |
-| set | organ, params{t-in, t-h1, t-out, t-h2, s-h2, c-freq, c-force, heart-rate}, preset | задано настройкой |
-| measured | device, samples, ряды пульса, RR-интервалов, SpO₂ | измерено прибором |
+| ключ | reason, reasonCode, reasonGroup — в корне записи | выбрано человеком |
+| stated | pre{ctx, area, areaOther, quality, level}, post{level, change, done, hinder}, note, postSkipped | заявлено человеком |
+| set | organ, params{t-in, t-h1, t-out, t-h2, s-h2, c-freq, c-force, heart-rate}, preset, reactMethod (`voice` / `slider`, фактический способ; с З-12, Р-13) | задано настройкой |
+| measured | device, samples; ряды `rr` и `spo2` — только в `series` (З-2, З-3) | измерено прибором |
 | marked | пусто; события этапов и ряд реакции — в `series.events` и `series.react` (З-2, Р-12) | отмечено во время сессии |
-| derived | длительности задержек, время до контакта, ВСР, изменение показателей | вычислено моделью |
+| derived | holds, holdSec[] (с), holdOpen[], lastHoldOpen, contactSec[] (с, `null` без контакта), boundaryReached, response (±1 / `null`) — из `series.events` при сохранении (З-11); позже ВСР (З-3), acc* (З-8) | вычислено моделью |
+
+`holdOpen` — задержка закончилась без `release` (следующим `hold` или концом сессии); её `holdSec` — нижняя граница. Записи без `derived` получают его при чтении из `series`, пока сырьё есть; сама запись не переписывается.
+
+Причина — ключ записи, а не ответ: она задаёт шаблон и набор вопросов, по ней строятся указатель и сводка. Поэтому лежит в корне, рядом со служебными полями. `areaOther` — свободный текст, если область выбрана как «другое».
 
 Состояния ответа: **дан**, **пропущен** (`__skipped`), **не задавался** (поля нет).
 
 ## Хранилище (IndexedDB `cb_records`)
-- `index` — строка на сессию для списков и сводок (~200 байт), с `reasonCode`.
+- `index` — строка на сессию для списков и сводок (~200 байт), с `reasonCode`; поля: id, at, reason, reasonCode, area, areaOther, pre, post, dur, device.
 - `sessions` — полная запись без сырья (<1 КБ).
 - `series` — сырые ряды (~10 КБ на 15 минут), запись на сессию, ключ равен id сессии (З-2):
   - `fmt` — версия формата;

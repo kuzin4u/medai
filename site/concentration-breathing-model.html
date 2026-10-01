@@ -5106,6 +5106,31 @@ document.addEventListener('keydown',e=>{
     return o;
   }
 
+  // Производные от событий (З-11): переживают сворачивание сырья (З-7).
+  // Задержка без release (оборвана следующим hold или концом сессии) — holdOpen:true, её holdSec — нижняя граница.
+  function derive(ev){
+    const r1=x=>Math.round(x*10)/10, holdSec=[], holdOpen=[], contactSec=[];
+    let h=null, c=null, b2=false, resp=null, lastT=0;
+    const close=(t,open)=>{ holdSec.push(r1(t-h)); holdOpen.push(open); contactSec.push(c); h=null; c=null; };
+    (ev||[]).forEach(x=>{ lastT=x.t;
+      if(x.e==='hold'){ if(h!==null) close(x.t,true); h=x.t; }
+      else if(x.e==='release'){ if(h!==null) close(x.t,false); }
+      else if(x.e==='contact'){ if(h!==null&&c===null) c=r1(x.t-h); }
+      else if(x.e==='b2') b2=true;
+      else if(x.e==='response') resp=x.v>0?1:x.v<0?-1:null;
+      else if(x.e==='end'){ if(h!==null) close(x.t,true); }
+    });
+    if(h!==null) close(lastT,true);
+    return {holds:holdSec.length, holdSec, holdOpen,
+      lastHoldOpen:holdOpen.length?holdOpen[holdOpen.length-1]:false,
+      contactSec, boundaryReached:b2, response:resp};
+  }
+  // Записи без производных: считаются при чтении из series, пока сырьё есть. Исходник не меняется.
+  function withDerived(r,s){
+    if(!s||!Array.isArray(s.events)) return r;
+    return Object.assign({},r,{derived:Object.assign({},r.derived,derive(s.events))});
+  }
+
   // ── Хранилище: указатель, сессии, ряды ──
   const DB={db:null,
     open(){ return new Promise(res=>{ if(this.db) return res(this.db);
@@ -5124,11 +5149,25 @@ document.addEventListener('keydown',e=>{
       return new Promise(res=>{ const tx=d.transaction(Object.keys(objs),'readwrite');
         Object.entries(objs).forEach(([s,o])=>tx.objectStore(s).put(o));
         tx.oncomplete=()=>res(true); tx.onerror=tx.onabort=()=>res(false); }); },
+    async del(store,id){ const d=await this.open(); if(!d) return false;
+      return new Promise(res=>{ const tx=d.transaction(store,'readwrite');
+        tx.objectStore(store).delete(id); tx.oncomplete=()=>res(true); tx.onerror=()=>res(false); }); },
+    // выборочно по ключам: не поднимать всё хранилище (Р-10)
+    async getMany(store,ids){ const d=await this.open(), out={}; if(!d||!ids.length) return out;
+      return new Promise(res=>{ const os=d.transaction(store,'readonly').objectStore(store); let n=ids.length;
+        ids.forEach(id=>{ const q=os.get(id);
+          q.onsuccess=()=>{ if(q.result) out[id]=q.result; if(!--n) res(out); };
+          q.onerror=()=>{ if(!--n) res(out); }; }); }); },
     async all(store){ const d=await this.open(); if(!d) return [];
-      return new Promise(res=>{ const q=d.transaction(store,'readonly').objectStore(store).getAll();
-        q.onsuccess=()=>res((q.result||[]).map(r=>withCode(store,r))); q.onerror=()=>res([]); }); }
+      const rows=await new Promise(res=>{ const q=d.transaction(store,'readonly').objectStore(store).getAll();
+        q.onsuccess=()=>res((q.result||[]).map(r=>withCode(store,r))); q.onerror=()=>res([]); });
+      if(store!=='sessions') return rows;
+      const need=rows.filter(r=>r&&!(r.derived&&'holds' in r.derived)).map(r=>r.id);
+      const sr=await this.getMany('series',need);
+      return rows.map(r=>sr[r.id]?withDerived(r,sr[r.id]):r); }
   };
   window.CB_DB=DB;
+  window.CB_DERIVE=derive;
   window.CB_REASON_CODES=Object.fromEntries(REASONS.map(([c,n])=>[n,c]));
 
   // ── Отрисовка вопросов ──
@@ -5332,6 +5371,7 @@ document.addEventListener('keydown',e=>{
     const pre=Object.assign({},cur.pre);
     (cur.preAsked||[]).forEach(k=>{ if(!(k in pre)) pre[k]='__skipped'; });
     const note=$('ps-note').value.trim();
+    if(ended===null){ ended=sinceStart(); events.push({t:ended,e:'end'}); }
     const rec={id,fmt:FMT,startedAt:new Date(started).toISOString(),
       tz:Intl.DateTimeFormat().resolvedOptions().timeZone,
       durationSec:Math.round((Date.now()-started)/1000),
@@ -5343,8 +5383,7 @@ document.addEventListener('keydown',e=>{
            preset:(()=>{const p=document.querySelector('.ss-preset.sel');
              return p? {tIn:+p.dataset.in,tH1:+p.dataset.h1,tOut:+p.dataset.out,tH2:+p.dataset.h2,minutes:+p.dataset.min} : null;})()},
       measured:{device:null,samples:0},
-      marked:{},derived:{}};
-    if(ended===null){ ended=sinceStart(); events.push({t:ended,e:'end'}); }
+      marked:{},derived:derive(events)};
     // сырьё: не перезаписывается и не пересчитывается; rr и spo2 появятся с датчиком (З-3)
     const series={id,fmt:FMT,react:reactSeries(),events};
     const ok=await DB.putAll({sessions:rec, series,
