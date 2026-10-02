@@ -163,6 +163,24 @@ select { background:#101010; color:#ccc; border:1px solid #2a2a2a; border-radius
 .stat-bar-bg { flex: 1; height: 10px; background: #111; border-radius: 4px; overflow: hidden; }
 .stat-bar-fill { height: 100%; border-radius: 4px; transition: width .4s; }
 .stat-bar-val { font-size: 12px; color: #dde8f2; min-width: 30px; text-align: right; font-weight: 600; }
+/* Сводка за период (З-4) */
+#ana-tabs{display:flex;gap:6px;margin:-4px 0 12px}
+#ana-tabs button{flex:1;padding:8px;border-radius:8px;border:1px solid #22304a;background:#0b131c;color:#9fb4cc;font-size:13px;cursor:pointer}
+#ana-tabs button.on{background:#14304f;color:#dff0ff;border-color:#2c5f95}
+.sum-per{display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap}
+.sum-per button,.sum-btn{padding:5px 10px;border-radius:7px;border:1px solid #22304a;background:#0b131c;color:#9fb4cc;font-size:12px;cursor:pointer}
+.sum-per button.on{background:#14304f;color:#dff0ff;border-color:#2c5f95}
+.sum-sig{font-size:12.5px;color:#ffd2a8;margin:4px 0}
+.sum-p{font-size:12.5px;color:#c9d8e8;margin:3px 0}
+.sum-muted{font-size:11px;color:#7f93ab;margin-top:6px}
+.sum-tbl-wrap{overflow-x:auto}
+.sum-tbl{width:100%;border-collapse:collapse;font-size:12px;color:#c9d8e8}
+.sum-tbl th,.sum-tbl td{padding:5px 6px;border-bottom:1px solid #1a2a44;text-align:right;white-space:nowrap}
+.sum-tbl th{color:#8fa6c0;font-weight:500}
+.sum-tbl th:first-child,.sum-tbl td:first-child{text-align:left;white-space:normal}
+.sum-tbl td.few{text-align:left;color:#7f93ab;font-style:italic;white-space:normal}
+.sum-tbl .worse{color:#ff9f6e;font-weight:600}
+.sum-demo{font-size:12px;color:#ffe08a;background:#2a2208;border:1px solid #5a4a12;border-radius:8px;padding:7px 10px;margin-bottom:10px}
 .stat-timeline { display: flex; gap: 3px; flex-wrap: wrap; margin-top: 6px; }
 .tl-dot {
   width: 12px; height: 12px; border-radius: 3px; cursor: pointer;
@@ -1573,12 +1591,12 @@ body.hints-off .hint-mark{display:none}
 │   └── повторное нажатие ───► остановить и сохранить
 │
 ├── 🧠 Теория · 🫁 Практика · ⚙️ Управление ─► разделы документации
-├── 📊 Аналитика ────────────► результаты, корреляции, экспорт
+├── 📊 Аналитика ────────────► «Сводка» (по умолчанию) · «Подробно»: корреляции, экспорт
 ├── ? подсказки ─────────────► показать или скрыть маркеры
 │
 └── ⚙ Настройки
     ├── Быстрые ─────────────► ЭКРАН НАСТРОЙКИ в режиме сохранения
-    │                          └── «Сохранить и выйти» ─► туда, откуда пришли
+    │                          └── «Сохранить и выйти» / «Отмена» ─► туда, откуда пришли
     └── Расширенные ─────────► ЭКРАН РАСШИРЕННЫХ
                                ├── «Сохранить и выйти» ─► туда, откуда пришли
                                └── «Отмена» / Escape ──► откат значений, туда же</div>
@@ -1613,7 +1631,8 @@ body.hints-off .hint-mark{display:none}
       <p><b>Расширенные настройки</b> — отдельный экран со всеми ползунками: фазы дыхания, интенсивность концентрации, частота и сила импульса, орган-цель, настройка целевых точек, режим мыши, пульс и громкость. На основном экране ползунков больше нет — схема и панели занимают всю ширину.</p>
 
       <h2>Аналитика</h2>
-      <p>Корреляции латентности с параметрами, диаграмма рассеяния, журнал причин, гистограммы по органам и причинам, тепловая карта по часам суток. Экспорт в CSV.</p>
+      <p>Две вкладки. <b>Сводка</b> — за 30 дней, 90 дней (по умолчанию) или всё время: сигналы, средняя задержка и доля сессий с контактом, строки по причине и области (до, после, разница, тенденция значения до), регулярность, пропуски ответов, последние заметки. Меньше 5 сессий в строке — средние не показываются. Пороги сигналов предварительные: подобраны для проверки логики и уточняются по наблюдениям. При пустом журнале сводку можно посмотреть на примере — пример в журнал не записывается.</p>
+      <p><b>Подробно</b> — корреляции латентности с параметрами, диаграмма рассеяния, журнал причин, гистограммы по органам и причинам, тепловая карта по часам суток. Экспорт в CSV.</p>
       <p>Нажатие на точку диаграммы показывает все параметры измерения.</p>
 
       <h2>Пульс и звук</h2>
@@ -1812,8 +1831,10 @@ body.hints-off .hint-mark{display:none}
   <div class="modal-box">
     <button class="modal-close" onclick="document.getElementById('m-analytics').classList.remove('open')">✕</button>
     <h2>📊 Анализ состояния</h2>
+    <div id="ana-tabs"><button data-tab="sum" class="on">Сводка</button><button data-tab="det">Подробно</button></div>
+    <div id="ana-summary"></div>
     <div id="analytics-content"><p style="color:#a8bdd4;font-size:12px">Загрузка...</p></div>
-    <div style="display:flex;gap:6px;margin-top:12px;flex-wrap:wrap">
+    <div id="ana-det-btns" style="display:flex;gap:6px;margin-top:12px;flex-wrap:wrap">
       <button id="btn-refresh-ana" style="flex:1;min-width:100px;padding:8px;background:#1a3a6a;color:#aaddff;border:1px solid #2255aa;border-radius:7px;font-size:12px;cursor:pointer">🔄 Обновить</button>
       <button id="btn-exp-fb" style="padding:8px 10px;background:#0a1a20;color:#66ccaa;border:1px solid #2a6a5a;border-radius:7px;font-size:11px;cursor:pointer">📈 CSV кривые</button>
       <button id="btn-exp-lat" style="padding:8px 10px;background:#0a1420;color:#66aadd;border:1px solid #2a5a8a;border-radius:7px;font-size:11px;cursor:pointer">⏱ CSV латентн.</button>
@@ -4961,7 +4982,7 @@ document.addEventListener('keydown',e=>{
   const HINTS=[
     ['#tb-quick','<b>⚡ Quick Start · провести сессию</b> — ведение: экран гаснет, идут звук и отсчёт фаз, глаза закрыты, нажимать ничего не нужно. Обычный путь и при боли, и при расслаблении.'],
     ['#tb-proc','<b>▶ Запустить процесс · начать воздействие</b> — глаза открыты: видны схема, «Процесс концентрации — обратная связь» и «Латентность отклика». Нужно, когда хотите измерить отклик, а не просто провести сессию.'],
-    ['#tb-ana','<b>📊 Аналитика</b> — корреляции, диаграмма рассеяния, экспорт. Осмысленна через несколько сессий: по одной видна только точка.'],
+    ['#tb-ana','<b>📊 Аналитика</b> — «Сводка» за период: сигналы, строки по причине и области, регулярность; «Подробно» — корреляции, диаграмма рассеяния, экспорт. Осмысленна через несколько сессий: по одной видна только точка.'],
     ['#tb-set','<b>⚙ Настройки</b> сохраняются и не меняются от сессии к сессии. <b>Быстрые</b> — «куда направляем» и «режим дыхания». <b>Расширенные</b> — фазы дыхания, интенсивность, частота и сила импульса, орган-цель, пульс, громкости.'],
     ['#adv-save','<b>Сохранить и выйти</b> — значения применяются при каждом открытии модели, пока вы их не измените. <b>Отмена</b> вернёт то, что было до входа в настройки.'],
     ['#ss-go','Режим дыхания задаёт ориентир задержки, а не норматив: отпускаете сами, как станет некомфортно. Концентрация идёт только в фазе <b>задержка↓</b>.'],
@@ -5130,6 +5151,16 @@ document.addEventListener('keydown',e=>{
     if(!s||!Array.isArray(s.events)) return r;
     return Object.assign({},r,{derived:Object.assign({},r.derived,derive(s.events))});
   }
+  // Поля указателя для сводки (Р-14): производные от sessions, не новые данные. При расхождении верна sessions.
+  // Оборванные задержки (holdOpen) не входят в holdN/holdSum — их длительность только нижняя граница.
+  function idxExtra(der,post){
+    const ch=post&&post.change, o={change:(ch&&ch!=='__skipped')?ch:null};
+    if(!der||!('holds' in der)) return o;
+    let n=0,sum=0,open=0;
+    (der.holdSec||[]).forEach((s,i)=>{ if(der.holdOpen&&der.holdOpen[i]) open++; else { n++; sum+=s; } });
+    return Object.assign(o,{holdN:n,holdSum:Math.round(sum*10)/10,holdOpenN:open,
+      contact:(der.contactSec||[]).some(c=>c!==null)});
+  }
 
   // ── Хранилище: указатель, сессии, ряды ──
   const DB={db:null,
@@ -5164,11 +5195,17 @@ document.addEventListener('keydown',e=>{
       if(store!=='sessions') return rows;
       const need=rows.filter(r=>r&&!(r.derived&&'holds' in r.derived)).map(r=>r.id);
       const sr=await this.getMany('series',need);
-      return rows.map(r=>sr[r.id]?withDerived(r,sr[r.id]):r); }
+      return rows.map(r=>sr[r.id]?withDerived(r,sr[r.id]):r); },
+    // строки указателя до Р-14: поля дочитываются из sessions (series не трогаем, Р-10), сама строка не переписывается
+    async fillIndex(rows){
+      const ss=await this.getMany('sessions',rows.filter(r=>!('change' in r)).map(r=>r.id));
+      return rows.map(r=>{ const s=ss[r.id]; if(!s) return r;
+        return Object.assign({},r,idxExtra(s.derived,s.stated&&s.stated.post)); }); }
   };
   window.CB_DB=DB;
   window.CB_DERIVE=derive;
   window.CB_REASON_CODES=Object.fromEntries(REASONS.map(([c,n])=>[n,c]));
+  window.CB_REASON_GROUPS=Object.fromEntries(REASONS.map(([c,,,g])=>[c,g]));
 
   // ── Отрисовка вопросов ──
   function qHTML(q,val,ns){
@@ -5387,9 +5424,9 @@ document.addEventListener('keydown',e=>{
     // сырьё: не перезаписывается и не пересчитывается; rr и spo2 появятся с датчиком (З-3)
     const series={id,fmt:FMT,react:reactSeries(),events};
     const ok=await DB.putAll({sessions:rec, series,
-      index:{id,at:rec.startedAt,reason:cur.reason,reasonCode:t.code,
-      area:cur.pre.area||null, areaOther:cur.pre.areaOther||null,pre:cur.pre.level??null,post:answers.level??null,
-      dur:rec.durationSec,device:false}});
+      index:Object.assign({id,at:rec.startedAt,reason:cur.reason,reasonCode:t.code,
+      area:cur.pre.area||null, areaOther:cur.pre.areaOther||null,pre:cur.pre.level??null,post:cur.post.level??null,
+      dur:rec.durationSec,device:false}, idxExtra(rec.derived,answers))});
     started=null; ended=null; events=[]; cur={reason:null,pre:{},post:{}};
     $('post-screen').classList.remove('on');
     document.getElementById('session-overlay').classList.remove('open');
@@ -5411,6 +5448,214 @@ document.addEventListener('keydown',e=>{
     if(b) b.addEventListener('click',()=>setTimeout(openPost,80),true); });
   document.querySelectorAll('#sess-vector [data-vec]').forEach(b=>
     b.addEventListener('click',()=>setTimeout(openPost,1700)));
+})();
+
+
+// ── СВОДКА ЗА ПЕРИОД (З-4) ──────────────────────────────────────────
+// Строится по index (Р-10); заметки — из sessions, series не читается.
+(function(){
+  const $=id=>document.getElementById(id);
+  const DAY=864e5;
+  // Пороги предварительные: подобраны для проверки логики, уточняются по наблюдениям
+  const MIN_N=5;          // меньше сессий в строке — средних нет
+  const TREND_30=1;       // сигнал: изменение значения до на 1 балл за 30 дней
+  const BREAK_WIN=28, BREAK_MIN=8, BREAK_GAP=7;   // обрыв: 8 сессий за 4 недели, затем больше 7 дней тишины
+
+  const num=v=>typeof v==='number';
+  const mean=a=>a.reduce((s,x)=>s+x,0)/a.length;
+  const r1=x=>Math.round(x*10)/10;
+  const avg=a=>a.length? r1(mean(a)) : null;
+  const dayNo=t=>{ const d=new Date(t); return Math.round(new Date(d.getFullYear(),d.getMonth(),d.getDate()).getTime()/DAY); };
+  // наклон прямой по точкам [время, значение], баллов за 30 дней
+  function slope30(pts){
+    if(pts.length<MIN_N) return null;
+    const mx=mean(pts.map(p=>p[0])), my=mean(pts.map(p=>p[1]));
+    let sxy=0,sxx=0; pts.forEach(([x,y])=>{ sxy+=(x-mx)*(y-my); sxx+=(x-mx)*(x-mx); });
+    return sxx? r1(sxy/sxx*DAY*30) : null;
+  }
+
+  // period: 30 | 90 | 'all'
+  function summarize(rows,now,period){
+    const groups=window.CB_REASON_GROUPS||{};
+    now=now||Date.now();
+    const all=(rows||[]).filter(r=>r&&r.at).map(r=>Object.assign({},r,{t:Date.parse(r.at)}))
+      .filter(r=>r.t<=now).sort((a,b)=>a.t-b.t);
+    const from= period==='all' ? (all.length? all[0].t : now) : now-period*DAY;
+    const rs=all.filter(r=>r.t>=from);
+
+    // строки на пару «причина + область»
+    const by={};
+    rs.forEach(r=>{
+      const other=r.area==='other'? (r.areaOther||'').trim() : '';
+      const k=(r.reasonCode||'R00')+'|'+(r.area||'')+(other? ':'+other.toLowerCase() : '');
+      (by[k]=by[k]||{key:k,reasonCode:r.reasonCode||'R00',reason:r.reason,area:r.area||null,
+        areaOther:other||null,group:groups[r.reasonCode]||null,list:[]}).list.push(r); });
+    const lines=Object.values(by).map(g=>{
+      const L=g.list, o={key:g.key,reasonCode:g.reasonCode,reason:g.reason,area:g.area,areaOther:g.areaOther,
+        group:g.group,n:L.length,few:L.length<MIN_N};
+      if(o.few) return o;
+      const pre=L.filter(r=>num(r.pre)), both=pre.filter(r=>num(r.post));
+      o.preAvg=avg(pre.map(r=>r.pre));
+      o.postAvg=avg(L.filter(r=>num(r.post)).map(r=>r.post));
+      o.diff=avg(both.map(r=>r.post-r.pre));
+      o.trend=slope30(pre.map(r=>[r.t,r.pre]));
+      // у well шкала «плохо → отлично»: тревожно снижение, у остальных — рост
+      o.worse=o.trend!==null && (g.group==='well'? o.trend<=-TREND_30 : o.trend>=TREND_30);
+      return o;
+    }).sort((a,b)=>b.n-a.n);
+
+    // сигналы
+    const signals=lines.filter(l=>l.worse).map(l=>({type:'pre',key:l.key,reason:l.reason,area:l.area,
+      areaOther:l.areaOther,group:l.group,trend:l.trend}));
+    const worse=rs.filter(r=>r.change==='усилилась');
+    if(worse.length) signals.push({type:'worse',n:worse.length,last:worse[worse.length-1].at});
+    if(all.length){   // обрыв считается по всему журналу, не только по периоду
+      const last=all[all.length-1].t, before=all.filter(r=>r.t>last-BREAK_WIN*DAY).length, gap=(now-last)/DAY;
+      if(before>=BREAK_MIN && gap>BREAK_GAP) signals.push({type:'break',n:before,days:Math.floor(gap),last:all[all.length-1].at});
+    }
+
+    // строка по периоду: задержки и контакт
+    const hr=rs.filter(r=>'holdN' in r), withHolds=hr.filter(r=>r.holdN+(r.holdOpenN||0)>0);
+    const holdN=hr.reduce((s,r)=>s+r.holdN,0), holdSum=hr.reduce((s,r)=>s+r.holdSum,0);
+    const holds={holdN, holdAvg:holdN? r1(holdSum/holdN) : null,
+      holdOpenN:hr.reduce((s,r)=>s+(r.holdOpenN||0),0),
+      sessions:withHolds.length, contactN:withHolds.filter(r=>r.contact).length,
+      contactShare:withHolds.length? withHolds.filter(r=>r.contact).length/withHolds.length : null,
+      noData:rs.length-hr.length};
+
+    // регулярность: дни с сессиями и самый длинный перерыв (дни без сессий, считая до сегодня)
+    const days=[...new Set(rs.map(r=>dayNo(r.t)))].sort((a,b)=>a-b);
+    const span=dayNo(now)-dayNo(from)+1;
+    let maxGap=null;
+    if(days.length){ maxGap=dayNo(now)-days[days.length-1];
+      for(let i=1;i<days.length;i++) maxGap=Math.max(maxGap,days[i]-days[i-1]-1); }
+    const regular={days:days.length, span, share:days.length/span, maxGap};
+
+    const skipped={pre:rs.length? rs.filter(r=>!num(r.pre)).length/rs.length : null,
+                   post:rs.length? rs.filter(r=>!num(r.post)).length/rs.length : null};
+
+    return {period, from:new Date(from).toISOString(), n:rs.length, total:all.length,
+      lines, signals, holds, regular, skipped, ids:rs.map(r=>r.id).reverse()};
+  }
+
+  // Пример на вымышленных данных: показывается при пустом журнале, в базу не пишется
+  function demo(now){
+    now=now||Date.now(); let s=7; const out=[];
+    const rnd=()=>{ s=s*16807%2147483647; return (s-1)/2147483646; };
+    const add=(d,code,reason,area,pre,post,change)=>{ const n=1+Math.floor(rnd()*3), open=rnd()<.15?1:0;
+      out.push({id:'DEMO'+out.length,at:new Date(now-d*DAY-Math.floor(rnd()*8)*3600e3).toISOString(),
+        reason,reasonCode:code,area,areaOther:null,pre,post,dur:600+Math.floor(rnd()*600),device:false,
+        change:change||null,holdN:n,holdSum:r1(n*(18+rnd()*14)),holdOpenN:open,contact:rnd()<.6}); };
+    // боль в области сердца: значение до растёт — сигнал; в конце отметка «усилилась»
+    for(let d=86;d>=10;d-=4){ const p=Math.min(9,Math.round(3+(86-d)/86*4+rnd()));
+      add(d,'R02','Боль','heart',p,Math.max(0,p-2-Math.round(rnd())),d===10?'усилилась':(rnd()<.5?'стала меньше':'не изменилась')); }
+    // тревога: фон ровный, после сессии ниже
+    for(let d=84;d>=12;d-=6){ const p=5+Math.round(rnd()*2); add(d,'R10','Тревога',null,p,p-2); }
+    // профилактика: мало сессий
+    [70,45,20].forEach(d=>add(d,'R12','Профилактика',null,7,8));
+    return out;
+  }
+  const DEMO_NOTES=[{at:new Date(Date.now()-10*DAY).toISOString(),note:'Пример заметки: к вечеру тянуло слева, после сессии стало ровнее.'},
+                    {at:new Date(Date.now()-24*DAY).toISOString(),note:'Пример заметки: отвлекал шум, задержку держал короче обычного.'}];
+
+  // ── Вкладка «Сводка» ──
+  let period=90, demoOn=false;
+  const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const fmt=x=>String(x).replace('.',',');
+  const sign=x=>(x>0?'+':x<0?'−':'')+fmt(Math.abs(x));
+  const pct=x=>Math.round(x*100)+'%';
+  const date=iso=>new Date(iso).toLocaleDateString('ru-RU');
+  function areaName(a,other){ if(a==='other') return other||'другое'; if(!a) return '';
+    const o=document.querySelector('#c-organ option[value="'+a+'"]'); return o? o.textContent : a; }
+  const lineName=l=>esc(l.reason||l.reasonCode)+(l.area? ' · '+esc(areaName(l.area,l.areaOther)) : '');
+
+  async function lastNotes(ids){
+    const pick=ids.slice(0,30), ss=window.CB_DB? await window.CB_DB.getMany('sessions',pick) : {};
+    return pick.map(id=>ss[id]).filter(s=>s&&s.stated&&s.stated.note).slice(0,5)
+      .map(s=>({at:s.startedAt,note:s.stated.note}));
+  }
+
+  function html(S,notes){
+    const per=[[30,'30 дней'],[90,'90 дней'],['all','всё время']].map(([v,t])=>
+      `<button data-per="${v}" class="${String(period)===String(v)?'on':''}">${t}</button>`).join('');
+    let h=`<div class="sum-per">${per}</div>`;
+    if(demoOn) h+=`<div class="sum-demo">Пример на вымышленных данных — в журнал не записан. <button class="sum-btn" data-demo="off">вернуться к своим данным</button></div>`;
+    if(!S.n){
+      return h+`<div class="stat-card"><p class="sum-p">${S.total? 'За период сессий нет.' : 'Сессий пока нет — сводка появится после первых записей.'}</p>`+
+        (S.total||demoOn? '' : `<p class="sum-p"><button class="sum-btn" data-demo="on">показать на примере</button></p>`)+`</div>`;
+    }
+    // сигналы
+    const sig=S.signals.map(s=>{
+      if(s.type==='pre') return `«${lineName(s)}»: `+(s.group==='well'
+        ? `самочувствие до сессии снижается — ${sign(s.trend)} балла за 30 дней`
+        : `значение до сессии растёт — ${sign(s.trend)} балла за 30 дней`);
+      if(s.type==='worse') return `Отметки «усилилась»: ${s.n} за период, последняя ${date(s.last)}`;
+      if(s.type==='break') return `Перерыв ${s.days} дн. после регулярной практики (${s.n} сессий за 4 недели до него)`;
+      return '';
+    });
+    h+=`<div class="stat-card"><h4>Сигналы</h4>`+(sig.length? sig.map(t=>`<div class="sum-sig">⚠ ${t}</div>`).join('')
+      : `<p class="sum-p">Сигналов нет.</p>`)+`</div>`;
+    // строка по периоду
+    const H=S.holds;
+    h+=`<div class="stat-card"><h4>Задержки за период</h4>`+(H.holdN||H.holdOpenN
+      ? `<p class="sum-p">Средняя задержка: <b>${H.holdAvg===null?'—':fmt(H.holdAvg)+' с'}</b> по ${H.holdN} полным задержкам`+
+        (H.holdOpenN? `, ещё ${H.holdOpenN} оборваны (в среднее не входят)` : '')+`</p>`+
+        `<p class="sum-p">Контакт достигнут: <b>${pct(H.contactShare)}</b> сессий с задержками (${H.contactN} из ${H.sessions})</p>`
+      : `<p class="sum-p">Задержек за период нет.</p>`)+
+      (H.noData? `<p class="sum-muted">Без данных о задержках: ${H.noData} сесс. (записаны до учёта задержек)</p>` : '')+`</div>`;
+    // строки по причине и области
+    const rows=S.lines.map(l=>l.few
+      ? `<tr><td>${lineName(l)}</td><td>${l.n}</td><td class="few" colspan="4">сессий мало, тенденция не определяется</td></tr>`
+      : `<tr><td>${lineName(l)}</td><td>${l.n}</td><td>${l.preAvg===null?'—':fmt(l.preAvg)}</td><td>${l.postAvg===null?'—':fmt(l.postAvg)}</td>`+
+        `<td>${l.diff===null?'—':sign(l.diff)}</td><td class="${l.worse?'worse':''}">${l.trend===null?'—':sign(l.trend)+' / 30 дн.'}</td></tr>`).join('');
+    h+=`<div class="stat-card"><h4>По причине и области</h4><div class="sum-tbl-wrap"><table class="sum-tbl">
+      <tr><th>Причина · область</th><th>сессий</th><th>до</th><th>после</th><th>после − до</th><th>тенденция до</th></tr>${rows}</table></div>
+      <p class="sum-muted">«После − до» — меняется ли состояние в моменте; «тенденция до» — меняется ли фон от сессии к сессии.</p></div>`;
+    // регулярность, пропуски, заметки
+    const R=S.regular;
+    h+=`<div class="stat-card"><h4>Регулярность</h4>
+      <p class="sum-p">Сессии в ${R.days} из ${R.span} дн. (${pct(R.share)}) · самый длинный перерыв ${R.maxGap} дн.</p>
+      <p class="sum-p">Без ответа на главный вопрос: до сессии — ${pct(S.skipped.pre)}, после — ${pct(S.skipped.post)}</p></div>`;
+    h+=`<div class="stat-card"><h4>Последние заметки</h4>`+(notes.length
+      ? notes.map(n=>`<p class="sum-p"><span style="color:#7f93ab">${date(n.at)}</span> — ${esc(n.note)}</p>`).join('')
+      : `<p class="sum-p">Заметок за период нет.</p>`)+`</div>`;
+    h+=`<p class="sum-muted">Значения до и после заявлены самим человеком. Сводка — материал анамнеза, а не диагностические данные.
+      Пороги сигналов предварительные: подобраны для проверки логики и уточняются по наблюдениям.</p>`;
+    return h;
+  }
+
+  async function render(){
+    const box=$('ana-summary'); if(!box) return;
+    let rows=[], notes=[];
+    if(demoOn){ rows=demo(); notes=DEMO_NOTES; }
+    else if(window.CB_DB) rows=await window.CB_DB.fillIndex(await window.CB_DB.all('index'));
+    const S=summarize(rows,Date.now(),period);
+    if(!demoOn&&S.n) notes=await lastNotes(S.ids);
+    box.innerHTML=html(S,notes);
+    return S;
+  }
+
+  function tab(t,quiet){
+    document.querySelectorAll('#ana-tabs [data-tab]').forEach(b=>b.classList.toggle('on',b.dataset.tab===t));
+    $('ana-summary').style.display = t==='sum'? '' : 'none';
+    $('analytics-content').style.display = t==='sum'? 'none' : '';
+    $('ana-det-btns').style.display = t==='sum'? 'none' : 'flex';
+    return t==='sum'&&!quiet? render() : Promise.resolve();
+  }
+  $('ana-tabs').addEventListener('click',e=>{ const b=e.target.closest('[data-tab]'); if(b) tab(b.dataset.tab); });
+  $('ana-summary').addEventListener('click',e=>{
+    const p=e.target.closest('[data-per]'), dm=e.target.closest('[data-demo]');
+    if(p){ period=p.dataset.per==='all'?'all':+p.dataset.per; render(); }
+    if(dm){ demoOn=dm.dataset.demo==='on'; render(); }
+  });
+  // аналитика открывается на «Сводке»
+  const ob=$('btn-open-analytics');
+  if(ob){ ob.addEventListener('click',()=>tab('sum')); ob.addEventListener('touchend',()=>tab('sum')); }
+  tab('sum',true);
+
+  window.CB_SUMMARY=summarize;
+  window.CB_SUMMARY_DEMO=demo;
+  window.__cbSummaryRender=render;
 })();
 
 </script>

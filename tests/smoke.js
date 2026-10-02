@@ -183,6 +183,8 @@ const click = (W, el) => el && el.dispatchEvent(new W.MouseEvent('click', {bubbl
   esr && esr.stated.postSkipped === true ? ok('Escape на экране после записывает сессию как пропуск') : bad('сессия после Escape не записана');
   esr && esr.stated.pre.ctx === '__skipped' && esr.stated.pre.level === '__skipped' && esi && esi.pre === null
     ? ok('пропуски до сессии: в записи __skipped, в указателе null') : bad('пропуски до сессии записаны неверно');
+  esr && esr.stated.post.level === '__skipped' && esi && esi.post === null
+    ? ok('пропуски после сессии: в записи __skipped, в указателе null') : bad('пропуск после сессии в указателе: ' + JSON.stringify(esi && esi.post));
   !d.getElementById('post-screen').classList.contains('on') ? ok('экран после закрыт') : bad('экран после не закрылся');
   const ess = esr && (await W.CB_DB.all('series')).find(x => x.id === esr.id);
   ess && Array.isArray(ess.react) && ess.react.length === 0 && ess.events.map(x => x.e).join(',') === 'start,end'
@@ -226,6 +228,110 @@ const click = (W, el) => el && el.dispatchEvent(new W.MouseEvent('click', {bubbl
   !(await W.CB_DB.all('series')).some(x => x.id === s1.id) && kept.derived.holds === 1
     ? ok('после удаления series derived остаётся') : bad('derived пропал вместе с series');
   sr1 && await W.CB_DB.put('series', sr1);
+
+  // З-4 · Р-14: производные в указателе
+  const i1 = (await W.CB_DB.getMany('index', [s1.id]))[s1.id];
+  const i1ok = i1 && i1.holdN === 1 && i1.holdOpenN === 0 && i1.contact === true
+    && i1.change === null && i1.holdSum === s1.derived.holdSec[0];
+  i1ok ? ok('index: holdN, holdSum, holdOpenN, contact, change')
+       : bad('index без производных: ' + JSON.stringify(i1));
+
+  await W.CB_DB.put('sessions', {id:'IDXOLD', fmt:'cb-record-2', reason:'Боль', reasonCode:'R02',
+    stated:{post:{change:'усилилась'}},
+    derived:{holds:2, holdSec:[10,5], holdOpen:[false,true], contactSec:[null,2]}});
+  await W.CB_DB.put('index', {id:'IDXOLD', at:'2026-09-01T10:00:00Z',
+    reason:'Боль', reasonCode:'R02', pre:5, post:3});
+  const fi = (await W.CB_DB.fillIndex([{id:'IDXOLD', pre:5}]))[0];
+  const rawIdx = (await W.CB_DB.getMany('index', ['IDXOLD'])).IDXOLD;
+  const fiOk = fi.holdN === 1 && fi.holdSum === 10 && fi.holdOpenN === 1
+    && fi.contact === true && fi.change === 'усилилась' && !('holdN' in rawIdx);
+  fiOk ? ok('старая строка index дочитывается из sessions, не переписывается')
+       : bad('fillIndex: ' + JSON.stringify(fi));
+  await W.CB_DB.del('index', 'IDXOLD');
+  await W.CB_DB.del('sessions', 'IDXOLD');
+
+  // З-4: сводка за период
+  const SUM = W.CB_SUMMARY, NOW = Date.UTC(2026, 9, 1, 12), DAY = 864e5;
+  let seq = 0;
+  const mk = (d, code, reason, area, pre, post, x) => Object.assign({
+    id: 'T' + (seq++), at: new Date(NOW - d*DAY).toISOString(),
+    reason, reasonCode: code, area, pre, post}, x);
+
+  // порог 5 сессий
+  const few = SUM([40,30,20,10].map(d => mk(d,'R10','Тревога',null,5,3)), NOW, 90).lines[0];
+  const five = SUM([50,40,30,20,10].map(d => mk(d,'R10','Тревога',null,5,3)), NOW, 90);
+  const l5 = five.lines[0];
+  few.few === true && few.preAvg === undefined && l5.few === false && l5.preAvg === 5 && l5.diff === -2
+    ? ok('сводка: меньше 5 сессий — без средних, с 5 — средние')
+    : bad('порог 5: ' + JSON.stringify([few, l5]));
+  !five.signals.length
+    ? ok('сводка: ровный фон — сигналов нет')
+    : bad('лишний сигнал: ' + JSON.stringify(five.signals));
+
+  // рост значения до
+  const up = SUM([40,30,20,10,1].map((d,i) => mk(d,'R02','Боль','heart',3+i,2)), NOW, 90);
+  up.signals.some(s => s.type === 'pre' && s.reason === 'Боль' && s.trend >= 1) && up.lines[0].worse
+    ? ok('сводка: рост значения до — сигнал')
+    : bad('нет сигнала роста: ' + JSON.stringify(up.signals));
+
+  // направление шкалы у well
+  const wellDown = SUM([40,30,20,10,1].map((d,i) => mk(d,'R12','Профилактика',null,8-i,8)), NOW, 90);
+  const wellUp = SUM([40,30,20,10,1].map((d,i) => mk(d,'R12','Профилактика',null,4+i,8)), NOW, 90);
+  wellDown.signals.some(s => s.type === 'pre') && !wellUp.signals.length
+    ? ok('сводка: у well сигнал при снижении, рост — не сигнал')
+    : bad('направление шкалы well: ' + JSON.stringify([wellDown.signals, wellUp.signals]));
+
+  // «усилилась» и границы периода
+  const ch = SUM([mk(5,'R02','Боль','heart',5,6,{change:'усилилась'}),
+                  mk(100,'R02','Боль','heart',5,6,{change:'усилилась'})], NOW, 90);
+  ch.n === 1 && ch.signals.some(s => s.type === 'worse' && s.n === 1)
+    ? ok('сводка: отметка «усилилась» — сигнал, период 90 дней')
+    : bad('сигнал «усилилась»: ' + JSON.stringify(ch.signals));
+
+  // обрыв практики
+  const days10 = [48,45,42,39,36,33,30,27,24,21];
+  const brk = SUM(days10.map(d => mk(d,'R06','Расслабление',null,4,2)), NOW, 'all');
+  const noBrk = SUM(days10.map(d => mk(d-18,'R06','Расслабление',null,4,2)), NOW, 'all');
+  brk.signals.some(s => s.type === 'break' && s.days === 21)
+    && !noBrk.signals.some(s => s.type === 'break')
+    ? ok('сводка: обрыв практики после регулярности')
+    : bad('обрыв: ' + JSON.stringify([brk.signals, noBrk.signals]));
+
+  // строка задержек по периоду
+  const hs = SUM([
+    mk(3,'R02','Боль','heart',5,3,{holdN:2, holdSum:40, holdOpenN:0, contact:true}),
+    mk(2,'R02','Боль','heart',5,3,{holdN:1, holdSum:20, holdOpenN:1, contact:false}),
+    mk(1,'R02','Боль','heart',5,3)], NOW, 90).holds;
+  const hsOk = hs.holdAvg === 20 && hs.holdN === 3 && hs.holdOpenN === 1
+    && hs.contactShare === 0.5 && hs.noData === 1;
+  hsOk ? ok('сводка: средняя задержка без оборванных, доля контакта')
+       : bad('строка задержек: ' + JSON.stringify(hs));
+
+  // демонстрационные данные
+  const dm = SUM(W.CB_SUMMARY_DEMO(NOW), NOW, 90);
+  dm.lines.length >= 3 && dm.lines.some(l => l.few)
+    && dm.signals.some(s => s.type === 'pre' && s.reason === 'Боль')
+    && dm.signals.some(s => s.type === 'worse')
+    ? ok('сводка на демонстрационных данных: строки и сигналы')
+    : bad('демо: ' + JSON.stringify(dm.signals));
+
+  // вкладки аналитики: открывается «Сводка», нынешняя аналитика — «Подробно»
+  click(W, d.getElementById('tb-ana'));
+  await wait(300);
+  const sumBox = d.getElementById('ana-summary');
+  const det = d.getElementById('analytics-content');
+  sumBox.style.display !== 'none' && det.style.display === 'none'
+    && d.querySelector('#ana-tabs .on').dataset.tab === 'sum'
+    ? ok('аналитика открывается на вкладке «Сводка»')
+    : bad('вкладка «Сводка» не первая');
+  sumBox.querySelector('.sum-tbl') && sumBox.textContent.includes('Боль')
+    ? ok('сводка построена по сохранённым сессиям')
+    : bad('сводка пуста: ' + sumBox.textContent.slice(0, 120));
+  click(W, d.querySelector('#ana-tabs [data-tab="det"]'));
+  det.style.display !== 'none' && sumBox.style.display === 'none'
+    ? ok('вкладка «Подробно» — нынешняя аналитика')
+    : bad('вкладка «Подробно» не открылась');
+  d.getElementById('m-analytics').classList.remove('open');
 
   // Возврат из настроек
   click(W, d.getElementById('tb-set'));
